@@ -1,45 +1,27 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+@import "tailwindcss";
 
-  font: 18px/145% var(--sans);
-  color: var(--text);
-  background: var(--bg);
-  -webkit-font-smoothing: antialiased;
+@theme {
+  /* Desk / notebook palette */
+  --color-desk-dark: #7a5c3a;
+  --color-desk-mid: #9b7550;
+  --color-desk-light: #b8956a;
+  --color-paper: #f0e8d0;
+  --color-binding: #d4c4a0;
+  --color-binding-border: #b8a070;
+  --color-banner: #8b6b4a;
+  --color-btn: #a67c52;
+  --color-btn-text: #f5e6c8;
+
+  --animate-fade-in: fade-in 0.4s ease-out;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
-}
-
-body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  box-sizing: border-box;
-}
-
-h1 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

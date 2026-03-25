@@ -1,9 +1,13 @@
-function App() {
-  return (
-    <>
-      <h1>Get started</h1>
-    </>
-  )
-}
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { TitleScreen } from './screens/TitleScreen'
 
-export default App
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <TitleScreen />,
+  },
+])
+
+export default function App() {
+  return <RouterProvider router={router} />
+}
