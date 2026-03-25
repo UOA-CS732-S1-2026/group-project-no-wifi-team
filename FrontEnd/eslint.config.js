@@ -25,6 +25,9 @@ export default defineConfig([
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+      camelcase: 'error',
+      'no-var': 'error',
+      'prefer-const': 'error',
     },
   },
   // Must be last — disables ESLint rules that conflict with Prettier
