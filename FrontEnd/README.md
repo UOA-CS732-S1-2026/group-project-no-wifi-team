@@ -1,16 +1,80 @@
-# React + Vite
+# International Student Simulator — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A text-based interactive story game for international students, built with React + Vite.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Tool | Version | Purpose |
+|------|---------|---------|
+| React | 19 | UI framework |
+| TypeScript | 5 | Type safety |
+| Vite | 8 | Build tool & dev server |
+| Tailwind CSS | 4 | Styling |
+| React Router | 7 | Client-side routing |
+| TanStack Query | 5 | Server state / data fetching |
+| Vitest | 3 | Unit testing |
+| ESLint + Prettier | 9 / 3 | Linting & formatting |
 
-## React Compiler
+## Project Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+src/
+├── screens/        # Page-level components (one per route)
+├── components/     # Reusable UI components
+├── hooks/          # Custom React hooks
+├── assets/         # Images, icons, static files
+├── test/           # Test setup and utilities
+├── App.tsx         # Router configuration
+└── main.tsx        # App entry point
+```
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+- Node.js 18+
+- npm 9+
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Start development server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+## Available Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start dev server with hot reload |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build locally |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format code with Prettier |
+| `npm run format:check` | Check formatting (CI use) |
+| `npm run test` | Run tests in watch mode |
+| `npm run test:run` | Run tests once |
+| `npm run coverage` | Generate test coverage report |
+
+## Adding a New Page
+
+1. Create a screen component in `src/screens/YourScreen.tsx`
+2. Add a route in `src/App.tsx`:
+
+```tsx
+{ path: '/your-path', element: <YourScreen /> }
+```
+
+## Code Style
+
+- **Formatting**: Prettier (auto-format on save recommended)
+- **Linting**: ESLint with TypeScript + React Hooks rules
+- **TypeScript**: Strict mode enabled — no implicit `any`
+- **Tailwind**: Custom color tokens defined in `src/index.css` under `@theme`
