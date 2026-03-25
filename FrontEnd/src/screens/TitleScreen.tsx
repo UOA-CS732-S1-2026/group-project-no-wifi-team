@@ -16,7 +16,13 @@ function useSpiralCount(ref: React.RefObject<HTMLDivElement | null>) {
     const el = ref.current
     if (!el) return
     const update = () => setCount(Math.max(4, Math.floor(el.clientWidth / 28)))
+    // Compute initial value based on current width
     update()
+
+    // In environments without ResizeObserver (e.g., Vitest's jsdom), skip observing
+    if (typeof ResizeObserver === 'undefined') {
+      return
+    }
     const observer = new ResizeObserver(update)
     observer.observe(el)
     return () => observer.disconnect()
