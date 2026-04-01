@@ -36,24 +36,24 @@
  
 #### F-01 · Start Screen and Character Customisation
  
-**Linked US:** US-01, US-11
 **Priority:** Must
-**Owner:** Grace Liao, Boni He, Shiying Yang
+**Developer:** Boni He, Shiying Yang
+**Contact:** bhe783@aucklanduni.ac.nz, syan634@aucklanduni.ac.nz
  
 **UI Elements:**
 - Title: *International Student Simulator*
 - Start button
 - About Us button
 - Sign In button
-- Character selection: Academic Ace / Rich Kid / Fitness Fanatic / Average Person
+- Character selection: Academic Ace / Richmen / Fitness Fanatic / Average Person
  
 ---
  
 #### F-02 · Monthly Task Selection
  
-**Linked US:** US-02
 **Priority:** Must
-**Owner:** Baiyi He, Grace Liao, Shiying Yang
+**Developer:** Grace Liao
+**Contact:** jila776@aucklanduni.ac.nz
  
 **UI Elements:**
 - Top: current month, remaining months until graduation
@@ -65,20 +65,10 @@
  
 ---
  
-#### F-03 · Three Core Attributes
+#### F-03 · Task Interaction System
  
 **Priority:** Must
-**Owner:** Baiyi He
- 
-**Description:**
-- Character base attribute levels: bad / good / well
- 
----
- 
-#### F-04 · Task Interaction System
- 
-**Priority:** Must
-**Owner:** Baiyi He
+**Developer:** Caspal Men
 **Contact:** hmen498@aucklanduni.ac.nz
  
 **UI Elements:**
@@ -90,10 +80,10 @@
  
 ---
  
-#### F-05 · Monthly Progression System
+#### F-04 · Monthly Progression System
  
 **Priority:** Must
-**Owner:** Shiying Yang
+**Owner:** Alvin Zhu
 **Contact:** jzhu528@aucklanduni.ac.nz
  
 **Description:**
@@ -111,32 +101,17 @@ After completing a month's tasks, display a monthly summary and attribute change
  
 ---
  
-#### F-06 · Status Update Logic After Each Decision *(removed)*
- 
-**Owner:** Shiying Yang
- 
-**Description:**
-After accepting or declining a task, a popup shows the attribute changes resulting from the decision.
-
-**UI Elements:**
-- Title: none
-- Centre text: description of the decision made
-- Bottom: attribute value changes
-- Bottom button: continue back to the next task decision page
- 
----
- 
-#### F-07 · Ending Screen
+#### F-05 · Ending Screen
  
 **Priority:** Must
-**Owner:** Grace Liao, Ethan Hao
+**Owner:** Ethan Hao
 **Contact:** zhao761@aucklanduni.ac.nz
  
 **Description:**
 - Status: Happy Ending & Bad Ending (different themes)
 - Show final status data: Intelligence, Money, Health (different numbers)
 - Final score: Real score / Total score (default 100)
-- Ending context: ——————————
+- Ending context
  
 **Buttons:**
 - **Play Again** — go back to start page
@@ -144,7 +119,7 @@ After accepting or declining a task, a popup shows the attribute changes resulti
  
 ---
  
-#### F-08 · Multiple Endings
+#### F-06 · Multiple Endings
  
 **Priority:** Must
 **Owner:** Baiyi He, Shiying Yang
