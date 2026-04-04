@@ -1,33 +1,69 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { CountUp } from '../utils/CountUp'
 
 interface MonthlySummaryProps {
   monthName?: string
-  monthIndex?: number // 1-12
+  monthIndex?: number
   stats?: {
     label: string
     value: number
     delta: number
   }[]
   totalScore?: number
+  monthsToGraduation?: number
   tasksCompleted?: number
   totalTasks?: number
 }
 
 export function MonthlySummary({
-  monthName = 'October',
-  monthIndex = 10,
-  stats = [
-    { label: 'Intelligence', value: 85, delta: 5 },
-    { label: 'Health', value: 70, delta: -2 },
-    { label: 'Wealth', value: 1200, delta: -150 },
-  ],
-  tasksCompleted = 5,
-  totalTasks = 5,
+  ...initialProps
 }: MonthlySummaryProps) {
   const navigate = useNavigate()
-  const monthsToGraduation = 12 - monthIndex
+  const [data, setData] = useState<MonthlySummaryProps | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  // const getUserId = () => {
+  //   let id = localStorage.getItem('game_guest_id')
+  //   if (!id) {
+  //     id = 'guest_' + Math.random().toString(36).substring(2, 9)
+  //     localStorage.setItem('game_guest_id', id)
+  //   }
+  //   return id
+  // }
+
+  // mockUser
+  const getUserId = () => {
+    return 'guest_mock_123456'; 
+  }
+
+  useEffect(() => {
+    fetch('/api/game/monthly-summary', {
+      headers: {
+        'x-user-id': getUserId()
+      }
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        setData(json)
+        setLoading(false)
+      })
+      .catch((err) => console.error('Failed to fetch summary:', err))
+  }, [])
+
+  if (loading) {
+    return <div className="flex h-dvh items-center justify-center bg-paper text-desk-dark">Loading Summary...</div>
+  }
+
+  const {
+    monthName = 'Unknown',
+    monthIndex = 0,
+    stats = [],
+    tasksCompleted = 0,
+    totalTasks = 0,
+    monthsToGraduation = 12 - monthIndex,
+  } = { ...initialProps, ...data }
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
