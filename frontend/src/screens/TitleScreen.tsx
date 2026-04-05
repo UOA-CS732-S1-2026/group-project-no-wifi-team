@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { motion } from 'motion/react'
 
 function GearIcon() {
   return (
@@ -68,7 +69,7 @@ export function TitleScreen() {
         {/* Content — vertically centered, responsive spacing */}
         <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-10 sm:gap-7 sm:px-10 sm:py-12">
           {/* Title banner */}
-          <div className="relative flex w-64 items-center justify-center py-5 sm:w-72">
+          <div className="relative flex w-64 items-center justify-center my-20 py-5 sm:w-72">
             <div className="absolute inset-0 bg-banner shadow-[0_3px_10px_rgba(0,0,0,0.3)] [clip-path:polygon(5%_0%,95%_0%,100%_50%,95%_100%,5%_100%,0%_50%)]" />
             <p className="relative z-10 text-center font-serif text-base font-bold leading-snug text-btn-text sm:text-lg">
               International Student
@@ -78,12 +79,21 @@ export function TitleScreen() {
           </div>
 
           {/* Start button */}
-          <button
-            disabled
-            className="w-48 border border-desk-dark bg-btn py-3 font-serif text-sm text-btn-text shadow-[0_2px_6px_rgba(0,0,0,0.25)] transition-all duration-150 active:scale-95 sm:w-56 sm:text-base"
+          <motion.button
+            animate={{
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 1.2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
+            className="w-48 border border-desk-dark bg-btn py-3 font-serif text-sm text-btn-text shadow-[0_2px_6px_rgba(0,0,0,0.25)] sm:w-56 sm:text-base"
           >
-            start
-          </button>
+            Start Game
+          </motion.button>
 
           {/* About us + Sign in */}
           <div className="flex gap-4 sm:gap-5">
