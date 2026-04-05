@@ -9,6 +9,54 @@
 | Last Updated | 24 March 2026 | Version 1.0 |
  
 ---
+## Overview
+
+```mermaid
+flowchart TD
+    START(["Start"]) --> LOGIN
+
+    subgraph GAME_START ["游戏启动 · Game Start"]
+        direction TB
+        LOGIN["是否登陆选择<br/>Login Selection"]
+        PAGE["进入游戏页面<br/>Enter Game Page"]
+        TASKS["安排本月任务<br/>Arrange Monthly Tasks"]
+        FETCH["抽取4个对应任务<br/>Fetch 4 Tasks"]
+
+        LOGIN --> PAGE --> TASKS --> FETCH
+    end
+
+    FETCH --> GAME_LOOP
+
+    subgraph GAME_LOOP ["游戏过程 · Game Process"]
+        direction TB
+        ENTER["进入游戏<br/>Enter Game"]
+        TASK["任务<br/>Task"]
+        DECIDE{"玩家选择是否进行<br/>Player Proceeds?"}
+        ATTR_Y["根据任务增减属性<br/>Adjust Attributes (Y)"]
+        ATTR_N["根据任务增减属性<br/>Adjust Attributes (N)"]
+        ZERO{"属性值是否归零<br/>Attributes at Zero?"}
+        GRAD{"是否毕业年限<br/>Graduation Year?"}
+
+        ENTER --> TASK --> DECIDE
+        DECIDE -->|Y| ATTR_Y
+        DECIDE -->|N| ATTR_N
+        ATTR_Y --> ZERO
+        ATTR_N --> ZERO
+        ZERO -->|N| GRAD
+        GRAD -->|N| LOGIN
+    end
+
+    ZERO -->|Y| ENDING
+    GRAD -->|Y| ENDING
+
+    subgraph GAME_END ["游戏结束 · Game End"]
+        direction TB
+        ENDING["结局<br/>Ending"]
+        SUMMARY["总结本局成就<br/>Summarize Achievements"]
+
+        ENDING --> SUMMARY
+    end
+```
  
 ## 1. Requirements
  
