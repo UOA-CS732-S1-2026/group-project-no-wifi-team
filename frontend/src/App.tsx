@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { TitleScreen } from './screens/TitleScreen'
 import { MonthlySummary } from './screens/MonthlySummary'
+import { TaskInteractionScreen } from './screens/TaskInteractionScreen'
 
 const router = createBrowserRouter([
   {
@@ -10,6 +11,10 @@ const router = createBrowserRouter([
   {
     path: '/monthly-summary',
     element: <MonthlySummary />,
+  },
+  {
+    path: '/task-interaction',
+    element: <TaskInteractionScreen />,
   },
 ])
 

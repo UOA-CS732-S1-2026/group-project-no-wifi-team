@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { MonthlyLog } from "../db/monthlyLog.js";
 import { User } from "../db/user.js";
+import { applyTaskChoice, baseTaskState, buildTaskResponse } from "../data/taskData.js";
 
 const router = Router();
 
@@ -31,6 +32,37 @@ router.get("/monthly-summary", async (req, res) => {
       totalTasks: summary.totalTasks,
       totalScore: summary.totalScore,
       monthsToGraduation: 12 - summary.monthIndex
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/task/current", async (_req, res) => {
+  try {
+    return res.json(buildTaskResponse(baseTaskState));
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.post("/task/choice", async (req, res) => {
+  try {
+    const { choiceId } = req.body;
+
+    if (!choiceId) {
+      return res.status(400).json({ error: "Missing choiceId" });
+    }
+
+    const result = applyTaskChoice(choiceId, baseTaskState);
+
+    if (!result) {
+      return res.status(404).json({ error: "Invalid choiceId" });
+    }
+
+    return res.json({
+      message: `Choice recorded: ${result.selectedOptionText}`,
+      ...result,
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
