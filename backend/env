@@ -1,0 +1,2 @@
+DB_URL=mongodb+srv://nwt_db_user:2RdaK6BfOSpLlXfk@cluster0.mgy4nmm.mongodb.net/?appName=Cluster0
+PORT=3000
