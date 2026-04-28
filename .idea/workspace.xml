@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0c7d3b3d-bcde-4b1e-a7f3-3fcf298a1e91" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/src/db/achievement.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/db/ending.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/db/event.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/.env.example" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/routes/api-game.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/routes/api-game.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/screens/EndingCollectionScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/screens/EndingCollectionScreen.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +14,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
@@ -35,25 +33,30 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "feature/StartPage",
+    "git-widget-placeholder": "feature/EndingPage-boni",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/boni_he/Desktop/group-project-no-wifi-team-feature-EndingPage/frontend/src/assets",
+    "last_opened_file_path": "/Users/boni_he/Downloads/group-project-no-wifi-team-feature-EndingPage/frontend/src/assets/ending-collection",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "/Users/boni_he/Downloads/group-project-no-wifi-team/frontend/node_modules/prettier",
-    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+    "prettierjs.PrettierConfiguration.Package": "/Users/boni_he/Downloads/group-project-no-wifi-team-feature-EndingPage/frontend/node_modules/prettier",
+    "ts.external.directory.path": "/Users/boni_he/Downloads/group-project-no-wifi-team-feature-EndingPage/frontend/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/frontend/src/assets/ending-collection" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/frontend/src/assets/assets/ending-collection" />
       <recent name="$PROJECT_DIR$/frontend/src/assets" />
       <recent name="$PROJECT_DIR$/backend/src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/frontend/src/assets/ending-collection" />
+      <recent name="$PROJECT_DIR$/frontend/src/assets" />
       <recent name="$PROJECT_DIR$/backend" />
     </key>
   </component>
@@ -67,6 +70,7 @@
       <workItem from="1777291036973" duration="821000" />
       <workItem from="1777292527462" duration="97000" />
       <workItem from="1777358095956" duration="1140000" />
+      <workItem from="1777375563678" duration="8594000" />
     </task>
     <servers />
   </component>

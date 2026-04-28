@@ -37,8 +37,8 @@ type EndingsApiResponse = {
 
 const API_BASE_URL = 'http://localhost:3000'
 
-const STAGE_WIDTH = 1365
-const STAGE_HEIGHT = 1040
+const STAGE_WIDTH = 1500
+const STAGE_HEIGHT = 1060
 const MOBILE_BREAKPOINT = 900
 
 function useResponsiveStageScale() {
