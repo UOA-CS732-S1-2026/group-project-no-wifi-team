@@ -33,233 +33,98 @@ For example, if Health is extremely low, the player should receive a health-rela
 
 Recommended priority order:
 
-1. Critical failure endings
-2. Special high-achievement endings
-3. Single-attribute dominant endings
-4. Balanced endings
-5. Normal ending
+1. Happly endings
+2. Bad endings
+3. Open endings
+4. Best Ending
 
-## 4. Ending List
+# 4. Ending List
 
-### Ending 1: Academic Star
+## Ending 1: Perfect All-Rounder
 
-**Theme:** Excellent academic outcome.
+**Chinese Name:** 全能留学生  
+**Ending Type:** Best Ending
 
-| Requirement |
-|---|
-| Intelligence ≥ 85 |
-| Health ≥ 45 |
+### Trigger Condition
 
-**Story Description:**  
-You worked hard throughout the year and managed to achieve strong academic results.  
-Even though the year was stressful, you kept enough balance to complete your study successfully.
+| Intelligence | Health | Wealth |
+|---:|---:|---:|
+| ≥ 85 | ≥ 85 | ≥ 85 |
 
-**Player Feeling:**  
-This is a positive study-focused ending.
+### Description
 
-**Suggested Unlock Text:**  
-You became known as a reliable and hardworking student. Your academic performance opened more opportunities for your future.
+You managed to balance study, health, and money throughout the year.  
+You did not just survive international student life — you mastered it.
+
+### Chinese Explanation
+
+你学习优秀，身体状态好，钱也管理得不错。  
+这是最理想的结局，代表玩家在学习、健康和财富三个方面都发展得很好。
+
+### Unlock Text
+
+You became the ideal international student: capable, healthy, and financially stable.
 
 ---
 
-### Ending 2: Burnout Student
+## Ending 2: Academic Star
 
-**Theme:** High academic pressure but poor health.
+**Chinese Name:** 学术之星  
+**Ending Type:** Study Ending
 
-| Requirement |
-|---|
-| Intelligence ≥ 85 |
-| Health < 45 |
+### Trigger Condition
 
-**Story Description:**  
-You pushed yourself too hard. Your grades improved, but your body and mental state could not keep up with the pressure.
+| Intelligence | Health | Wealth |
+|---:|---:|---:|
+| ≥ 85 | ≥ 45 | Any |
 
-**Player Feeling:**  
-This is a warning ending. It shows that academic success without health balance can be risky.
+### Description
 
-**Suggested Unlock Text:**  
+Your hard work paid off.  
+You achieved excellent academic results and became a reliable student in your course.
+
+### Chinese Explanation
+
+你的智力很高，而且健康没有崩溃。  
+这代表玩家成功走出了学霸路线。
+
+### Unlock Text
+
+You became known as a hardworking student. Your academic performance opened more opportunities for your future.
+
+---
+
+## Ending 3: Burnout Student
+
+**Chinese Name:** 过劳留学生  
+**Ending Type:** Warning Ending
+
+### Trigger Condition
+
+| Intelligence | Health |
+|---:|---:|
+| ≥ 85 | < 45 |
+
+### Description
+
+You pushed yourself too hard.  
+Your grades were strong, but your body and mind could not keep up with the pressure.
+
+### Chinese Explanation
+
+你学习很好，但是健康太差。  
+这个结局体现了“成绩高但身体崩了”的风险。
+
+### Unlock Text
+
 You achieved strong results, but the cost was too high. The year ended with exhaustion instead of celebration.
 
 ---
 
-### Ending 3: Healthy Lifestyle Master
+## Ending 4: Part-Time Hustler
 
-**Theme:** Strong health and stable lifestyle.
 
-| Requirement |
-|---|
-| Health ≥ 85 |
-| Intelligence ≥ 45 |
-
-**Story Description:**  
-You built a healthy routine, managed stress well, and kept a positive lifestyle during your international student life.
-
-**Player Feeling:**  
-This is a positive life-balance ending.
-
-**Suggested Unlock Text:**  
-You learned that studying abroad is not only about grades. A healthy routine helped you survive and grow.
-
----
-
-### Ending 4: Broke but Survived
-
-**Theme:** Low wealth but still able to continue.
-
-| Requirement |
-|---|
-| Wealth < 45 |
-| Health ≥ 45 |
-
-**Story Description:**  
-Money was always tight. You had to save carefully, avoid unnecessary spending, and make difficult choices.
-
-**Player Feeling:**  
-This ending is realistic and slightly bittersweet.
-
-**Suggested Unlock Text:**  
-You did not have much money left, but you learned how to survive with limited resources.
-
----
-
-### Ending 5: Part-time Hustler
-
-**Theme:** Strong wealth from work and money management.
-
-| Requirement |
-|---|
-| Wealth ≥ 85 |
-| Health ≥ 45 |
-
-**Story Description:**  
-You made strong financial progress through part-time work, budgeting, or career opportunities.  
-However, balancing money, study, and rest was not always easy.
-
-**Player Feeling:**  
-This is a positive money-focused ending.
-
-**Suggested Unlock Text:**  
-You became good at managing your living costs. Your financial situation became one of your biggest strengths.
-
----
-
-### Ending 6: Social Butterfly
-
-**Theme:** Good health and moderate overall progress.
-
-| Requirement |
-|---|
-| Health ≥ 75 |
-| Intelligence ≥ 45 |
-| Wealth ≥ 45 |
-
-**Story Description:**  
-You built friendships, joined activities, and slowly became more comfortable in the new environment.
-
-**Player Feeling:**  
-This is a warm and positive social-life ending.
-
-**Suggested Unlock Text:**  
-Your international student life was not perfect, but the people you met made the journey meaningful.
-
----
-
-### Ending 7: Balanced Graduate
-
-**Theme:** Stable and balanced development.
-
-| Requirement |
-|---|
-| Intelligence ≥ 65 |
-| Health ≥ 65 |
-| Wealth ≥ 65 |
-
-**Story Description:**  
-You did not focus only on one area. You managed study, health, and money carefully throughout the year.
-
-**Player Feeling:**  
-This is one of the best general endings.
-
-**Suggested Unlock Text:**  
-You completed the year with a balanced lifestyle. It was not always easy, but you made steady progress in every area.
-
----
-
-### Ending 8: Ordinary International Student
-
-**Theme:** Normal completion.
-
-| Requirement |
-|---|
-| No special ending condition is met |
-
-**Story Description:**  
-Your year was ordinary but real. You had some good moments, some stressful moments, and many small lessons.
-
-**Player Feeling:**  
-This is the default ending.
-
-**Suggested Unlock Text:**  
-You finished the year as a normal international student. It was not legendary, but it was your own story.
-
----
-
-### Ending 9: Crisis Year
-
-**Theme:** Multiple attributes are low.
-
-| Requirement |
-|---|
-| At least two attributes < 45 |
-
-**Story Description:**  
-This year became difficult in many ways. Study, health, and money problems started to affect each other.
-
-**Player Feeling:**  
-This is a failure or bad ending.
-
-**Suggested Unlock Text:**  
-The year became overwhelming. You survived, but many problems were left unresolved.
-
----
-
-### Ending 10: Perfect All-Rounder
-
-**Theme:** Very strong overall performance.
-
-| Requirement |
-|---|
-| Intelligence ≥ 85 |
-| Health ≥ 85 |
-| Wealth ≥ 85 |
-
-**Story Description:**  
-You achieved a rare balance of academic success, strong health, and financial stability.
-
-**Player Feeling:**  
-This is the highest achievement ending.
-
-**Suggested Unlock Text:**  
-You became the ideal international student: capable, healthy, and financially stable.
-
-## 5. Achievement Design
-
-The game can also unlock achievements separately from endings.
-
-| Achievement | Unlock Condition |
-|---|---|
-| Study Machine | Choose many Study events across the year |
-| Life Balance | Keep all three attributes at Average or above |
-| Money Saver | Reach Wealth ≥ 85 |
-| Health First | Reach Health ≥ 85 |
-| Academic Focus | Reach Intelligence ≥ 85 |
-| Risky Lifestyle | Let Health drop below 30 |
-| Social Explorer | Choose several Social events |
-| Random Survivor | Complete all four random events |
-| First Ending | Unlock any ending |
-| Ending Collector | Unlock multiple endings in the ending gallery |
-
-## 6. Ending Gallery Design
+## 5. Ending Gallery Design
 
 The ending gallery should show:
 
