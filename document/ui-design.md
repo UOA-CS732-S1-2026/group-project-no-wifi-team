@@ -29,6 +29,7 @@ It introduces the game title and gives the player access to the main actions.
 
 The screen uses a large notebook background placed on a study desk.  
 The title is placed in the centre on a brown banner, making it look like a label stuck onto a notebook page.
+<img width="1680" height="950" alt="042a11d61d3bfbe58a03b47bbf5a847e" src="https://github.com/user-attachments/assets/0b5c84bf-183e-4349-adf5-63b68dd61d45" />
 
 Main elements:
 
@@ -63,6 +64,7 @@ This screen allows the player to plan tasks for the current quarter.
 The player can select planned events from different categories, such as Study, Entertainment, and Social.
 
 ### Layout Description
+<img width="1536" height="1024" alt="0893e982a69b27fdb6d3faa16a4cfe88" src="https://github.com/user-attachments/assets/9a9703bc-6820-4035-a825-e32ede7e5ef1" />
 
 The screen is divided into two main areas:
 
@@ -115,6 +117,7 @@ The empty slots show how many tasks still need to be selected.
 The attribute status bar shows the player's current condition at the top of the game interface.
 
 ### Layout Description
+<img width="1104" height="77" alt="5bbc6571edb7be8d3280c7e27b2a96be" src="https://github.com/user-attachments/assets/a9db5a81-0984-4c4c-acc3-ffdd3401421e" />
 
 The status bar displays three attributes:
 
@@ -150,6 +153,7 @@ The task story screen shows the result or story of a selected event.
 This is where the player experiences the event and makes a choice.
 
 ### Layout Description
+<img width="1536" height="1024" alt="c846f9775312c9dfcc233d04e5cc21be" src="https://github.com/user-attachments/assets/2377c4d7-076d-4ed1-8484-406ac592dcfa" />
 
 The screen uses the same notebook background.  
 The task story is displayed on the left, while the event illustration is shown on the right.
@@ -200,6 +204,7 @@ The quarter summary screen appears after the player completes all tasks in a qua
 It shows the player's progress and attribute changes.
 
 ### Layout Description
+<img width="1536" height="1024" alt="6902ebf1ac495b03277c7a1d87b30eab" src="https://github.com/user-attachments/assets/f505da05-90bc-4415-8a73-0962bf31fce0" />
 
 The screen is designed like a summary page in a planner.
 
@@ -242,6 +247,7 @@ The ending result screen appears after the player completes all four quarters.
 It shows the final ending the player has achieved.
 
 ### Layout Description
+<img width="1676" height="944" alt="512e48172fcfb4902b1cc851cac1905d" src="https://github.com/user-attachments/assets/2921b658-cc0d-4f83-9720-6acde17095f2" />
 
 The ending screen uses a large paper panel placed on the notebook background.  
 The left side contains the ending title and ending description.  
@@ -273,6 +279,7 @@ The achievement cards give extra reward feedback and encourage replay.
 ---
 
 ## 8. Ending Collection Screen
+<img width="1536" height="1024" alt="995b49360ad1c4c42341602342f0e39a" src="https://github.com/user-attachments/assets/1a8943e6-8f39-489b-8122-b2780ea9f5f2" />
 
 ### Purpose
 
