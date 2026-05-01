@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { endingBg } from '../../assets/ending-collection'
+import { endingBg } from '../../assets/EndingCollection'
 
 type StatusStateViewProps = {
   title: string

@@ -1,4 +1,4 @@
-import { endingViewAchievements } from '../../assets/ending-collection'
+import { endingViewAchievements } from '../../assets/EndingCollection'
 
 type ProgressPanelProps = {
   unlockedCount: number

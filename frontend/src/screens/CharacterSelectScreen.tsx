@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { arrowLeft, arrowRight, backHomeBtn, characterBg, heroLeft, heroPlane, heroRight } from '../assets/character-select'
+import { arrowLeft, arrowRight, backHomeBtn, characterBg, heroLeft, heroPlane, heroRight } from '../assets/CharacterSelect'
 import { characters, DESIGN_HEIGHT, DESIGN_WIDTH, Character } from '../components/CharacterSelectScreen/constants'
 import { DesktopCharacterCard } from '../components/CharacterSelectScreen/DesktopCharacterCard'
 import { useIsMobile, useResponsiveStageScale } from '../components/CharacterSelectScreen/hooks'
