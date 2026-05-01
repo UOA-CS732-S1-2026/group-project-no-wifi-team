@@ -3,6 +3,7 @@ import { CharacterSelectScreen } from './screens/CharacterSelectScreen'
 import { MonthlySummary } from './screens/MonthlySummary'
 import { TaskInteractionScreen } from './screens/TaskInteractionScreen'
 import { TitleScreen } from './screens/TitleScreen'
+import { MonthlyTaskSelection } from './screens/MonthlyTaskSelection'
 
 const router = createBrowserRouter([
   {
@@ -12,6 +13,10 @@ const router = createBrowserRouter([
   {
     path: '/characters',
     element: <CharacterSelectScreen />,
+  },
+  {
+    path: '/monthly-task-selection',
+    element: <MonthlyTaskSelection />,
   },
   {
     path: '/monthly-summary',

@@ -4,9 +4,13 @@
 .DS_Store
 .claude
 node_modules
+package-lock.json
 
 # Environment variables - Edit if necessary
 .env
 .env.*
 !.env.example
 !.env.test
+.idea/
+EOF
+
