@@ -1,0 +1,7 @@
+export { default as endingBg } from './ending-bg.png'
+export { default as endingBackHome } from './ending-back-home.png'
+export { default as endingCardFrame } from './ending-card-frame.png'
+export { default as endingCardLockedFrame } from './ending-card-locked-frame.png'
+export { default as endingReplayButton } from './ending-replay-button.png'
+export { default as endingTitleBanner } from './ending-title-banner.png'
+export { default as endingViewAchievements } from './ending-view-achievements.png'
