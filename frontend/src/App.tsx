@@ -4,6 +4,7 @@ import { MonthlySummary } from './screens/MonthlySummary'
 import { TaskInteractionScreen } from './screens/TaskInteractionScreen'
 import { TitleScreen } from './screens/TitleScreen'
 import { MonthlyTaskSelection } from './screens/MonthlyTaskSelection'
+import {EndingCollectionScreen} from './screens/EndingCollectionScreen.tsx'
 
 const router = createBrowserRouter([
   {
@@ -26,13 +27,15 @@ const router = createBrowserRouter([
     path: '/task-interaction',
     element: <TaskInteractionScreen />,
   },
-
+  {
+    path: '/endings',
+    element: <EndingCollectionScreen />,
+  },
   {
     path: '*',
     element: <TitleScreen />,
   },
 ])
-
 export default function App() {
   return <RouterProvider router={router} />
 }
