@@ -2,6 +2,7 @@
 
 A text-based interactive story game for international students, built with React + Vite.
 
+
 ## Tech Stack
 
 | Tool | Version | Purpose |
