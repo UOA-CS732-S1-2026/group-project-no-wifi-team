@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import {CharacterSelectScreen} from './screens/CharacterSelectScreen.tsx'
+import { CharacterSelectScreen } from './screens/CharacterSelectScreen'
 import { MonthlySummary } from './screens/MonthlySummary'
 import { TaskInteractionScreen } from './screens/TaskInteractionScreen'
 import { TitleScreen } from './screens/TitleScreen'
