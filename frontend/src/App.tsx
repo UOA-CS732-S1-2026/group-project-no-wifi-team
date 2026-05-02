@@ -4,7 +4,8 @@ import { MonthlySummary } from './screens/MonthlySummary'
 import { TaskInteractionScreen } from './screens/TaskInteractionScreen'
 import { TitleScreen } from './screens/TitleScreen'
 import { MonthlyTaskSelection } from './screens/MonthlyTaskSelection'
-import {EndingCollectionScreen} from './screens/EndingCollectionScreen.tsx'
+import { EndingResultScreen } from './screens/EndingResultScreen'
+import { EndingCollectionScreen } from './screens/EndingCollectionScreen'
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
   {
     path: '/task-interaction',
     element: <TaskInteractionScreen />,
+  },
+  {
+    path: '/ending-result',
+    element: <EndingResultScreen />,
   },
   {
     path: '/endings',

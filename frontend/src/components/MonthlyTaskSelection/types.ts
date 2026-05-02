@@ -35,8 +35,4 @@ export const TASKS: Task[] = [
   { id: 'social-3', category: 'Social', name: 'Flatmate Introduction', illustration: '🏠' },
 ]
 
-export function getLevel(v: number): string {
-  if (v >= 85) return 'Excellent'
-  if (v >= 45) return 'Good'
-  return 'Poor'
-}
+export { getAttributeLevel as getLevel } from '../../utils/level'
