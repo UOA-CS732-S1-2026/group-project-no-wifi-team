@@ -9,7 +9,7 @@ import {
   selectBlue,
   selectRed,
   selectBrown,
-} from '../../assets/character-select'
+} from '../../assets/CharacterSelect'
 
 export type AttributeLevel = 'Excellent' | 'Average' | 'Poor'
 

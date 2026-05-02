@@ -1,4 +1,4 @@
-import { endingCardFrame, endingCardLockedFrame } from '../../assets/ending-collection'
+import { endingCardFrame, endingCardLockedFrame } from '../../assets/EndingCollection'
 import type { BackendEndingItem } from './types'
 
 type EndingCardProps = {

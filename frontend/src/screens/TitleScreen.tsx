@@ -6,7 +6,7 @@ import {
   titleBanner as titleBannerImg,
   student as studentImg,
   setting as settingImg,
-} from '../assets/gamebegin'
+} from '../assets/GameBegin'
 import { AboutModal } from '../components/TitleScreen/AboutModal'
 import { MainButtons } from '../components/TitleScreen/MainButtons'
 import { SettingsModal } from '../components/TitleScreen/SettingsModal'

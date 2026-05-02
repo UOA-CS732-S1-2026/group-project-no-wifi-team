@@ -6,7 +6,7 @@ import {
   endingBg,
   endingReplayButton,
   endingTitleBanner,
-} from '../assets/ending-collection'
+} from '../assets/EndingCollection'
 import {
   AchievementModal,
   API_BASE_URL,
