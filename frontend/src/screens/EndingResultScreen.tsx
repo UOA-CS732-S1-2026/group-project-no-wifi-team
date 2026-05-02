@@ -14,7 +14,7 @@ import {
   resolveEnding,
   calculateScore,
   TOTAL_SCORE,
-} from '../utils/ending'
+} from '../utils/endingResult'
 
 interface EndingLocationState {
   snapshot?: Partial<AttributeSnapshot>
@@ -40,7 +40,7 @@ function numberOr(value: unknown, fallback: number): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback
 }
 
-export function EndingScreen() {
+export function EndingResultScreen() {
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -76,7 +76,7 @@ export function EndingScreen() {
           <ScoreBlock score={score} theme={ending.theme} />
           <ActionRow
             onPlayAgain={() => navigate('/')}
-            onViewOthers={() => navigate('/ending-collection')}
+            onViewOthers={() => navigate('/endings')}
           />
         </NotebookPanel>
       </motion.div>

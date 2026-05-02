@@ -4,7 +4,7 @@ import {
   TOTAL_SCORE,
   calculateScore,
   resolveEnding,
-} from './ending'
+} from './endingResult'
 
 describe('resolveEnding', () => {
   it('picks Burnout Student when intelligence is high but health is low', () => {
