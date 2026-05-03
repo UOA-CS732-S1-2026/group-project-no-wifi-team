@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 import { User } from '../db/user.js';
-import { MonthlyLog } from '../db/monthlyLog.js';
+import { QuarterlyLog } from '../db/quarterlyLog.js';
 
 async function seed() {
   try {
     // clean up existing data
     await User.deleteMany({});
-    await MonthlyLog.deleteMany({});
+    await QuarterlyLog.deleteMany({});
 
     const mockUser = await User.create({
       guestId: 'guest_mock_123456',
@@ -17,8 +17,8 @@ async function seed() {
     const mockLogs = [
       {
         userId: mockUser._id,
-        monthIndex: 9,
-        monthName: 'September',
+        quarterIndex: 1,
+        quarterName: 'First Quarter',
         statsSnapshot: [
           { label: 'Intelligence', value: 70, delta: 10 },
           { label: 'Health', value: 80, delta: 5 },
@@ -30,8 +30,8 @@ async function seed() {
       },
       {
         userId: mockUser._id,
-        monthIndex: 10,
-        monthName: 'October',
+        quarterIndex: 2,
+        quarterName: 'Second Quarter',
         statsSnapshot: [
           { label: 'Intelligence', value: 85, delta: 15 },
           { label: 'Health', value: 75, delta: -5 },
@@ -43,7 +43,7 @@ async function seed() {
       }
     ];
 
-    await MonthlyLog.insertMany(mockLogs);
+    await QuarterlyLog.insertMany(mockLogs);
     console.log('Mock logs inserted successfully!');
 
     console.log('\n--- SEEDING COMPLETE ---');
