@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { CharacterSelectScreen } from './screens/CharacterSelectScreen'
-import { MonthlySummary } from './screens/MonthlySummary'
+import { QuarterlySummary } from './screens/QuarterSummary'
 import { TaskInteractionScreen } from './screens/TaskInteractionScreen'
 import { TitleScreen } from './screens/TitleScreen'
 import { MonthlyTaskSelection } from './screens/MonthlyTaskSelection'
@@ -21,8 +21,8 @@ const router = createBrowserRouter([
     element: <MonthlyTaskSelection />,
   },
   {
-    path: '/monthly-summary',
-    element: <MonthlySummary />,
+    path: '/quarterly-summary',
+    element: <QuarterlySummary />,
   },
   {
     path: '/task-interaction',

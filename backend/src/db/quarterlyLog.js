@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 
-const MonthlyLogSchema = new mongoose.Schema({
+const QuarterlyLogSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  monthIndex: { type: Number, required: true },
-  monthName: { type: String, required: true },
+  quarterIndex: { type: Number, required: true },
+  quarterName: { type: String, required: true },
   statsSnapshot: [
     {
       label: String,
       value: Number, // current value
-      delta: Number  // change from previous month (can be positive or negative)
+      delta: Number  // change from previous quarter (can be positive or negative)
     }
   ],
   tasksCompleted: { type: Number, default: 0 },
@@ -17,4 +17,4 @@ const MonthlyLogSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-export const MonthlyLog = mongoose.model('MonthlyLog', MonthlyLogSchema);
+export const QuarterlyLog = mongoose.model('QuarterlyLog', QuarterlyLogSchema);
