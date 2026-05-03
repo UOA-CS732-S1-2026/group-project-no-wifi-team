@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'motion/react'
+import { motion, stagger } from 'motion/react'
 import { CountUp } from '../utils/CountUp'
 import {
   quarterBg,
@@ -66,13 +66,13 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
       .catch((err) => console.error('Failed to fetch summary:', err))
   }, [])
 
-  if (loading) {
-    return (
-      <div className="flex h-dvh items-center justify-center bg-[#4b2f1e] font-serif text-[#f2dfb5]">
-        Loading Summary...
-      </div>
-    )
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex h-dvh items-center justify-center bg-[#4b2f1e] font-serif text-[#f2dfb5]">
+  //       Loading Summary...
+  //     </div>
+  //   )
+  // }
 
   const {
     quarterName = 'First Quarter',
@@ -85,19 +85,22 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
+    show: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
-        staggerChildren: 0.2,
+        duration: 1.6,
+        delayChildren: stagger(1.2),
       },
     },
   }
 
   const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0 },
+    visible: {
+      initial: { x: 50, opacity: 0 },
+      animate: { x: 0, opacity: 1 },
+      transition: { duration: 1, delayChildren: stagger(0.07, { startDelay: 0.2 }) },
+    },
   }
 
   return (
@@ -119,19 +122,24 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
           }}
         >
           {/* Title Banner */}
-          <motion.div variants={itemVariants} className="pt-[86px] w-[710px] mx-auto">
+          <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ ease: 'easeInOut', delay: 1, duration: 1 }}
+            className="pt-[86px] w-[710px] mx-auto"
+          >
             <img src={quarterTitle} alt="Summary Title" className="w-full drop-shadow-lg" />
           </motion.div>
 
           {/* Summary Content Board */}
-          <motion.div
-            variants={containerVariants}
-            className="flex flex-col w-full flex-1 items-start justify-center pl-[72px]"
-          >
+          <div className="pl-[72px]">
             <div className="flex items-center gap-4 px-10 py-2">
               {/* Left Side: Calendar Visual */}
               <div className="flex flex-col items-center">
-                <div
+                <motion.div
+                  initial={{ y: 40, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ ease: 'easeInOut', delay: 2, duration: 1 }}
                   style={{
                     backgroundImage: `url(${quarterCalender})`,
                     width: '318px',
@@ -141,58 +149,82 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                   }}
                   className="relative flex items-start justify-center"
                 >
-                  <div className="mt-[64px] ml-[50px] text-[84px] font-black text-[#4b3116]">
+                  <motion.div
+                    initial={{ y: -10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ ease: 'easeInOut', delay: 3, duration: 1 }}
+                    className="mt-[64px] ml-[50px] text-[84px] font-black text-[#4b3116]"
+                  >
                     {quarterIndex}
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
               </div>
 
               {/* Right Side: Stats Display */}
-              <div className="flex flex-1 flex-col justify-start pl-[54px] pr-[54px] border-l-2 border-[#d9b16f]/30 min-h-[426px] min-w-[600px]">
+              <div className="flex flex-1 flex-col justify-start pl-[54px] pr-[54px] min-h-[426px] min-w-[600px]">
                 <div className="w-full space-y-[12px]">
                   <motion.div
-                    variants={itemVariants}
+                    initial={{ x: 50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ ease: 'easeInOut', delay: 4, duration: 1 }}
                     className="mt-[54px]"
                   >
                     <span className="text-3xl font-bold text-[#5c3318]">{quarterName}</span>
                   </motion.div>
 
                   <motion.div
-                    variants={itemVariants}
+                    initial={{ x: 50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ ease: 'easeInOut', delay: 5, duration: 1 }}
                   >
                     <span className="text-3xl font-bold text-[#5c3318] leading-[54px]">
                       Graduation in <span className="font-black">{quartersRemaining}</span> Quarters
                     </span>
                   </motion.div>
                   <motion.div
-                    variants={itemVariants}
+                    initial={{ x: 50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ ease: 'easeInOut', delay: 6, duration: 1 }}
                   >
                     <span className="text-3xl font-bold text-[#5c3318]">
                       Tasks completed:{' '}
                       <span className="font-black text-[#5c3318]">
-                        {tasksCompleted} / {totalTasks}
+                        <CountUp from={0} to={tasksCompleted} delay={6.3} duration={0.5}></CountUp>{' '}
+                        / {totalTasks}
                       </span>{' '}
                     </span>
                   </motion.div>
                   <div style={{ marginTop: '30px' }}></div>
                   {stats.map((stat, index) => (
-                    <motion.div
-                      key={index}
-                      variants={itemVariants}
-                      className="flex items-center justify-between border-b-2 border-[#d9b16f]/20 mt-[24px]"
-                    >
-                      <span className="text-2xl font-bold text-[#5c3318] pl-[72px]">
+                    <div key={index} className="flex items-center justify-between mt-[24px]">
+                      <motion.span
+                        initial={{ x: 50, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ ease: 'easeInOut', delay: 7 + index * 3, duration: 1 }}
+                        className="text-2xl font-bold text-[#5c3318] pl-[72px]"
+                      >
                         {stat.label}
-                      </span>
+                      </motion.span>
                       <div className="flex items-center gap-6">
-                        <span className="text-4xl font-black text-[#5c3318]">
+                        <motion.span
+                          initial={{ x: 50, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          transition={{ ease: 'easeInOut', delay: 7 + index * 3, duration: 1 }}
+                          className="text-4xl font-black text-[#5c3318]"
+                        >
                           <CountUp
                             from={stat.value - stat.delta}
                             to={stat.value}
-                            delay={0.5 + index * 0.1}
+                            delay={7 + index * 3 + 2}
+                            duration={1}
                           />
-                        </span>
-                        <div className="flex min-w-[100px] items-center gap-1">
+                        </motion.span>
+                        <motion.div
+                          initial={{ x: -100, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          transition={{ ease: 'easeInOut', delay: 7 + index * 3 + 1, duration: 1 }}
+                          className="flex min-w-[100px] items-center gap-1"
+                        >
                           {stat.delta !== 0 && (
                             <img
                               src={stat.delta > 0 ? quarterArrowUp : quarterArrowDown}
@@ -205,21 +237,30 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                               stat.delta >= 0 ? 'text-[#4a7228]' : 'text-[#a23b3b]'
                             }`}
                           >
-                            <CountUp from={0} to={Math.abs(stat.delta)} delay={0.3 + index * 0.1} />
+                            <CountUp
+                              from={0}
+                              to={Math.abs(stat.delta)}
+                              delay={7 + index * 3 + 1}
+                              duration={1}
+                            />
                           </span>
-                        </div>
+                        </motion.div>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Next Quarter Button */}
-          <div className="w-full flex items-center justify-center">
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ ease: 'easeInOut', delay: 16, duration: 1 }}
+            className="w-full flex items-center justify-center"
+          >
             <motion.button
-              variants={itemVariants}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/next-quarter')}
@@ -227,7 +268,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
             >
               <img src={nextBtn} alt="Next Quarter" className="w-full" />
             </motion.button>
-          </div>
+          </motion.div>
         </div>
       </div>
     </main>
