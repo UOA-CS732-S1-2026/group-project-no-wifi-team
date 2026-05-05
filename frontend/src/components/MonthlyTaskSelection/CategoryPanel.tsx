@@ -1,4 +1,20 @@
 import { Category, CATEGORIES } from './types'
+import taskChoiceBg from '../../assets/MonthlyTaskSelection/task-choice-bg.png'
+import taskStudy from '../../assets/MonthlyTaskSelection/task-study.png'
+import taskStudyChoice from '../../assets/MonthlyTaskSelection/task-study-choice.png'
+import taskSocial from '../../assets/MonthlyTaskSelection/task-social.png'
+import taskSocialChoice from '../../assets/MonthlyTaskSelection/task-social-choice.png'
+import taskEntertainment from '../../assets/MonthlyTaskSelection/task-entertainment.png'
+import taskEntertainmentChoice from '../../assets/MonthlyTaskSelection/task-entertainment-choice.png'
+
+// Panel: 200×340px. Each tab: 200×68px.
+// Images are 2508×627 (4:1). objectFit:cover at 200×68 — no distortion, crops the sides.
+
+const CATEGORY_IMAGES: Record<Category, { normal: string; active: string }> = {
+  Study: { normal: taskStudy, active: taskStudyChoice },
+  Social: { normal: taskSocial, active: taskSocialChoice },
+  Entertainment: { normal: taskEntertainment, active: taskEntertainmentChoice },
+}
 
 interface Props {
   active: Category
@@ -8,23 +24,35 @@ interface Props {
 export function CategoryPanel({ active, onSelect }: Props) {
   return (
     <div
-      className="flex w-28 shrink-0 flex-col items-stretch gap-3 p-3 sm:w-36"
-      style={{ borderRight: '1px solid rgba(160,120,60,0.35)' }}
+      className="flex shrink-0 flex-col gap-3 pt-4 px-0"
+      style={{
+        width: '220px',
+        height: 'auto',
+        marginRight: 20,
+        padding: '92px 0 0 18px',
+        backgroundImage: `url(${taskChoiceBg})`,
+        backgroundSize: '100% 100%',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
-      {CATEGORIES.map((cat) => (
-        <button
-          key={cat}
-          onClick={() => onSelect(cat)}
-          className={[
-            'rounded border py-3 font-serif text-sm font-semibold transition-all duration-150 active:scale-95',
-            active === cat
-              ? 'border-desk-dark bg-desk-dark text-btn-text shadow-inner'
-              : 'border-desk-light bg-binding/70 text-desk-dark hover:bg-binding',
-          ].join(' ')}
-        >
-          {cat}
-        </button>
-      ))}
+      {CATEGORIES.map((cat) => {
+        const imgs = CATEGORY_IMAGES[cat]
+        const isActive = active === cat
+        return (
+          <button
+            key={cat}
+            onClick={() => onSelect(cat)}
+            className="shrink-0 active:scale-95"
+            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', width: isActive ? '200px' : '180px', height: isActive ? '75px' : '68px', transition: 'width 0.3s ease, height 0.3s ease' }}
+          >
+            <img
+              src={isActive ? imgs.active : imgs.normal}
+              alt={cat}
+              style={{ width: isActive ? '220px' : '200px', height: isActive ? '75px' : '68px', objectFit: 'contain', objectPosition: 'center', display: 'block', transition: 'width 0.3s ease, height 0.3s ease' }}
+            />
+          </button>
+        )
+      })}
     </div>
   )
 }

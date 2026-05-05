@@ -1,4 +1,7 @@
-import { CalendarIcon } from './Icons'
+import quarterTitle from '../../assets/MonthlyTaskSelection/quarter-title.png'
+
+// quarter-title.png: 1448×1086 (4:3). Displayed at 480×72px with objectFit:cover —
+// no distortion, crops to show the center band of the illustrated header.
 
 interface Props {
   month: number
@@ -7,19 +10,21 @@ interface Props {
 
 export function MonthHeader({ month, monthsUntilGraduation }: Props) {
   return (
-    <div
-      className="flex shrink-0 items-center justify-center gap-4 border-b px-6 py-3"
-      style={{ borderColor: 'rgba(160,120,60,0.3)', background: 'rgba(237,228,200,0.45)' }}
-    >
-      <CalendarIcon />
-      <div className="text-center font-serif">
-        <p className="text-base font-bold text-desk-dark">
-          current month: <span className="text-desk-mid">Month {month}</span>
+    <div className="relative shrink-0" style={{ width: '920px', height: '100px' }}>
+      <img
+        src={quarterTitle}
+        alt="Current Quarter"
+        className="absolute inset-0 h-full w-full"
+        style={{ width: 'auto', height: 'auto' }}
+      />
+      <div className="relative flex h-full flex-col items-center justify-center gap-1" style={{ paddingTop: 36 }}>
+        <p className="font-serif font-bold text-desk-dark drop-shadow" style={{ fontSize: 'xxx-large' }}>
+          Current Quarter
         </p>
-        <p className="text-sm text-desk-dark">
-          Distance to graduate:{' '}
-          <span className="font-bold">{monthsUntilGraduation}</span> month
-          {monthsUntilGraduation !== 1 ? 's' : ''}
+        <p className="font-serif font-bold text-desk-dark drop-shadow" style={{ fontSize: 'large' }}>
+          Distance to Graduation:{' '}
+          <span>{monthsUntilGraduation}</span>{' '}
+          Quarter{monthsUntilGraduation !== 1 ? 's' : ''}
         </p>
       </div>
     </div>

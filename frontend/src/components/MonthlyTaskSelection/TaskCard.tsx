@@ -1,52 +1,39 @@
 import { motion } from 'motion/react'
 import { type Task } from './types'
+import availableTasks from '../../assets/MonthlyTaskSelection/available-tasks.png'
 
 interface Props {
   task: Task
   selected: boolean
-  disabled: boolean
   onToggle: () => void
 }
 
-export function TaskCard({ task, selected, disabled, onToggle }: Props) {
+export function TaskCard({ task, selected, onToggle }: Props) {
   return (
     <motion.button
       onClick={onToggle}
-      disabled={disabled}
-      whileHover={!disabled ? { scale: 1.015 } : {}}
-      whileTap={!disabled ? { scale: 0.985 } : {}}
+      whileHover={{ scale: 1.015 }}
+      whileTap={{ scale: 0.985 }}
       className={[
-        'flex w-full items-stretch overflow-hidden rounded border text-left transition-all duration-150',
-        selected
-          ? 'border-desk-dark bg-btn shadow-md'
-          : disabled
-          ? 'cursor-not-allowed border-desk-light bg-paper/70 opacity-40'
-          : 'cursor-pointer border-desk-light bg-paper/70 hover:border-desk-mid hover:bg-paper/90 hover:shadow-sm',
+        'flex w-full items-stretch overflow-hidden rounded text-left transition-all duration-150 cursor-pointer',
+        selected ? 'shadow-md' : 'hover:shadow-sm',
       ].join(' ')}
-      style={{ minHeight: '72px' }}
+      style={{
+        width: '380px',
+        height: '80px',
+        backgroundImage: `url(${availableTasks})`,
+        backgroundSize: '100% 100%',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
       {/* Illustration thumbnail */}
-      <div
-        className={[
-          'flex w-20 shrink-0 items-center justify-center text-3xl',
-          selected ? 'bg-desk-dark/20' : 'bg-binding/60',
-        ].join(' ')}
-        style={{
-          backgroundImage:
-            'linear-gradient(135deg, rgba(180,155,110,0.3) 0%, rgba(210,185,140,0.1) 100%)',
-        }}
-      >
+      <div className="flex w-20 shrink-0 items-center justify-center text-3xl">
         {task.illustration}
       </div>
 
       {/* Task name */}
       <div className="flex flex-1 items-center px-4 py-2">
-        <p
-          className={[
-            'font-serif text-sm font-semibold leading-snug',
-            selected ? 'text-btn-text' : 'text-desk-dark',
-          ].join(' ')}
-        >
+        <p className="font-serif text-sm font-semibold leading-snug text-desk-dark">
           {task.name}
         </p>
       </div>

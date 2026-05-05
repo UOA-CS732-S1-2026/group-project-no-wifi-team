@@ -1,6 +1,14 @@
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { type Task, MAX_PLAYER_SELECTIONS } from './types'
 import { SelectedSlot } from './SelectedSlot'
+import selectedTasksTitle from '../../assets/MonthlyTaskSelection/selected-tasks-title.png'
+import selectedTasksBg from '../../assets/MonthlyTaskSelection/selected-task-bg.png'
+import taskConfirmBottom from '../../assets/MonthlyTaskSelection/task-confirm-bottom.png'
+
+// Panel: 360×340px. Slot cards: 300×68px (px-[30px] gives 300px inner width).
+// selected-tasks-title.png: 2508×627 (4:1) — header at 360px wide → 90px tall naturally.
+// selected-tasks.png: 2508×627 (4:1) — CSS background stretched.
+// task-confirm-bottom.png: 1448×1086 (4:3) — confirm button image.
 
 interface Props {
   selectedTasks: (Task | undefined)[]
@@ -19,27 +27,33 @@ export function MonthlyPlanBoard({
 }: Props) {
   return (
     <div
-      className="flex w-40 shrink-0 flex-col overflow-hidden sm:w-52"
-      style={{ borderLeft: '1px solid rgba(160,120,60,0.35)' }}
+      className="relative flex shrink-0 flex-col overflow-hidden"
+      style={{
+        width: '360px',
+        height: 'auto',
+        backgroundImage: `url(${selectedTasksBg})`,
+        backgroundSize: '100% 100%',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
-      {/* Ribbon / scroll header */}
-      <div
-        className="shrink-0 px-2 py-3 text-center"
-        style={{
-          background: '#c4a06a',
-          clipPath: 'polygon(0% 0%, 100% 0%, 95% 50%, 100% 100%, 0% 100%, 5% 50%)',
-        }}
-      >
-        <p className="font-serif text-xs font-bold leading-tight text-btn-text sm:text-sm">
-          This Month's Tasks
-        </p>
-        <p className="mt-0.5 font-serif text-[10px] text-btn-text/80">
-          Selected {selectedCount}/{MAX_PLAYER_SELECTIONS + 1}
-        </p>
+      {/* Header — title image with text overlaid */}
+      <div className="relative shrink-0 flex items-center justify-center" style={{ height: '66px' }}>
+        <img
+          src={selectedTasksTitle}
+          alt=""
+          className="absolute inset-0 w-full h-full"
+          style={{ objectFit: 'contain', objectPosition: 'center' }}
+        />
+        <p className="relative font-serif font-bold text-desk-dark" style={{ marginTop: '-16px' }}>Selected This Quarter</p>
       </div>
 
-      {/* Task slots */}
-      <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-3">
+      {/* Count label */}
+      <p className="shrink-0 text-center font-serif text-xs text-desk-mid py-1">
+        Selected {selectedCount}/{MAX_PLAYER_SELECTIONS + 1}
+      </p>
+
+      {/* Slot cards + confirm button */}
+      <div className="flex flex-col gap-2 px-[30px] pb-3">
         {Array.from({ length: MAX_PLAYER_SELECTIONS }).map((_, i) => (
           <SelectedSlot
             key={i}
@@ -49,44 +63,30 @@ export function MonthlyPlanBoard({
         ))}
 
         {/* Random event slot */}
-        <div
-          className="flex items-center justify-center rounded border py-3"
-          style={{
-            borderColor: 'rgba(160,120,60,0.45)',
-            borderStyle: 'dashed',
-            background: 'rgba(210,185,140,0.2)',
-          }}
-        >
-          <p
-            className="font-serif text-lg font-bold text-desk-mid"
-            title="Random event — added by the system"
-          >
-            +
-          </p>
-        </div>
-      </div>
+        <SelectedSlot
+          task={undefined}
+          onRemove={() => {}}
+          placeholder="🎲 Random Task"
+        />
 
-      {/* Confirm button */}
-      <div
-        className="shrink-0 border-t p-3"
-        style={{ borderColor: 'rgba(160,120,60,0.3)' }}
-      >
-        <motion.button
-          whileHover={allSelected ? { scale: 1.04 } : {}}
-          whileTap={allSelected ? { scale: 0.96 } : {}}
-          disabled={!allSelected}
-          onClick={onConfirm}
-          className={[
-            'w-full rounded py-2 font-serif text-xs font-bold transition-all duration-150 sm:text-sm',
-            allSelected
-              ? 'cursor-pointer bg-desk-dark text-btn-text shadow-md hover:brightness-110'
-              : 'cursor-not-allowed bg-binding text-desk-mid opacity-60',
-          ].join(' ')}
-        >
-          {allSelected
-            ? 'Start Month →'
-            : `Pick ${MAX_PLAYER_SELECTIONS - selectedCount} more`}
-        </motion.button>
+        {/* Confirm button — appears in flow after all slots when all selected */}
+        <AnimatePresence>
+          {allSelected && (
+            <motion.button
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.25 }}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={onConfirm}
+              className="w-full"
+              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+            >
+              <img src={taskConfirmBottom} alt="Start Month" className="w-full h-auto" />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
