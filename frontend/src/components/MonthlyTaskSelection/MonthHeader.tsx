@@ -1,4 +1,4 @@
-import quarterTitle from '../../assets/MonthlyTaskSelection/quarter-title.png'
+import { quarterTitle } from './images'
 
 // quarter-title.png: 1448×1086 (4:3). Displayed at 480×72px with objectFit:cover —
 // no distortion, crops to show the center band of the illustrated header.

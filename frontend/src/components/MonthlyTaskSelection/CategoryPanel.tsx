@@ -1,11 +1,10 @@
 import { Category, CATEGORIES } from './types'
-import taskChoiceBg from '../../assets/MonthlyTaskSelection/task-choice-bg.png'
-import taskStudy from '../../assets/MonthlyTaskSelection/task-study.png'
-import taskStudyChoice from '../../assets/MonthlyTaskSelection/task-study-choice.png'
-import taskSocial from '../../assets/MonthlyTaskSelection/task-social.png'
-import taskSocialChoice from '../../assets/MonthlyTaskSelection/task-social-choice.png'
-import taskEntertainment from '../../assets/MonthlyTaskSelection/task-entertainment.png'
-import taskEntertainmentChoice from '../../assets/MonthlyTaskSelection/task-entertainment-choice.png'
+import {
+  taskChoiceBg,
+  taskStudy, taskStudyChoice,
+  taskSocial, taskSocialChoice,
+  taskEntertainment, taskEntertainmentChoice,
+} from './images'
 
 // Panel: 200×340px. Each tab: 200×68px.
 // Images are 2508×627 (4:1). objectFit:cover at 200×68 — no distortion, crops the sides.

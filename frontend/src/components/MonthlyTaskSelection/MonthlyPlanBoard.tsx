@@ -1,9 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { type Task, MAX_PLAYER_SELECTIONS } from './types'
 import { SelectedSlot } from './SelectedSlot'
-import selectedTasksTitle from '../../assets/MonthlyTaskSelection/selected-tasks-title.png'
-import selectedTasksBg from '../../assets/MonthlyTaskSelection/selected-task-bg.png'
-import taskConfirmBottom from '../../assets/MonthlyTaskSelection/task-confirm-bottom.png'
+import { selectedTasksTitle, selectedTasksBg, taskConfirmBottom } from './images'
 
 // Panel: 360×340px. Slot cards: 300×68px (px-[30px] gives 300px inner width).
 // selected-tasks-title.png: 2508×627 (4:1) — header at 360px wide → 90px tall naturally.

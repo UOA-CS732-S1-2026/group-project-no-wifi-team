@@ -1,6 +1,5 @@
 import { type Task } from './types'
-import selectedTaskBg from '../../assets/MonthlyTaskSelection/selected-tasks.png'
-import availableTasks from '../../assets/MonthlyTaskSelection/available-tasks.png'
+import { selectedTasks as selectedTaskBg, availableTasks } from './images'
 
 // Slot card: 300×68px (full width within the px-[30px] padded panel).
 // selected-task-bg.png: 1086×1448 (portrait) — CSS background stretched to slot.

@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { type Task } from './types'
-import availableTasks from '../../assets/MonthlyTaskSelection/available-tasks.png'
+import { availableTasks } from './images'
 
 interface Props {
   task: Task

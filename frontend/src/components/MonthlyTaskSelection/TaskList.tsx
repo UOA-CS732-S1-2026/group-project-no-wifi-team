@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { type Category, type Task, MAX_PLAYER_SELECTIONS } from './types'
 import { TaskCard } from './TaskCard'
-import availableTasksBg from '../../assets/MonthlyTaskSelection/available-tasks-bg.png'
+import { availableTasksBg } from './images'
 
 // Panel: 530×340px. Each task card: 520×80px.
 // available-tasks-bg.png: 1086×1448 (portrait) — CSS background stretched to fill panel.

@@ -1,6 +1,6 @@
 import { BrainIcon, HeartIcon, MoneyIcon } from './Icons'
 import { getLevel } from './types'
-import statusBar from '../../assets/MonthlyTaskSelection/status-bar.png'
+import { statusBar } from './images'
 
 // status-bar.png: 2172×724 (3:1). Displayed at 1366×56px with objectFit:cover — no distortion, crops vertically.
 
