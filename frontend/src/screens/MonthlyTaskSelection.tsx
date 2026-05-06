@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import taskBg from '../assets/CommonImage/common-background.jpg'
+import taskBg from '../assets/CommonImage/common-background.png'
 import { taskTip } from '../components/MonthlyTaskSelection/images'
 import {
   AttributeBar,
