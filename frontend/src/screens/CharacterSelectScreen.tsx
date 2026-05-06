@@ -29,7 +29,7 @@ export function CharacterSelectScreen() {
 
   function chooseCharacter(character: Character) {
     localStorage.setItem('selectedCharacter', JSON.stringify(character))
-    navigate('/game')
+    navigate('/monthly-task-selection')
   }
 
   if (isMobile) {

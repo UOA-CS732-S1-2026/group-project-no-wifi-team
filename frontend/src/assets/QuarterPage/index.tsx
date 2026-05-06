@@ -1,5 +1,5 @@
 // src/assets/QuarterPage-image/index.ts
-import quarterBg from './Quarter-background.png'
+import quarterBg from './common-background.png'
 import quarterCalender from './Quarter-calendar.png'
 import quarterArrowDown from './Quarter-downgrading.png'
 import quarterArrowUp from './Quarter-upgrade.png'
