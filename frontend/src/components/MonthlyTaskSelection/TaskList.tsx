@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { type Category, type Task, MAX_PLAYER_SELECTIONS } from './types'
+import { type Category, type Task } from './types'
 import { TaskCard } from './TaskCard'
 import { availableTasksBg } from './images'
 

@@ -1,4 +1,3 @@
-import { BrainIcon, HeartIcon, MoneyIcon } from './Icons'
 import { getLevel } from './types'
 import { statusBar } from './images'
 
