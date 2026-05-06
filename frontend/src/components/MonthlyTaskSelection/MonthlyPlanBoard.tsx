@@ -72,10 +72,14 @@ export function MonthlyPlanBoard({
           {allSelected && (
             <motion.button
               initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0, scale: [1, 1.04, 1] }}
               exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.25 }}
-              whileHover={{ scale: 1.04 }}
+              transition={{
+                opacity: { duration: 0.25 },
+                y: { duration: 0.25 },
+                scale: { duration: 1.4, repeat: Infinity, ease: 'easeInOut' },
+              }}
+              whileHover={{ scale: 1.06 }}
               whileTap={{ scale: 0.96 }}
               onClick={onConfirm}
               className="w-full"

@@ -39,7 +39,7 @@ export function TaskCard({ task, selected, onToggle }: Props) {
       ].join(' ')}
       style={{
         width: '380px',
-        height: '80px',
+        height: '110px',
         backgroundImage: `url(${availableTasks})`,
         backgroundSize: '100% 100%',
         backgroundRepeat: 'no-repeat',
@@ -47,9 +47,9 @@ export function TaskCard({ task, selected, onToggle }: Props) {
         filter: selected ? 'brightness(0.93)' : 'none',
       }}
     >
-      {/* Left image placeholder */}
-      <div className="flex w-20 shrink-0 items-center justify-center text-3xl">
-        {task.illustration}
+      {/* Left icon */}
+      <div className="flex shrink-0 items-center justify-center p-2" style={{ width: 190, height: 110 }}>
+        <img src={task.illustration} alt="" className="h-full w-full object-contain" />
       </div>
 
       {/* Title + Description */}

@@ -4,11 +4,11 @@ import { quarterTitle } from './images'
 // no distortion, crops to show the center band of the illustrated header.
 
 interface Props {
-  month: number
-  monthsUntilGraduation: number
+  quarter: number
 }
 
-export function MonthHeader({ month, monthsUntilGraduation }: Props) {
+export function MonthHeader({ quarter }: Props) {
+  const quartersLeft = 4 - quarter
   return (
     <div className="relative shrink-0" style={{ width: '920px', height: '100px' }}>
       <img
@@ -19,12 +19,12 @@ export function MonthHeader({ month, monthsUntilGraduation }: Props) {
       />
       <div className="relative flex h-full flex-col items-center justify-center gap-1" style={{ paddingTop: 36 }}>
         <p className="font-serif font-bold text-desk-dark drop-shadow" style={{ fontSize: 'xxx-large' }}>
-          Current Quarter
+          Current Quarter {quarter}
         </p>
         <p className="font-serif font-bold text-desk-dark drop-shadow" style={{ fontSize: 'large' }}>
           Distance to Graduation:{' '}
-          <span>{monthsUntilGraduation}</span>{' '}
-          Quarter{monthsUntilGraduation !== 1 ? 's' : ''}
+          <span>{quartersLeft}</span>{' '}
+          Quarter{quartersLeft !== 1 ? 's' : ''}
         </p>
       </div>
     </div>

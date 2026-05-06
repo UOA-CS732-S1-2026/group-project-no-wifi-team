@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useNavigate } from 'react-router-dom'
 import taskBg from '../assets/CommonImage/common-background.png'
 import { taskTip } from '../components/MonthlyTaskSelection/images'
@@ -23,6 +24,7 @@ export function MonthlyTaskSelection() {
   const [activeCategory, setActiveCategory] = useState<Category>('Study')
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [tasks, setTasks] = useState<Task[]>(TASKS)
+  const [showFullToast, setShowFullToast] = useState(false)
 
   useEffect(() => {
     fetchEventsByQuarter(QUARTER_INFO.number)
@@ -43,13 +45,15 @@ export function MonthlyTaskSelection() {
   )
 
   function toggleTask(id: string) {
-    setSelectedIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((s) => s !== id)
-        : prev.length < MAX_PLAYER_SELECTIONS
-        ? [...prev, id]
-        : prev
-    )
+    setSelectedIds((prev) => {
+      if (prev.includes(id)) return prev.filter((s) => s !== id)
+      if (prev.length >= MAX_PLAYER_SELECTIONS) {
+        setShowFullToast(true)
+        setTimeout(() => setShowFullToast(false), 2500)
+        return prev
+      }
+      return [...prev, id]
+    })
   }
 
   return (
@@ -67,10 +71,7 @@ export function MonthlyTaskSelection() {
       />
 
       <div className="flex flex-1 flex-col items-center" style={{ marginTop: -34 }}>
-        <MonthHeader
-          month={QUARTER_INFO.month}
-          monthsUntilGraduation={QUARTER_INFO.monthsUntilGraduation}
-        />
+        <MonthHeader quarter={QUARTER_INFO.number} />
 
         <div className="flex" style={{ width: '1090px', height: '100%', marginTop: 100 }}>
           <CategoryPanel active={activeCategory} onSelect={setActiveCategory} />
@@ -89,6 +90,23 @@ export function MonthlyTaskSelection() {
           />
         </div>
       </div>
+
+      {/* Toast */}
+      <AnimatePresence>
+        {showFullToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[9999] rounded-lg bg-desk-dark px-6 py-3 shadow-xl"
+          >
+            <p className="font-serif text-sm font-bold text-btn-text">
+              You've selected enough tasks — ready to start!
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="w-full shrink-0" style={{ height: '104px', marginBottom: 100 }}>
         <img

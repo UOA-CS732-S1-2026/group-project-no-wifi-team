@@ -12,9 +12,9 @@ interface Props {
 
 export function AttributeBar({ intelligence, health, wealth }: Props) {
   const attrs = [
-    { label: 'Intelligence', icon: <BrainIcon />, value: intelligence },
-    { label: 'Health', icon: <HeartIcon />, value: health },
-    { label: 'Wealth', icon: <MoneyIcon />, value: wealth },
+    { label: 'Intelligence', value: intelligence, left: -28 },
+    { label: 'Health',       value: health,       left:  28 },
+    { label: 'Wealth',       value: wealth,       left:  74 },
   ]
 
   return (
@@ -27,9 +27,8 @@ export function AttributeBar({ intelligence, health, wealth }: Props) {
         style={{ objectFit: 'contain', objectPosition: 'center' }}
       />
       <div className="relative flex h-full items-center justify-center gap-12">
-        {attrs.map(({ label, icon, value }) => (
-          <div key={label} className="flex items-center gap-2 font-serif text-sm text-desk-dark">
-            <span>{icon}</span>
+        {attrs.map(({ label, value, left }) => (
+          <div key={label} className="flex items-center gap-2 font-serif text-sm text-desk-dark" style={{ position: 'relative', left }}>
             <span>{label}: <span className="font-bold">{getLevel(value)}</span></span>
           </div>
         ))}

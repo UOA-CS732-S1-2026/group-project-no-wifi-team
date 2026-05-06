@@ -33,7 +33,7 @@ export function TaskList({ activeCategory, tasks, selectedIds, onToggle }: Props
       </div>
 
       {/* Task cards */}
-      <div className="flex flex-col gap-2" style={{ padding: '22px 30px 0' }}>
+      <div className="flex flex-col gap-2" style={{ padding: '22px 30px 24px' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeCategory}

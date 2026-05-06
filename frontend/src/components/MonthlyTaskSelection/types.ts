@@ -1,4 +1,13 @@
 import type { EventFromAPI } from '../../api/events'
+import { TASK_ICONS } from './images'
+
+function pickIcon(category: string, key: string): string {
+  const pool = category === 'study' ? TASK_ICONS.study
+    : category === 'social' ? TASK_ICONS.social
+    : TASK_ICONS.play
+  const hash = key.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  return pool[hash % pool.length]
+}
 
 export type Category = 'Study' | 'Entertainment' | 'Social'
 
@@ -89,7 +98,7 @@ export function mapEventToTask(event: EventFromAPI): Task {
     id: event.eventKey,
     category: CATEGORY_MAP[event.category] ?? 'Study',
     name: event.title,
-    illustration: ILLUSTRATIONS[event.eventKey] ?? '📌',
+    illustration: pickIcon(event.category, event.eventKey),
     participateEffects: event.participateEffects,
     skipEffects: event.skipEffects,
     participateStory: event.participateStory,
