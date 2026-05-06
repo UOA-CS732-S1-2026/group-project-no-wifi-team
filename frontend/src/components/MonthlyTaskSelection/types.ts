@@ -36,57 +36,6 @@ export const BASE_STATS = { intelligence: 55, health: 60, wealth: 50 }
 
 export const CATEGORIES: Category[] = ['Entertainment', 'Study', 'Social']
 
-const ILLUSTRATIONS: Record<string, string> = {
-  // Q1 Study
-  'q1-study-campus-orientation': '🏫',
-  'q1-study-first-week-plan':    '📋',
-  'q1-study-library-card':       '📚',
-  // Q1 Entertainment
-  'q1-entertainment-explore-city':      '🏙️',
-  'q1-entertainment-cooking-challenge': '🍳',
-  'q1-entertainment-room-decoration':   '🪴',
-  // Q1 Social
-  'q1-social-orientation-party':    '🎉',
-  'q1-social-campus-club':          '🤝',
-  'q1-social-flatmate-introduction': '🏠',
-  // Q2 Study
-  'q2-study-midterm-revision':  '📝',
-  'q2-study-office-hours':      '🧑‍🏫',
-  'q2-study-assignment-sprint': '⏰',
-  // Q2 Entertainment
-  'q2-entertainment-movie-night':    '🎬',
-  'q2-entertainment-gym-relief':     '🏋️',
-  'q2-entertainment-sleep-recovery': '😴',
-  // Q2 Social
-  'q2-social-study-group':    '👥',
-  'q2-social-flatmate-dinner': '🍽️',
-  'q2-social-help-classmate': '🤝',
-  // Q3 Study
-  'q3-study-group-leader':   '👔',
-  'q3-study-extra-tutoring': '📖',
-  'q3-study-online-course':  '💻',
-  // Q3 Entertainment
-  'q3-entertainment-weekend-trip': '🚗',
-  'q3-entertainment-eat-out':      '🍜',
-  'q3-entertainment-gaming-night': '🎮',
-  // Q3 Social
-  'q3-social-birthday-party':    '🎂',
-  'q3-social-networking-event':  '💼',
-  'q3-social-cultural-festival': '🎭',
-  // Q4 Study
-  'q4-study-final-exam-sprint':  '📑',
-  'q4-study-academic-workshop':  '🎓',
-  'q4-study-portfolio-polish':   '🗂️',
-  // Q4 Entertainment
-  'q4-entertainment-sleep-recovery': '😴',
-  'q4-entertainment-semester-treat': '🎁',
-  'q4-entertainment-long-walk':      '🚶',
-  // Q4 Social
-  'q4-social-internship-networking': '🤵',
-  'q4-social-farewell-dinner':       '🥂',
-  'q4-social-ask-senior':            '💬',
-}
-
 const CATEGORY_MAP: Record<string, Category> = {
   study: 'Study',
   entertainment: 'Entertainment',

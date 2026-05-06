@@ -14,7 +14,6 @@ interface Props {
 }
 
 export function TaskList({ activeCategory, tasks, selectedIds, onToggle }: Props) {
-  console.log('[TaskList] activeCategory:', activeCategory, '| tasks count:', tasks.length, '| tasks:', tasks)
   return (
     <div
       className="flex shrink-0 flex-col"

@@ -28,15 +28,8 @@ export function MonthlyTaskSelection() {
 
   useEffect(() => {
     fetchEventsByQuarter(QUARTER_INFO.number)
-      .then(({ events }) => {
-        console.log('[Events API] raw:', events)
-        const mapped = events.map(mapEventToTask)
-        console.log('[Events API] mapped:', mapped)
-        setTasks(mapped)
-      })
-      .catch((err) => {
-        console.error('[Events API] error:', err)
-      })
+      .then(({ events }) => setTasks(events.map(mapEventToTask)))
+      .catch(() => {})
   }, [])
 
   const visibleTasks = tasks.filter((t) => t.category === activeCategory)
