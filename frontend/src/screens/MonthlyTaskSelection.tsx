@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import taskBg from '../assets/task-bg-final.jpg'
+import taskBg from '../assets/CommonImage/common-background.jpg'
+import { taskTip } from '../components/MonthlyTaskSelection/images'
 import {
   AttributeBar,
   CategoryPanel,
@@ -37,38 +38,36 @@ export function MonthlyTaskSelection() {
 
   return (
     <div
-      className="flex h-dvh w-full flex-col items-center justify-center overflow-hidden px-4 py-4"
+      className="flex h-dvh w-full flex-col overflow-hidden"
       style={{
         backgroundImage: `url(${taskBg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundSize: '100% 100%',
       }}
     >
+      {/* Stats bar — 1366×56px, full viewport width */}
       <AttributeBar
         intelligence={BASE_STATS.intelligence}
         health={BASE_STATS.health}
         wealth={BASE_STATS.wealth}
       />
 
-      <div
-        className="flex w-full max-w-5xl flex-col overflow-hidden"
-        style={{ background: 'transparent', maxHeight: 'calc(100dvh - 90px)' }}
-      >
+      {/* Remaining space: center title + columns vertically */}
+      <div className="flex flex-1 flex-col items-center" style={{ marginTop: -34 }}>
+        {/* Title block — 480×72px */}
         <MonthHeader
           month={QUARTER_INFO.month}
           monthsUntilGraduation={QUARTER_INFO.monthsUntilGraduation}
         />
 
-        <div className="flex flex-1 overflow-hidden">
+        {/* Three columns — 1090×340px total (200+530+360) */}
+        <div className="flex" style={{ width: '1090px', height: '100%', marginTop: 100 }}>
           <CategoryPanel active={activeCategory} onSelect={setActiveCategory} />
-
           <TaskList
             activeCategory={activeCategory}
             tasks={visibleTasks}
             selectedIds={selectedIds}
             onToggle={toggleTask}
           />
-
           <MonthlyPlanBoard
             selectedTasks={selectedTasks}
             selectedCount={selectedIds.length}
@@ -77,6 +76,16 @@ export function MonthlyTaskSelection() {
             onConfirm={() => navigate('/task-interaction')}
           />
         </div>
+      </div>
+
+      {/* Bottom hint bar — 1366×44px, full viewport width */}
+      <div className="w-full shrink-0" style={{ height: '104px', marginBottom: 100 }}>
+        <img
+          src={taskTip}
+          alt="Tip"
+          className="h-full w-full"
+          style={{ objectFit: 'contain', objectPosition: 'center' }}
+        />
       </div>
     </div>
   )
