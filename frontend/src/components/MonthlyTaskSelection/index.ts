@@ -12,5 +12,6 @@ export {
   MAX_PLAYER_SELECTIONS,
   QUARTER_INFO,
   TASKS,
+  mapEventToTask,
   getLevel,
 } from './types'

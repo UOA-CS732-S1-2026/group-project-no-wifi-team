@@ -1,25 +1,26 @@
 import "dotenv/config";
 import mongoose from "mongoose";
-import monthlyData from "../data/monthlyData.js";
+import { Event } from "../db/event.js";
+import { eventData } from "../data/eventData.js";
 
 await mongoose.connect(process.env.DB_URL);
 console.log("Connected to database!");
-console.log();
 
-await clearDatabase();
-console.log();
+// Clear existing events
+await Event.deleteMany({});
+console.log("Cleared existing events.");
 
-await monthlyData;
-console.log();
+// Insert all events
+const result = await Event.insertMany(eventData);
+console.log(`Inserted ${result.length} events across 4 quarters.`);
 
-// Disconnect when complete
+const counts = [1, 2, 3, 4].map((q) => ({
+  quarter: q,
+  count: result.filter((e) => e.quarter === q).length,
+}));
+counts.forEach(({ quarter, count }) =>
+  console.log(`  Quarter ${quarter}: ${count} events`)
+);
+
 await mongoose.disconnect();
-console.log("Disconnected from database!");
-
-/**
- * Clears all existing data from the database collections.
- */
-// async function clearDatabase() {
-//   // await Species.deleteMany();
-//   console.log("Database cleared");
-// }
+console.log("\nDone. Database seeded successfully!");

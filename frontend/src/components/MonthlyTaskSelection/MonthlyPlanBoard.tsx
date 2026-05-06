@@ -47,7 +47,7 @@ export function MonthlyPlanBoard({
 
       {/* Count label */}
       <p className="shrink-0 text-center font-serif text-xs text-desk-mid py-1">
-        Selected {selectedCount}/{MAX_PLAYER_SELECTIONS + 1}
+        Selected {selectedCount}/{MAX_PLAYER_SELECTIONS}
       </p>
 
       {/* Slot cards + confirm button */}
