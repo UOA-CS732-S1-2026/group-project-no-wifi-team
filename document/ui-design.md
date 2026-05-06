@@ -279,7 +279,8 @@ The achievement cards give extra reward feedback and encourage replay.
 ---
 
 ## 8. Ending Collection Screen
-<img width="1536" height="1024" alt="995b49360ad1c4c42341602342f0e39a" src="https://github.com/user-attachments/assets/1a8943e6-8f39-489b-8122-b2780ea9f5f2" />
+<img width="1672" height="941" alt="ending_result" src="https://github.com/user-attachments/assets/f918ec34-9097-45ac-8329-5bb0a4a34c12" />
+
 
 ### Purpose
 
