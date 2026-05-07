@@ -9,6 +9,19 @@ import { ENDING_COLLECTION_MAP } from "../data/endingData.js";
 
 const router = Router();
 
+// GET /api/game/events/random?quarter=1
+router.get("/events/random", async (req, res) => {
+  try {
+    const quarter = parseInt(req.query.quarter) || 1;
+    const events = await Event.find({ quarter, category: "random" }).lean();
+    if (!events.length) return res.status(404).json({ error: "No random events found" });
+    const random = events[Math.floor(Math.random() * events.length)];
+    return res.json({ event: random });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 // GET /api/game/events?quarter=1
 router.get("/events", async (req, res) => {
   try {

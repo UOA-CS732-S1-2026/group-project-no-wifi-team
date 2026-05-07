@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
+import gameReducer from './slices/gameSlice'
 import gameHistoryReducer, { STORAGE_KEY } from './store/gameHistorySlice'
 
 export const store = configureStore({
   reducer: {
+    game: gameReducer,
     gameHistory: gameHistoryReducer,
   },
 })
