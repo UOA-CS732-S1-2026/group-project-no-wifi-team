@@ -11,9 +11,9 @@ interface Props {
 
 export function AttributeBar({ intelligence, health, wealth }: Props) {
   const attrs = [
-    { label: 'Intelligence', value: intelligence, centerOffset: -170 },
-    { label: 'Health', value: health, centerOffset: 60 },
-    { label: 'Wealth', value: wealth, centerOffset: 250 },
+    { label: 'Intelligence', value: intelligence, centerOffset: -180 },
+    { label: 'Health', value: health, centerOffset: 55 },
+    { label: 'Wealth', value: wealth, centerOffset: 245 },
   ]
 
   return (
@@ -29,10 +29,11 @@ export function AttributeBar({ intelligence, health, wealth }: Props) {
         {attrs.map(({ label, value, centerOffset }) => (
           <div
             key={label}
-            className="absolute top-1/2 w-36 font-serif text-xs text-desk-dark"
+            className="absolute top-1/2 w-42 whitespace-nowrap font-serif text-sm text-desk-dark"
             style={{
               left: `calc(50% + ${centerOffset}px)`,
               transform: 'translate(-50%, -50%)',
+              letterSpacing: '0.04em',
             }}
           >
             <span>{label}: <span className="font-bold">{getLevel(value)}</span></span>
