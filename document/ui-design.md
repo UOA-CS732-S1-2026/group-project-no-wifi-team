@@ -64,7 +64,7 @@ This screen allows the player to plan tasks for the current quarter.
 The player can select planned events from different categories, such as Study, Entertainment, and Social.
 
 ### Layout Description
-<img width="1536" height="1024" alt="0893e982a69b27fdb6d3faa16a4cfe88" src="https://github.com/user-attachments/assets/9a9703bc-6820-4035-a825-e32ede7e5ef1" />
+<img width="1536" height="1024" alt="6fa0cfad24fc5f2677266cd01aca7e17" src="https://github.com/user-attachments/assets/e6324902-bd4b-4565-8423-7ba8c791a8a8" />
 
 The screen is divided into two main areas:
 
@@ -204,7 +204,7 @@ The quarter summary screen appears after the player completes all tasks in a qua
 It shows the player's progress and attribute changes.
 
 ### Layout Description
-<img width="1536" height="1024" alt="6902ebf1ac495b03277c7a1d87b30eab" src="https://github.com/user-attachments/assets/f505da05-90bc-4415-8a73-0962bf31fce0" />
+<img width="1448" height="1086" alt="8bd6daf03539a2104170ff6159fbb2e1" src="https://github.com/user-attachments/assets/66bcf9c3-cf38-4a59-8396-a6bfe36dc8e6" />
 
 The screen is designed like a summary page in a planner.
 
@@ -247,7 +247,7 @@ The ending result screen appears after the player completes all four quarters.
 It shows the final ending the player has achieved.
 
 ### Layout Description
-<img width="1676" height="944" alt="512e48172fcfb4902b1cc851cac1905d" src="https://github.com/user-attachments/assets/2921b658-cc0d-4f83-9720-6acde17095f2" />
+<img width="1672" height="941" alt="6ae348eb024640002a1dce5dad7abbf6" src="https://github.com/user-attachments/assets/0e4a37fc-0b3e-40f4-a8ff-e5a8fbae2e1c" />
 
 The ending screen uses a large paper panel placed on the notebook background.  
 The left side contains the ending title and ending description.  
@@ -279,7 +279,7 @@ The achievement cards give extra reward feedback and encourage replay.
 ---
 
 ## 8. Ending Collection Screen
-<img width="1536" height="1024" alt="995b49360ad1c4c42341602342f0e39a" src="https://github.com/user-attachments/assets/1a8943e6-8f39-489b-8122-b2780ea9f5f2" />
+<img width="1448" height="1086" alt="c9b49547a6d7a59fea8884ade7dcf954" src="https://github.com/user-attachments/assets/ad636e10-20d4-4d16-aec9-674a78de47b4" />
 
 ### Purpose
 
