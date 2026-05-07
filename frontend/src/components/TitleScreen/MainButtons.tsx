@@ -1,4 +1,4 @@
-import { aboutUs as aboutUsImg, signIn as signInImg, startGame as startGameImg } from '../../assets/GameBegin'
+import { aboutUs as aboutUsImg, signIn as signInImg, startGame as startGameImg } from '../../assets/gamebegin'
 
 export function MainButtons({
   onStart,

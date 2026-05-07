@@ -58,15 +58,15 @@ export function mapEventToTask(event: EventFromAPI): Task {
 
 // Fallback static tasks used before API response arrives
 export const TASKS: Task[] = [
-  { id: 'study-1', category: 'Study', name: 'Campus Orientation Tour', illustration: '🏫' },
-  { id: 'study-2', category: 'Study', name: 'First Week Study Plan', illustration: '📋' },
-  { id: 'study-3', category: 'Study', name: 'Library Card Setup', illustration: '📚' },
-  { id: 'ent-1', category: 'Entertainment', name: 'Explore the City', illustration: '🏙️' },
-  { id: 'ent-2', category: 'Entertainment', name: 'Cooking Starter Challenge', illustration: '🍳' },
-  { id: 'ent-3', category: 'Entertainment', name: 'Room Decoration', illustration: '🪴' },
-  { id: 'social-1', category: 'Social', name: 'Orientation Party', illustration: '🎉' },
-  { id: 'social-2', category: 'Social', name: 'Join a Campus Club', illustration: '🤝' },
-  { id: 'social-3', category: 'Social', name: 'Flatmate Introduction', illustration: '🏠' },
+  { id: 'q1-study-campus-orientation', category: 'Study', name: 'Campus Orientation Tour', illustration: pickIcon('study', 'q1-study-campus-orientation') },
+  { id: 'q1-study-first-week-plan', category: 'Study', name: 'First Week Study Plan', illustration: pickIcon('study', 'q1-study-first-week-plan') },
+  { id: 'q1-study-library-card', category: 'Study', name: 'Library Card Setup', illustration: pickIcon('study', 'q1-study-library-card') },
+  { id: 'q1-entertainment-explore-city', category: 'Entertainment', name: 'Explore the City', illustration: pickIcon('entertainment', 'q1-entertainment-explore-city') },
+  { id: 'q1-entertainment-cooking-challenge', category: 'Entertainment', name: 'Cooking Starter Challenge', illustration: pickIcon('entertainment', 'q1-entertainment-cooking-challenge') },
+  { id: 'q1-entertainment-room-decoration', category: 'Entertainment', name: 'Room Decoration', illustration: pickIcon('entertainment', 'q1-entertainment-room-decoration') },
+  { id: 'q1-social-orientation-party', category: 'Social', name: 'Orientation Party', illustration: pickIcon('social', 'q1-social-orientation-party') },
+  { id: 'q1-social-campus-club', category: 'Social', name: 'Join a Campus Club', illustration: pickIcon('social', 'q1-social-campus-club') },
+  { id: 'q1-social-flatmate-introduction', category: 'Social', name: 'Flatmate Introduction', illustration: pickIcon('social', 'q1-social-flatmate-introduction') },
 ]
 
 export { getAttributeLevel as getLevel } from '../../utils/level'
