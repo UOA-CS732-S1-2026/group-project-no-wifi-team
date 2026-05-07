@@ -8,6 +8,8 @@ import App from './App'
 
 const queryClient = new QueryClient()
 
+store.subscribe(() => console.log('[Redux Store]', store.getState()))
+
 const container = document.getElementById('root')
 
 if (!container) {

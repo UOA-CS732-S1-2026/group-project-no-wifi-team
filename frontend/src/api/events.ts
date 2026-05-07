@@ -16,3 +16,7 @@ export interface EventFromAPI {
 export function fetchEventsByQuarter(quarter: number) {
   return get<{ quarter: number; events: EventFromAPI[] }>(`/game/events?quarter=${quarter}`)
 }
+
+export function fetchRandomEvent(quarter: number) {
+  return get<{ event: EventFromAPI }>(`/game/events/random?quarter=${quarter}`)
+}
