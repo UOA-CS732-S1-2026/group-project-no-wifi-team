@@ -1,4 +1,4 @@
-<img width="1448" height="1086" alt="9bcd45d0a38a99d81c65474b29705d2f" src="https://github.com/user-attachments/assets/9ba1dc07-9b41-43c5-85d5-7bff12928e7f" /># UI Design Document
+# UI Design Document
 
 ## 1. UI Design Overview
 
