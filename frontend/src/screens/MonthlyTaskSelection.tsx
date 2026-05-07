@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState } from '../store'
 import taskBg from '../assets/CommonImage/common-background.png'
 import { taskTip } from '../components/MonthlyTaskSelection/images'
-import { fetchEventsByQuarter } from '../api/events'
+import { fetchEventsByQuarter, fetchRandomEvent } from '../api/events'
+import { confirmQuarterTasks } from '../slices/gameSlice'
+import type { AppDispatch } from '../store'
 import {
   AttributeBar,
   CategoryPanel,
@@ -12,7 +16,6 @@ import {
   TaskList,
   BASE_STATS,
   MAX_PLAYER_SELECTIONS,
-  QUARTER_INFO,
   TASKS,
   mapEventToTask,
   type Category,
@@ -21,13 +24,15 @@ import {
 
 export function MonthlyTaskSelection() {
   const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
+  const quarter = useSelector((s: RootState) => s.game.currentQuarter) as 1 | 2 | 3 | 4
   const [activeCategory, setActiveCategory] = useState<Category>('Study')
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [tasks, setTasks] = useState<Task[]>(TASKS)
   const [showFullToast, setShowFullToast] = useState(false)
 
   useEffect(() => {
-    fetchEventsByQuarter(QUARTER_INFO.number)
+    fetchEventsByQuarter(quarter)
       .then(({ events }) => setTasks(events.map(mapEventToTask)))
       .catch(() => {})
   }, [])
@@ -49,6 +54,31 @@ export function MonthlyTaskSelection() {
     })
   }
 
+  async function handleConfirm() {
+    const chosen = selectedIds
+      .map((id) => tasks.find((t) => t.id === id))
+      .filter((t): t is Task => t !== undefined)
+
+    try {
+      const { event } = await fetchRandomEvent(quarter)
+      const randomTask = mapEventToTask(event)
+      dispatch(confirmQuarterTasks({
+        quarter: quarter,
+        selectedTasks: chosen,
+        randomTask,
+      }))
+    } catch {
+      // fallback: dispatch without random task using a placeholder
+      dispatch(confirmQuarterTasks({
+        quarter: quarter,
+        selectedTasks: chosen,
+        randomTask: { id: 'random-fallback', category: 'Study', name: 'Random Event', illustration: '' },
+      }))
+    }
+
+    navigate('/task-interaction')
+  }
+
   return (
     <div
       className="flex h-dvh w-full flex-col overflow-hidden"
@@ -64,7 +94,7 @@ export function MonthlyTaskSelection() {
       />
 
       <div className="flex flex-1 flex-col items-center" style={{ marginTop: -34 }}>
-        <MonthHeader quarter={QUARTER_INFO.number} />
+        <MonthHeader quarter={quarter} />
 
         <div className="flex" style={{ width: '1090px', height: '100%', marginTop: 100 }}>
           <CategoryPanel active={activeCategory} onSelect={setActiveCategory} />
@@ -79,7 +109,7 @@ export function MonthlyTaskSelection() {
             selectedCount={selectedIds.length}
             allSelected={selectedIds.length === MAX_PLAYER_SELECTIONS}
             onRemove={toggleTask}
-            onConfirm={() => navigate('/task-interaction')}
+            onConfirm={handleConfirm}
           />
         </div>
       </div>
