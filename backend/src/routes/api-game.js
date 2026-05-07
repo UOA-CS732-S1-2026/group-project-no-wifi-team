@@ -2,8 +2,23 @@ import { Router } from "express";
 import { QuarterlyLog } from "../db/quarterlyLog.js";
 import { User } from "../db/user.js";
 import { applyTaskChoice, baseTaskState, buildTaskResponse } from "../data/taskData.js";
+import { Event } from "../db/event.js";
 
 const router = Router();
+
+// GET /api/game/events?quarter=1
+router.get("/events", async (req, res) => {
+  try {
+    const quarter = parseInt(req.query.quarter) || 1;
+    const events = await Event.find(
+      { quarter, category: { $ne: "random" } },
+      { __v: 0 }
+    ).lean();
+    return res.json({ quarter, events });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 /**
  * GET /api/game/quarterly-summary

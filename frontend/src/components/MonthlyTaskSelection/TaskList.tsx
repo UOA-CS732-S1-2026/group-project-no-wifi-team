@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { type Category, type Task, MAX_PLAYER_SELECTIONS } from './types'
+import { type Category, type Task } from './types'
 import { TaskCard } from './TaskCard'
 import { availableTasksBg } from './images'
 
@@ -32,7 +32,7 @@ export function TaskList({ activeCategory, tasks, selectedIds, onToggle }: Props
       </div>
 
       {/* Task cards */}
-      <div className="flex flex-col gap-2" style={{ padding: '22px 30px 0' }}>
+      <div className="flex flex-col gap-2" style={{ padding: '22px 30px 24px' }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeCategory}

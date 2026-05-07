@@ -23,7 +23,7 @@ export function SelectedSlot({ task, onRemove, placeholder = '— Pending —' }
     >
       {task ? (
         <div className="flex w-full items-center gap-2 px-3">
-          <span className="text-lg">{task.illustration}</span>
+          <img src={task.illustration} alt="" className="shrink-0 object-contain" style={{ width: 72, height: 72 }} />
           <p className="flex-1 font-serif text-xs font-bold leading-snug text-desk-dark">
             {task.name}
           </p>
