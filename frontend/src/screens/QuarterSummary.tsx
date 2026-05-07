@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { CountUp } from '../utils/CountUp'
 import {
@@ -35,14 +35,10 @@ interface QuarterlySummaryProps {
   totalTasks?: number
 }
 
-const bounce = {
-  idle: { transition: { duration: 1.2, repeat: Infinity, ease: 'ease' } },
-  hover: { scale: 1.08 },
-  tap: { scale: 0.95 },
-}
-
 export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
   const navigate = useNavigate()
+  const location = useLocation()
+  const routeSummary = location.state as QuarterlySummaryProps | null
   const [scale, setScale] = useState(1)
 
   // Handle responsive scaling for the 1182x886 design stage
@@ -57,7 +53,6 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
   }, [])
 
   const [data, setData] = useState<QuarterlySummaryProps | null>(null)
-  const [loading, setLoading] = useState(true)
 
   // mockUser
   const getUserId = () => {
@@ -65,6 +60,11 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
   }
 
   useEffect(() => {
+    if (routeSummary) {
+      setData(routeSummary)
+      return
+    }
+
     fetch('/api/game/quarterly-summary', {
       headers: {
         'x-user-id': getUserId(),
@@ -73,10 +73,9 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
       .then((res) => res.json())
       .then((json) => {
         setData(json)
-        setLoading(false)
       })
       .catch((err) => console.error('Failed to fetch summary:', err))
-  }, [])
+  }, [routeSummary])
 
   // if (loading) {
   //   return (

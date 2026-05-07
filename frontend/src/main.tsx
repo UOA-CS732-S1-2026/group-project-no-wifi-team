@@ -10,6 +10,13 @@ const queryClient = new QueryClient()
 
 store.subscribe(() => console.log('[Redux Store]', store.getState()))
 
+// Handle GitHub Pages SPA redirect
+const redirect = sessionStorage.getItem('spa_redirect')
+if (redirect) {
+  sessionStorage.removeItem('spa_redirect')
+  window.history.replaceState(null, '', redirect)
+}
+
 const container = document.getElementById('root')
 
 if (!container) {
