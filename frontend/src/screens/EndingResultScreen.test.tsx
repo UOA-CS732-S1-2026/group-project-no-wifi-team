@@ -1,27 +1,45 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import { configureStore } from '@reduxjs/toolkit'
+import gameHistoryReducer from '../store/gameHistorySlice'
 import { EndingResultScreen } from './EndingResultScreen'
+
+function makeStore() {
+  return configureStore({
+    reducer: { gameHistory: gameHistoryReducer },
+  })
+}
 
 function renderAt(initial: { pathname: string; state?: unknown }) {
   return render(
-    <MemoryRouter initialEntries={[initial]}>
-      <EndingResultScreen />
-    </MemoryRouter>,
+    <Provider store={makeStore()}>
+      <MemoryRouter initialEntries={[initial]}>
+        <EndingResultScreen />
+      </MemoryRouter>
+    </Provider>,
   )
 }
 
 describe('EndingResultScreen', () => {
-  it('renders the Perfect All-Rounder ending for an excellent run', () => {
+  it('renders the "ENDING" label and the resolved ending title', () => {
     renderAt({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 95, health: 95, wealth: 95 } },
     })
+    expect(screen.getByText('ENDING')).toBeInTheDocument()
     expect(screen.getByText('Perfect All-Rounder')).toBeInTheDocument()
-    expect(screen.getByText('Best Ending')).toBeInTheDocument()
-    expect(screen.getByText('Final Score')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /play again/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /view others/i })).toBeInTheDocument()
+  })
+
+  it('renders the ending description', () => {
+    renderAt({
+      pathname: '/ending-result',
+      state: { snapshot: { intelligence: 95, health: 95, wealth: 95 } },
+    })
+    expect(
+      screen.getByText(/you did not just survive international student life/i),
+    ).toBeInTheDocument()
   })
 
   it('renders the Burnout Student ending when health collapses despite high intelligence', () => {
@@ -30,22 +48,39 @@ describe('EndingResultScreen', () => {
       state: { snapshot: { intelligence: 92, health: 20, wealth: 60 } },
     })
     expect(screen.getByText('Burnout Student')).toBeInTheDocument()
-    expect(screen.getByText('Warning Ending')).toBeInTheDocument()
+    expect(screen.getByText(/pushed yourself too hard/i)).toBeInTheDocument()
   })
 
-  it('falls back to a default ending when no state is supplied', () => {
+  it('falls back to Steady Graduate when no state is supplied', () => {
     renderAt({ pathname: '/ending-result' })
-    // Default snapshot resolves to Steady Graduate (balanced mid values).
     expect(screen.getByText('Steady Graduate')).toBeInTheDocument()
   })
 
-  it('shows the three attribute tiles with their level labels', () => {
+  it('shows the Ranking List and Achievement Collection buttons', () => {
     renderAt({
       pathname: '/ending-result',
-      state: { snapshot: { intelligence: 90, health: 50, wealth: 30 } },
+      state: { snapshot: { intelligence: 80, health: 80, wealth: 80 } },
     })
-    expect(screen.getByText('Intelligence')).toBeInTheDocument()
-    expect(screen.getByText('Health')).toBeInTheDocument()
-    expect(screen.getByText('Wealth')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /ranking list/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /achievement collection/i })).toBeInTheDocument()
+  })
+
+  it('shows achievement images for an S-rank ending', () => {
+    renderAt({
+      pathname: '/ending-result',
+      state: { snapshot: { intelligence: 95, health: 95, wealth: 95 } },
+    })
+    const imgs = screen.getAllByRole('img', { name: /achievement/i })
+    expect(imgs.length).toBe(3)
+  })
+
+  it('shows fewer achievements for lower ranks', () => {
+    // B-rank (Steady Graduate) → 1 achievement
+    renderAt({
+      pathname: '/ending-result',
+      state: { snapshot: { intelligence: 60, health: 60, wealth: 60 } },
+    })
+    const imgs = screen.getAllByRole('img', { name: /achievement/i })
+    expect(imgs.length).toBe(1)
   })
 })

@@ -3,6 +3,9 @@ import { QuarterlyLog } from "../db/quarterlyLog.js";
 import { User } from "../db/user.js";
 import { applyTaskChoice, baseTaskState, buildTaskResponse } from "../data/taskData.js";
 import { Event } from "../db/event.js";
+import { GameResult } from "../db/gameResult.js";
+import Ending from "../db/ending.js";
+import { ENDING_COLLECTION_MAP } from "../data/endingData.js";
 
 const router = Router();
 
@@ -85,25 +88,78 @@ router.post("/task/choice", async (req, res) => {
 });
 
 /**
- * GET /api/game/:dexNumber
- *
- * Returns detailed information
+ * POST /api/game/result
+ * Save a completed game result and auto-unlock the corresponding collection ending.
  */
-router.get("/:dexNumber", async (req, res) => {
+router.post("/result", async (req, res) => {
   try {
-    const dexNumber = parseInt(req.params.dexNumber);
+    const { userId, playerName, score, endingId, endingTitle, endingRank, endingTheme, snapshot, timestamp } = req.body;
 
-    if (isNaN(dexNumber)) {
-      return res.status(400).json({ error: "Invalid dex number" });
+    if (!playerName || !endingId || !endingTitle || !endingRank || !endingTheme || !snapshot) {
+      return res.status(400).json({ success: false, message: "Missing required fields" });
     }
 
-    // const game = await game.findOne({ dexNumber });
-    // if (!game) {
-    //   return res.status(404).json({ error: `dex number ${dexNumber} not found` });
-    // }
-    return res.json(species);
+    const result = await GameResult.create({
+      userId: userId ?? null,
+      playerName,
+      score: Number(score) || 0,
+      endingId,
+      endingTitle,
+      endingRank,
+      endingTheme,
+      snapshot: {
+        intelligence: Number(snapshot.intelligence) || 0,
+        health: Number(snapshot.health) || 0,
+        wealth: Number(snapshot.wealth) || 0,
+      },
+      timestamp: timestamp ?? Date.now(),
+    });
+
+    const collectionKey = ENDING_COLLECTION_MAP[endingId];
+    if (collectionKey) {
+      await Ending.findOneAndUpdate(
+        { $or: [{ endingId: collectionKey }, { endingKey: collectionKey }] },
+        { status: "Unlocked" },
+      );
+    }
+
+    return res.status(201).json({ success: true, data: result });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    console.error("Failed to save game result:", error);
+    return res.status(500).json({ success: false, message: "Failed to save game result", error: error.message });
+  }
+});
+
+/**
+ * GET /api/game/results
+ * Returns all game results sorted by score (leaderboard).
+ * Optional query param: ?limit=20
+ */
+router.get("/results", async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+    const results = await GameResult.find({}).sort({ score: -1, timestamp: -1 }).limit(limit).lean();
+    return res.json({ success: true, total: results.length, data: results });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to get results", error: error.message });
+  }
+});
+
+/**
+ * GET /api/game/result/latest
+ * Returns the most recent result. Pass x-user-id header to filter by user.
+ */
+router.get("/result/latest", async (req, res) => {
+  try {
+    const userId = req.headers["x-user-id"] || null;
+    const query = userId ? { userId } : {};
+    const result = await GameResult.findOne(query).sort({ timestamp: -1 }).lean();
+    if (!result) {
+      return res.status(404).json({ success: false, message: "No result found" });
+    }
+    return res.json({ success: true, data: result });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to get latest result", error: error.message });
   }
 });
 

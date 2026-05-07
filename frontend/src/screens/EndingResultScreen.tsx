@@ -1,166 +1,186 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { motion } from 'motion/react'
-import {
-  AttributeStat,
-  Banner,
-  NotebookPanel,
-  PaperButton,
-} from '../components/common'
-import { CountUp } from '../utils/CountUp'
+
 import {
   type AttributeSnapshot,
-  type Ending,
   resolveEnding,
   calculateScore,
-  TOTAL_SCORE,
 } from '../utils/endingResult'
+import { addRecord, LAST_RESULT_KEY } from '../store/gameHistorySlice'
+import { generateId, type GameResult } from '../utils/gameResultTypes'
+import { post } from '../utils/request'
 
+// ── Assets ────────────────────────────────────────────────────────────────────
+import commonBg            from '../assets/CommonImage/common-background.png'
+import endingMiddleBg      from '../assets/endingPage-image/ending-middle-bg.png'
+import rankingListBanner   from '../assets/endingPage-image/ranking-list-banner.png'
+import achGraduate         from '../assets/endingPage-image/achievement-card-graduate.png'
+import achCulturalExplorer from '../assets/endingPage-image/achievement-card-cultural-explorer.png'
+import achGlobalAdventurer from '../assets/endingPage-image/achievement-card-global-adventurer.png'
+import btnAchCollection    from '../assets/endingPage-image/button-achievement-collection.png'
+
+// ── Achievement pool — order matches unlock priority ──────────────────────────
+const ALL_ACHIEVEMENTS = [achGraduate, achCulturalExplorer, achGlobalAdventurer]
+const ACH_COUNT_BY_RANK: Record<string, number> = { S: 3, A: 2, B: 1, C: 0 }
+
+// ── Location state ────────────────────────────────────────────────────────────
 interface EndingLocationState {
-  snapshot?: Partial<AttributeSnapshot>
+  snapshot?:   Partial<AttributeSnapshot>
+  playerName?: string
 }
 
-const FALLBACK_SNAPSHOT: AttributeSnapshot = {
-  intelligence: 70,
-  health: 65,
-  wealth: 60,
-}
+const FALLBACK_SNAPSHOT: AttributeSnapshot = { intelligence: 70, health: 65, wealth: 60 }
 
 function readSnapshot(state: unknown): AttributeSnapshot {
   const incoming = (state as EndingLocationState | null)?.snapshot
   if (!incoming) return FALLBACK_SNAPSHOT
   return {
-    intelligence: numberOr(incoming.intelligence, FALLBACK_SNAPSHOT.intelligence),
-    health: numberOr(incoming.health, FALLBACK_SNAPSHOT.health),
-    wealth: numberOr(incoming.wealth, FALLBACK_SNAPSHOT.wealth),
+    intelligence: numOr(incoming.intelligence, FALLBACK_SNAPSHOT.intelligence),
+    health:       numOr(incoming.health,        FALLBACK_SNAPSHOT.health),
+    wealth:       numOr(incoming.wealth,        FALLBACK_SNAPSHOT.wealth),
   }
 }
 
-function numberOr(value: unknown, fallback: number): number {
-  return typeof value === 'number' && Number.isFinite(value) ? value : fallback
+function numOr(v: unknown, fallback: number): number {
+  return typeof v === 'number' && Number.isFinite(v) ? v : fallback
 }
 
+// ── Component ─────────────────────────────────────────────────────────────────
 export function EndingResultScreen() {
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate  = useNavigate()
+  const location  = useLocation()
+  const dispatch  = useDispatch()
 
-  const snapshot = useMemo(() => readSnapshot(location.state), [location.state])
-  const ending = useMemo(() => resolveEnding(snapshot), [snapshot])
-  const score = useMemo(() => calculateScore(snapshot), [snapshot])
+  const snapshot   = useMemo(() => readSnapshot(location.state),  [location.state])
+  const ending     = useMemo(() => resolveEnding(snapshot),       [snapshot])
+  const score      = useMemo(() => calculateScore(snapshot),      [snapshot])
+  const playerName = (location.state as EndingLocationState | null)?.playerName ?? 'Player'
 
-  const isHappy = ending.theme === 'happy'
+  const [resultId] = useState(() => generateId())
+
+  useEffect(() => {
+    const now = Date.now()
+    const record: GameResult = {
+      id:          resultId,
+      playerName,
+      score,
+      endingId:    ending.id,
+      endingTitle: ending.title,
+      endingRank:  ending.rank,
+      endingTheme: ending.theme,
+      snapshot,
+      timestamp:   now,
+    }
+    dispatch(addRecord(record))
+    try { localStorage.setItem(LAST_RESULT_KEY, resultId) } catch { /* quota */ }
+
+    // Persist result to backend and auto-unlock the collection ending (fire-and-forget)
+    const userId = localStorage.getItem('guestId') || localStorage.getItem('guest_id') || null
+    post('/game/result', {
+      userId,
+      playerName,
+      score,
+      endingId:    ending.id,
+      endingTitle: ending.title,
+      endingRank:  ending.rank,
+      endingTheme: ending.theme,
+      snapshot,
+      timestamp:   now,
+    }).catch(() => { /* offline or server unavailable — localStorage copy remains */ })
+  }, [dispatch, resultId])
+
+  const achievements = ALL_ACHIEVEMENTS.slice(0, ACH_COUNT_BY_RANK[ending.rank] ?? 0)
+
+  // Shared spring ease
+  const spring = { ease: [0.22, 1, 0.36, 1] as const }
 
   return (
-    <div
-      className={`
-        flex min-h-dvh w-full items-center justify-center overflow-y-auto px-4 py-8
-        ${isHappy
-          ? 'bg-[radial-gradient(ellipse_at_30%_60%,var(--color-desk-light)_0%,var(--color-desk-mid)_50%,var(--color-desk-dark)_100%)]'
-          : 'bg-[radial-gradient(ellipse_at_30%_60%,#6b5840_0%,#4a3a28_55%,#2c2117_100%)]'}
-      `}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
+    <div className="er-screen">
+
+      {/* ── Background ─────────────────────────────────────────────────────── */}
+      <img src={commonBg} alt="" aria-hidden="true" className="er-bg" />
+
+      {/* ── Ranking List banner (viewport-relative) ─────────────────────────── */}
+      <motion.button
+        className="er-banner"
+        onClick={() => navigate('/rankings')}
+        aria-label="Ranking List"
+        initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, ease: 'easeOut' }}
-        className="w-full max-w-2xl"
+        transition={{ duration: 0.45, delay: 0.15, ...spring }}
       >
-        <NotebookPanel
-          spiral={false}
-          ruled
-          className="rounded-sm px-6 py-10 sm:px-12 sm:py-12"
+        <img src={rankingListBanner} alt="Ranking List" />
+      </motion.button>
+
+      {/* ── Card position wrapper (centering via CSS transform) ─────────────── */}
+      <div className="er-card-wrap">
+        <motion.div
+          className="er-card"
+          style={{ backgroundImage: `url(${endingMiddleBg})` }}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ...spring }}
         >
-          <EndingHeader ending={ending} />
-          <EndingNarrative ending={ending} />
-          <AttributeRow snapshot={snapshot} />
-          <ScoreBlock score={score} theme={ending.theme} />
-          <ActionRow
-            onPlayAgain={() => navigate('/')}
-            onViewOthers={() => navigate('/endings')}
+          {/* Title row */}
+          <motion.div
+            className="er-title-row"
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.15, ...spring }}
+          >
+            <span className="er-title-ending">ENDING</span>
+            <span className="er-title-name">{ending.title}</span>
+          </motion.div>
+
+          {/* Gold divider */}
+          <motion.hr
+            className="er-divider"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            style={{ transformOrigin: 'left' }}
+            transition={{ duration: 0.5, delay: 0.28 }}
           />
-        </NotebookPanel>
-      </motion.div>
-    </div>
-  )
-}
 
-function EndingHeader({ ending }: { ending: Ending }) {
-  return (
-    <div className="flex flex-col items-center gap-3">
-      <Banner tone={ending.theme} className="w-72 sm:w-80">
-        <div className="flex items-center justify-center gap-2 text-base sm:text-lg">
-          <RankBadge rank={ending.rank} />
-          <span>{ending.title}</span>
-        </div>
-      </Banner>
-      <p className="font-serif text-xs uppercase tracking-[0.25em] text-desk-mid">
-        {ending.type}
-      </p>
-    </div>
-  )
-}
+          {/* Description */}
+          <motion.p
+            className="er-description"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.45, delay: 0.38 }}
+          >
+            {ending.description}
+          </motion.p>
 
-function RankBadge({ rank }: { rank: Ending['rank'] }) {
-  return (
-    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-btn-text/60 bg-paper/20 font-serif text-sm font-bold text-btn-text">
-      {rank}
-    </span>
-  )
-}
+          {/* Achievement cards (margin-top:auto pushes to card bottom) */}
+          {achievements.length > 0 && (
+            <motion.div
+              className="er-achievements"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.48, ...spring }}
+            >
+              {achievements.map((src, i) => (
+                <img key={i} src={src} alt={`Achievement ${i + 1}`} />
+              ))}
+            </motion.div>
+          )}
 
-function EndingNarrative({ ending }: { ending: Ending }) {
-  return (
-    <div className="mt-7 space-y-3 text-center">
-      <p className="font-serif text-base leading-relaxed text-desk-dark sm:text-lg">
-        {ending.description}
-      </p>
-      <p className="font-serif text-sm italic leading-relaxed text-desk-mid sm:text-base">
-        “{ending.unlockText}”
-      </p>
-    </div>
-  )
-}
+          {/* Achievement Collection button — inside card, centered at bottom */}
+          <motion.button
+            className="er-collect-btn"
+            onClick={() => navigate('/endings')}
+            aria-label="Achievement Collection"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.6 }}
+          >
+            <img src={btnAchCollection} alt="" aria-hidden="true" />
+          </motion.button>
+        </motion.div>
+      </div>
 
-function AttributeRow({ snapshot }: { snapshot: AttributeSnapshot }) {
-  return (
-    <div className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
-      <AttributeStat kind="intelligence" value={snapshot.intelligence} />
-      <AttributeStat kind="health" value={snapshot.health} />
-      <AttributeStat kind="wealth" value={snapshot.wealth} />
-    </div>
-  )
-}
-
-function ScoreBlock({ score, theme }: { score: number; theme: 'happy' | 'bad' }) {
-  const accent = theme === 'happy' ? 'text-emerald-800' : 'text-red-800'
-  return (
-    <div className="mt-8 flex flex-col items-center gap-1 border-t border-desk-light/60 pt-6">
-      <p className="font-serif text-xs uppercase tracking-[0.25em] text-desk-mid">
-        Final Score
-      </p>
-      <p className={`font-serif text-5xl font-bold ${accent} sm:text-6xl`}>
-        <CountUp from={0} to={score} duration={1.4} />
-        <span className="font-serif text-2xl text-desk-mid sm:text-3xl"> / {TOTAL_SCORE}</span>
-      </p>
-    </div>
-  )
-}
-
-function ActionRow({
-  onPlayAgain,
-  onViewOthers,
-}: {
-  onPlayAgain: () => void
-  onViewOthers: () => void
-}) {
-  return (
-    <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-5">
-      <PaperButton variant="primary" size="lg" onClick={onPlayAgain}>
-        Play Again
-      </PaperButton>
-      <PaperButton variant="secondary" size="lg" onClick={onViewOthers}>
-        View Others
-      </PaperButton>
     </div>
   )
 }
