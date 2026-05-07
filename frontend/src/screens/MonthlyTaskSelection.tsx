@@ -14,7 +14,6 @@ import {
   MonthHeader,
   MonthlyPlanBoard,
   TaskList,
-  BASE_STATS,
   MAX_PLAYER_SELECTIONS,
   TASKS,
   mapEventToTask,
@@ -26,6 +25,7 @@ export function MonthlyTaskSelection() {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const quarter = useSelector((s: RootState) => s.game.currentQuarter) as 1 | 2 | 3 | 4
+  const currentStats = useSelector((s: RootState) => s.game.currentStats)
   const [activeCategory, setActiveCategory] = useState<Category>('Study')
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [tasks, setTasks] = useState<Task[]>(TASKS)
@@ -35,7 +35,7 @@ export function MonthlyTaskSelection() {
     fetchEventsByQuarter(quarter)
       .then(({ events }) => setTasks(events.map(mapEventToTask)))
       .catch(() => {})
-  }, [])
+  }, [quarter])
 
   const visibleTasks = tasks.filter((t) => t.category === activeCategory)
   const selectedTasks: (Task | undefined)[] = selectedIds.map(
@@ -88,9 +88,9 @@ export function MonthlyTaskSelection() {
       }}
     >
       <AttributeBar
-        intelligence={BASE_STATS.intelligence}
-        health={BASE_STATS.health}
-        wealth={BASE_STATS.wealth}
+        intelligence={currentStats.intelligence}
+        health={currentStats.health}
+        wealth={currentStats.wealth}
       />
 
       <div className="flex flex-1 flex-col items-center" style={{ marginTop: -34 }}>
