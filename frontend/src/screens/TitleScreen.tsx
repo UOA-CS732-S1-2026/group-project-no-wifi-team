@@ -12,6 +12,7 @@ import { MainButtons } from '../components/TitleScreen/MainButtons'
 import { SettingsModal } from '../components/TitleScreen/SettingsModal'
 import { SignInModal } from '../components/TitleScreen/SignInModal'
 
+
 export function TitleScreen() {
   const navigate = useNavigate()
 
