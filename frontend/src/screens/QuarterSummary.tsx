@@ -295,7 +295,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
             <motion.div
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ ease: 'easeInOut', delay: 16, duration: 1 }}
+              transition={{ ease: 'easeInOut', delay: 17, duration: 1 }}
               className="w-full flex items-center justify-center"
             >
               <motion.button
