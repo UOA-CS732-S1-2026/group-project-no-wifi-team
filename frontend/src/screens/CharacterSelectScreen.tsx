@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
 import { arrowLeft, arrowRight, backHomeBtn, characterBg, heroLeft, heroPlane, heroRight } from '../assets/CharacterSelect'
@@ -6,9 +7,12 @@ import { characters, DESIGN_HEIGHT, DESIGN_WIDTH, Character } from '../component
 import { DesktopCharacterCard } from '../components/CharacterSelectScreen/DesktopCharacterCard'
 import { useIsMobile, useResponsiveStageScale } from '../components/CharacterSelectScreen/hooks'
 import { MobileCharacterCard } from '../components/CharacterSelectScreen/MobileCharacterCard'
+import { selectCharacter } from '../slices/gameSlice'
+import type { AppDispatch } from '../store'
 
 export function CharacterSelectScreen() {
   const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
   const scrollRef = useRef<HTMLDivElement>(null)
   const stageScale = useResponsiveStageScale()
   const isMobile = useIsMobile()
@@ -29,6 +33,7 @@ export function CharacterSelectScreen() {
 
   function chooseCharacter(character: Character) {
     localStorage.setItem('selectedCharacter', JSON.stringify(character))
+    dispatch(selectCharacter(character))
     navigate('/monthly-task-selection')
   }
 
