@@ -129,7 +129,7 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
       <AttributeBar intelligence={stats.intelligence} health={stats.health} wealth={stats.money} />
 
       <main className="flex flex-1 items-center justify-center px-8 pb-10 pt-4">
-        <div className="grid h-[620px] w-[1120px] grid-cols-[430px_1fr] items-center gap-10">
+        <div className="grid w-full max-w-[1120px] grid-cols-[minmax(0,430px)_1fr] items-stretch gap-10">
           <TaskChoicePanel
             currentTask={currentTask}
             taskIndex={taskIndex}

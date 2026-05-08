@@ -7,7 +7,7 @@ interface Props {
 export function TaskArtworkPanel({ image }: Props) {
   return (
     <section
-      className="relative flex h-[600px] items-center justify-center px-8 py-10"
+      className="relative flex h-full min-h-[400px] items-center justify-center px-8 py-10"
       style={{
         backgroundImage: `url(${selectedTasksBg})`,
         backgroundSize: '100% 100%',

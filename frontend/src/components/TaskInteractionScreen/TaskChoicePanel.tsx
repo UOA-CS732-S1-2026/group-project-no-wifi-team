@@ -24,7 +24,7 @@ export function TaskChoicePanel({
 }: Props) {
   return (
     <section
-      className="relative flex h-[600px] flex-col px-10 pb-9 pt-14"
+      className="relative flex h-full min-h-[520px] flex-col px-10 pb-9 pt-14"
       style={{
         backgroundImage: `url(${taskChoiceBg})`,
         backgroundSize: '100% 100%',
@@ -42,7 +42,7 @@ export function TaskChoicePanel({
         {currentTask.title}
       </h1>
 
-      <p className="mt-2 h-[72px] overflow-hidden font-serif text-[15px] italic leading-[1.55] text-[#5d4935]">
+      <p className="mt-2 flex-1 overflow-hidden font-serif text-[15px] italic leading-[1.55] text-[#5d4935]">
         {selectedOption ? selectedOption.resultText : currentTask.description}
       </p>
 
