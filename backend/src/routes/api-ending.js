@@ -1,91 +1,11 @@
 import express from 'express'
 import Ending from '../db/ending.js'
+import { endingData } from '../data/endingData.js'
 
 const router = express.Router()
 
-const defaultEndings = [
-    {
-        endingId: 'academic-success',
-        endingKey: 'academic-success',
-        title: 'Academic Success',
-        status: 'Locked',
-        category: 'Study',
-        description: 'You focused on study and achieved strong academic results.',
-        image: 'ending-academic-success.png',
-    },
-    {
-        endingId: 'balanced-life',
-        endingKey: 'balanced-life',
-        title: 'Balanced Life',
-        status: 'Locked',
-        category: 'Balance',
-        description:
-            'You balanced study, health, and daily life as an international student.',
-        image: 'ending-balanced-life.png',
-    },
-    {
-        endingId: 'burnout-ending',
-        endingKey: 'burnout-ending',
-        title: 'Burnout Ending',
-        status: 'Locked',
-        category: 'Health',
-        description:
-            'You pushed yourself too hard and forgot to take care of your health.',
-        image: 'ending-burnout-ending.png',
-    },
-    {
-        endingId: 'financial-freedom',
-        endingKey: 'financial-freedom',
-        title: 'Financial Freedom',
-        status: 'Locked',
-        category: 'Wealth',
-        description:
-            'You managed money carefully and became financially stable.',
-        image: 'ending-financial-freedom.png',
-    },
-    {
-        endingId: 'social-butterfly',
-        endingKey: 'social-butterfly',
-        title: 'Social Butterfly',
-        status: 'Locked',
-        category: 'Social',
-        description:
-            'You built strong friendships and enjoyed your student life.',
-        image: 'ending-social-butterfly.png',
-    },
-    {
-        endingId: 'homesick-heart',
-        endingKey: 'homesick-heart',
-        title: 'Homesick Heart',
-        status: 'Locked',
-        category: 'Emotion',
-        description: 'You missed home deeply while studying overseas.',
-        image: 'ending-homesick-heart.png',
-    },
-    {
-        endingId: 'money-over-everything',
-        endingKey: 'money-over-everything',
-        title: 'Money Over Everything',
-        status: 'Locked',
-        category: 'Wealth',
-        description:
-            'You focused too much on money and lost sight of other parts of life.',
-        image: 'ending-money-over-everything.png',
-    },
-    {
-        endingId: 'lost-in-choices',
-        endingKey: 'lost-in-choices',
-        title: 'Lost in Choices',
-        status: 'Locked',
-        category: 'Decision',
-        description:
-            'Too many choices made your journey confusing and uncertain.',
-        image: 'ending-lost-in-choices.png',
-    },
-]
-
 async function seedOrUpdateDefaultEndings() {
-    for (const ending of defaultEndings) {
+    for (const ending of endingData) {
         await Ending.updateOne(
             {
                 $or: [
@@ -103,7 +23,7 @@ async function seedOrUpdateDefaultEndings() {
                     image: ending.image,
                 },
                 $setOnInsert: {
-                    status: ending.status,
+                    status: 'Locked',
                 },
             },
             {
@@ -119,12 +39,10 @@ router.get('/', async (req, res) => {
 
         const endings = await Ending.find({}).lean()
 
-        const sortedEndings = defaultEndings
-            .map((defaultEnding) =>
+        const sortedEndings = endingData
+            .map((def) =>
                 endings.find(
-                    (ending) =>
-                        ending.endingId === defaultEnding.endingId ||
-                        ending.endingKey === defaultEnding.endingKey,
+                    (e) => e.endingId === def.endingId || e.endingKey === def.endingKey,
                 ),
             )
             .filter(Boolean)
