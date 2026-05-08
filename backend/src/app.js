@@ -22,9 +22,10 @@ app.use(express.static("public"));
 import apiRoutes from "./routes/api.js";
 app.use("/api", apiRoutes);
 
-// Use Cloudflare's DNS servers to avoid DNS resolution issues in some environments.
-import dns from "node:dns/promises";
-dns.setServers(["1.1.1.1"]);
+// Use Google's DNS servers to avoid DNS resolution issues in some environments.
+// Uncomment the following lines if you encounter DNS resolution issues when connecting to the database. This is a workaround for environments where the default DNS servers may not resolve the database host correctly.
+// import dns from "node:dns/promises";
+// dns.setServers(["8.8.8.8", "130.216.1.1"]); // Google's public DNS servers and University's DNS server
 
 // Start the DB running. Then, once it's connected, start the server.
 await mongoose.connect(process.env.DB_URL);
