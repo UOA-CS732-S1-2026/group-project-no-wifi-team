@@ -54,10 +54,10 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
 
   const [data, setData] = useState<QuarterlySummaryProps | null>(null)
 
-  // mockUser
-  const getUserId = () => {
-    return 'guest_mock_123456'
-  }
+  // // mockUser
+  // const getUserId = () => {
+  //   return 'guest_mock_123456'
+  // }
 
   useEffect(() => {
     if (routeSummary) {
@@ -65,16 +65,16 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
       return
     }
 
-    fetch('/api/game/quarterly-summary', {
-      headers: {
-        'x-user-id': getUserId(),
-      },
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        setData(json)
-      })
-      .catch((err) => console.error('Failed to fetch summary:', err))
+    // fetch('/api/game/quarterly-summary', {
+    //   headers: {
+    //     'x-user-id': getUserId(),
+    //   },
+    // })
+    //   .then((res) => res.json())
+    //   .then((json) => {
+    //     setData(json)
+    //   })
+    //   .catch((err) => console.error('Failed to fetch summary:', err))
   }, [routeSummary])
 
   // if (loading) {
