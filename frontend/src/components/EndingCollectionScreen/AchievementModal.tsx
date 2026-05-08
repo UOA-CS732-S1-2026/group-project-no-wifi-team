@@ -1,11 +1,41 @@
-import { achievements } from './constants'
+import { useEffect, useState } from 'react'
 
 type AchievementModalProps = {
   onClose: () => void
 }
+type BackendAchievement = {
+  _id?: string
+  achievementKey: string
+  title: string
+  description: string
+  category: string
+  conditionText?: string
+  unlocked?: boolean
+}
+
+type AchievementsApiResponse = {
+  success: boolean
+  total: number
+  data: BackendAchievement[]
+}
 
 export function AchievementModal({ onClose }: AchievementModalProps) {
-  const unlockedCount = achievements.filter((item) => item.unlocked).length
+  const [achievements, setAchievements] = useState<BackendAchievement[]>([])
+
+  useEffect(() => {
+    fetch('/api/achievements')
+      .then((res) => res.json())
+      .then((result: AchievementsApiResponse) => {
+        if (result.success) {
+          setAchievements(result.data)
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to load achievements:', error)
+      })
+  }, [])
+
+  const unlockedCount = achievements.filter((item) => item.unlocked ?? true).length
 
   return (
     <div
@@ -41,44 +71,54 @@ export function AchievementModal({ onClose }: AchievementModalProps) {
         </header>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {achievements.map((achievement) => (
-            <article
-              key={achievement.id}
-              className={`rounded-[18px] border-[2px] p-4 shadow-sm ${
-                achievement.unlocked
-                  ? 'border-[#cfa472] bg-[#fff8e8]'
-                  : 'border-[#b9a28b] bg-[#e9dfd0]'
-              }`}
-            >
-              <div className="mb-3 flex items-center gap-3">
-                <div
-                  className={`flex h-[48px] w-[48px] items-center justify-center rounded-full border-2 text-[22px] ${
-                    achievement.unlocked
-                      ? 'border-[#73864f] bg-[#dfe8b8]'
-                      : 'border-[#8a6a4a] bg-[#c9b69d]'
-                  }`}
-                >
-                  {achievement.unlocked ? '★' : '🔒'}
-                </div>
+{achievements.map((achievement) => {
+  const isUnlocked = achievement.unlocked ?? true
 
-                <div>
-                  <h3 className="text-[18px] font-bold leading-tight text-[#5c3318]">
-                    {achievement.title}
-                  </h3>
+  return (
+    <article
+      key={achievement.achievementKey}
+      className={`rounded-[18px] border-[2px] p-4 shadow-sm ${
+        isUnlocked
+          ? 'border-[#cfa472] bg-[#fff8e8]'
+          : 'border-[#b9a28b] bg-[#e9dfd0]'
+      }`}
+    >
+      <div className="mb-3 flex items-center gap-3">
+        <div
+          className={`flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-full border-2 text-[22px] ${
+            isUnlocked
+              ? 'border-[#73864f] bg-[#dfe8b8]'
+              : 'border-[#8a6a4a] bg-[#c9b69d]'
+          }`}
+        >
+          {isUnlocked ? '★' : '🔒'}
+        </div>
 
-                  <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9a6840]">
-                    {achievement.unlocked ? 'Unlocked' : 'Locked'}
-                  </p>
-                </div>
-              </div>
+        <div className="min-w-0">
+          <h3 className="text-[18px] font-bold leading-tight text-[#5c3318]">
+            {achievement.title}
+          </h3>
 
-              <p className="min-h-[72px] rounded-[12px] bg-[#f4e4c8]/80 px-3 py-3 text-[14px] leading-[1.45] text-[#714729]">
-                {achievement.unlocked
-                  ? achievement.description
-                  : 'This achievement is still locked. Continue playing to unlock it.'}
-              </p>
-            </article>
-          ))}
+          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9a6840]">
+            {isUnlocked ? 'Unlocked' : 'Locked'}
+          </p>
+        </div>
+      </div>
+
+      <p className="min-h-[72px] rounded-[12px] bg-[#f4e4c8]/80 px-3 py-3 text-[14px] leading-[1.45] text-[#714729]">
+        {isUnlocked
+          ? achievement.description
+          : 'This achievement is still locked. Continue playing to unlock it.'}
+      </p>
+
+      {achievement.conditionText && (
+        <p className="mt-3 rounded-[10px] bg-[#e9d0a8] px-3 py-2 text-[12px] leading-[1.4] text-[#6b4427]">
+          {achievement.conditionText}
+        </p>
+      )}
+    </article>
+  )
+})}
         </div>
       </section>
     </div>
