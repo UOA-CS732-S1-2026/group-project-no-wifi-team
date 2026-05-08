@@ -1,10 +1,21 @@
 import { configureStore } from '@reduxjs/toolkit'
 import gameReducer from './slices/gameSlice'
+import gameHistoryReducer, { STORAGE_KEY } from './store/gameHistorySlice'
 
 export const store = configureStore({
   reducer: {
     game: gameReducer,
+    gameHistory: gameHistoryReducer,
   },
+})
+
+store.subscribe(() => {
+  try {
+    const { records } = store.getState().gameHistory
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
+  } catch {
+    // localStorage quota exceeded — silently degrade
+  }
 })
 
 export type RootState = ReturnType<typeof store.getState>
