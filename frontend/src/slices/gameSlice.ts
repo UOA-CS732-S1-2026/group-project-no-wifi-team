@@ -50,6 +50,9 @@ const gameSlice = createSlice({
       const { quarter, selectedTasks, randomTask } = action.payload
       state.quarters[quarter] = { selectedTasks, randomTask }
     },
+    updateStats(state, action: PayloadAction<CharacterStats>) {
+      state.currentStats = action.payload
+    },
     advanceQuarter(state) {
       if (state.currentQuarter < 4) state.currentQuarter++
     },
@@ -65,6 +68,12 @@ const gameSlice = createSlice({
   },
 })
 
-export const { selectCharacter, confirmQuarterTasks, advanceQuarter, setQuarter, resetGame } =
-  gameSlice.actions
+export const {
+  selectCharacter,
+  confirmQuarterTasks,
+  updateStats,
+  advanceQuarter,
+  setQuarter,
+  resetGame,
+} = gameSlice.actions
 export default gameSlice.reducer
