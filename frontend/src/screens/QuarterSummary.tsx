@@ -94,6 +94,8 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
     quartersRemaining = 4 - quarterIndex,
   } = { ...initialProps, ...data }
 
+  const duration = 0.5 // default duration for animations
+
   return (
     <main
       className="relative flex h-dvh w-full items-center justify-center overflow-hidden font-serif text-[#5a3218]"
@@ -117,7 +119,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ ease: 'easeInOut', delay: 0.3, duration: 1 }}
+            transition={{ ease: 'easeInOut', delay: 0.3, duration: duration }}
             className="absolute bg-center bg-no-repeat"
             style={{
               width: `1310px`,
@@ -132,7 +134,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ ease: 'easeInOut', delay: 1, duration: 1 }}
+              transition={{ ease: 'easeInOut', delay: duration, duration: duration }}
               className="pt-[4px] w-[840px] mx-auto"
             >
               <img src={quarterTitle} alt="Summary Title" className="w-full drop-shadow-lg" />
@@ -146,7 +148,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                   <motion.div
                     initial={{ y: 40, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ ease: 'easeInOut', delay: 2, duration: 1 }}
+                    transition={{ ease: 'easeInOut', delay: 2 * duration, duration: duration }}
                     style={{
                       backgroundImage: `url(${quarterCalender})`,
                       width: '460px',
@@ -158,7 +160,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                     <motion.div
                       initial={{ y: -10, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      transition={{ ease: 'easeInOut', delay: 3, duration: 1 }}
+                      transition={{ ease: 'easeInOut', delay: 3 * duration, duration: duration }}
                       className="mt-[48px] ml-[10px] text-[74px] font-black text-[#4b3116]"
                     >
                       {`Q${quarterIndex}`}
@@ -172,7 +174,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                     <motion.div
                       initial={{ x: 50, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
-                      transition={{ ease: 'easeInOut', delay: 4, duration: 1 }}
+                      transition={{ ease: 'easeInOut', delay: 4 * duration, duration: duration }}
                       className="mt-[6px]"
                     >
                       <span className="text-4xl font-bold text-[#5c3318] leading-[54px]">
@@ -183,7 +185,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                     <motion.div
                       initial={{ x: 50, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
-                      transition={{ ease: 'easeInOut', delay: 5, duration: 1 }}
+                      transition={{ ease: 'easeInOut', delay: 5 * duration, duration: duration }}
                     >
                       <span className="text-4xl font-bold text-[#5c3318] leading-[54px]">
                         Graduation in <span className="font-black">{quartersRemaining}</span>{' '}
@@ -193,7 +195,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                     <motion.div
                       initial={{ x: 50, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
-                      transition={{ ease: 'easeInOut', delay: 6, duration: 1 }}
+                      transition={{ ease: 'easeInOut', delay: 6 * duration, duration: duration }}
                     >
                       <span className="text-4xl font-bold text-[#5c3318] leading-[54px]">
                         Tasks completed:{' '}
@@ -201,19 +203,19 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                           <CountUp
                             from={0}
                             to={tasksCompleted}
-                            delay={6.3}
-                            duration={0.5}
+                            delay={6 * duration}
+                            duration={duration}
                           ></CountUp>{' '}
                           / {totalTasks}
                         </span>{' '}
                       </span>
                     </motion.div>
                     {stats.map((stat, index) => (
-                      <div key={index} className="flex items-center justify-between">
+                      <div key={index} className="flex items-center justify-between w-[400px]">
                         <motion.div
                           initial={{ x: 50, opacity: 0 }}
                           animate={{ x: 0, opacity: 1 }}
-                          transition={{ ease: 'easeInOut', delay: 7 + index * 3, duration: 1 }}
+                          transition={{ ease: 'easeInOut', delay: 7 * duration + index * 3 * duration, duration: duration }}
                           className="flex items-center text-3xl font-bold text-[#5c3318] pl-[8px] leading-[54px]"
                         >
                           <motion.div
@@ -221,11 +223,11 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                               scale: [1, 1.2, 1, 1.2, 1],
                             }}
                             transition={{
-                              duration: 1,
-                              repeat: 2,
+                              duration: duration,
+                              repeat: 1,
                               ease: 'easeInOut',
                               times: [0, 0.2, 0.4, 0.6, 1],
-                              delay: 7 + index * 3 + 0.5,
+                              delay: 7 * duration + index * 3 * duration + 0.5 * duration,
                             }}
                             className="w-[54px] h-[54px] mr-2 bg-contain bg-no-repeat bg-center"
                             style={{
@@ -238,23 +240,23 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                           <motion.span
                             initial={{ x: 50, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
-                            transition={{ ease: 'easeInOut', delay: 7 + index * 3, duration: 1 }}
+                            transition={{ ease: 'easeInOut', delay: 7 * duration + index * 3 * duration, duration: duration }}
                             className="text-4xl font-black text-[#5c3318]"
                           >
-                            <CountUp
+                            {/* <CountUp
                               from={stat.value - stat.delta}
                               to={stat.value}
-                              delay={7 + index * 3 + 2}
-                              duration={1}
-                            />
+                              delay={7 * duration + index * 3 * duration + 2 * duration}
+                              duration={duration}
+                            /> */}
                           </motion.span>
                           <motion.div
                             initial={{ x: -100, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{
                               ease: 'easeInOut',
-                              delay: 7 + index * 3 + 1,
-                              duration: 1,
+                              delay: 7 * duration + index * 3 * duration + 1 * duration,
+                              duration: duration,
                             }}
                             className="flex min-w-[100px] items-center gap-1"
                           >
@@ -262,10 +264,10 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                               <motion.img
                                 animate={{ y: [0, stat.delta > 0 ? -6 : 6, 0], scale: [1, 1.1, 1] }}
                                 transition={{
-                                  duration: 0.6,
+                                  duration: 0.6 * duration,
                                   repeat: 2,
                                   ease: 'easeOut',
-                                  delay: 7 + index * 3 + 1.5,
+                                  delay: 7 * duration + index * 3 * duration + 1.5 * duration,
                                 }}
                                 src={stat.delta > 0 ? quarterArrowUp : quarterArrowDown}
                                 alt="arrow-change"
@@ -277,12 +279,12 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                                 stat.delta >= 0 ? 'text-[#4a7228]' : 'text-[#a23b3b]'
                               }`}
                             >
-                              <CountUp
+                              {/* <CountUp
                                 from={0}
                                 to={Math.abs(stat.delta)}
-                                delay={7 + index * 3 + 1}
-                                duration={1}
-                              />
+                                delay={7 * duration + index * 3 * duration + 1 * duration}
+                                duration={duration}
+                              /> */}
                             </span>
                           </motion.div>
                         </div>
@@ -297,7 +299,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
             <motion.div
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ ease: 'easeInOut', delay: 17, duration: 1 }}
+              transition={{ ease: 'easeInOut', delay: 16 * duration + 0.3, duration: duration }}
               className="w-full flex items-center justify-center"
             >
               <motion.button
