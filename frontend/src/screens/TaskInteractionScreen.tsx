@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import commonBackground from '../assets/CommonImage/common-background.png'
 import { AttributeBar } from '../components/MonthlyTaskSelection'
-import type { RootState } from '../store'
+import type { AppDispatch, RootState } from '../store'
+import { updateStats } from '../slices/gameSlice'
 import {
   TaskArtworkPanel,
   TaskChoicePanel,
@@ -23,6 +24,7 @@ interface TaskInteractionScreenProps {
 
 export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
   const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
   const location = useLocation()
   const routeState = location.state as RouteState | null
   const currentQuarter = useSelector((s: RootState) => s.game.currentQuarter) as 1 | 2 | 3 | 4
@@ -95,6 +97,13 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
   const handleNext = () => {
     if (isLastTask) {
+      dispatch(
+        updateStats({
+          intelligence: stats.intelligence,
+          health: stats.health,
+          wealth: stats.money,
+        }),
+      )
       navigate('/quarterly-summary', { state: buildSummaryState(stats) })
       return
     }
