@@ -22,7 +22,6 @@ app.use(express.static("public"));
 import apiRoutes from "./routes/api.js";
 app.use("/api", apiRoutes);
 
-<<<<<<< HEAD
 // Use Google's DNS servers to avoid DNS resolution issues in some environments.
 // This is a workaround for environments where the default DNS servers may not resolve the database host correctly.
 // Prefer system DNS; fall back to Google's public DNS servers and University's DNS server if system resolver can't reach.
