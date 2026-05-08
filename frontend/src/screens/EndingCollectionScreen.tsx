@@ -87,7 +87,7 @@ export function EndingCollectionScreen() {
             <p className="mt-3 text-[14px] leading-[1.6] text-[#7a5030]">
               Please make sure your backend is running at:
               <br />
-              <span className="font-bold">http://localhost:3000/api/endings</span>
+              <span className="font-bold">http://localhost:3001/api/endings</span>
             </p>
 
             <button

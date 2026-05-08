@@ -1,14 +1,37 @@
-import { endingCardFrame, endingCardLockedFrame } from '../../assets/EndingCollection'
+import {
+  endingCardFrame,
+  endingCardLockedFrame,
+  endingModelMinorityRealVersion,
+  endingLibraryResidentLandlord,
+  endingGpa4Hairline04,
+  endingMainCharacterParty,
+  endingPartTimeTycoon,
+  endingSmartHeadEmptyPocket,
+  endingShowedUpSurvived,
+  endingSpeedrunEarlyRetirement,
+} from '../../assets/EndingCollection'
 import type { BackendEndingItem } from './types'
 
 type EndingCardProps = {
   ending: BackendEndingItem
+  
 }
 
+const endingImageMap: Record<string, string> = {
+  'ending-model-minority-real-version.png': endingModelMinorityRealVersion,
+  'ending-library-resident-landlord.png': endingLibraryResidentLandlord,
+  'ending-gpa-4-hairline-04.png': endingGpa4Hairline04,
+  'ending-main-character-party.png': endingMainCharacterParty,
+  'ending-part-time-tycoon.png': endingPartTimeTycoon,
+  'ending-smart-head-empty-pocket.png': endingSmartHeadEmptyPocket,
+  'ending-showed-up-survived.png': endingShowedUpSurvived,
+  'ending-speedrun-early-retirement.png': endingSpeedrunEarlyRetirement,
+}
 export function EndingCard({ ending }: EndingCardProps) {
   const isUnlocked = ending.status === 'Unlocked'
   const frameImage = isUnlocked ? endingCardFrame : endingCardLockedFrame
-
+  const endingImage = ending.image ? endingImageMap[ending.image] : undefined
+console.log(ending.image, endingImage)
   return (
     <article className="relative h-[305px] w-[295px] shrink-0 transition duration-200 hover:-translate-y-1 hover:scale-[1.02]">
       <img
@@ -26,6 +49,15 @@ export function EndingCard({ ending }: EndingCardProps) {
       </div>
 
       <div className="absolute left-[43px] top-[33px] h-[156px] w-[206px] overflow-hidden rounded-[10px] border border-[#d6b27c] bg-[#f5e2bd]">
+        {ending.image ? (
+      <img
+        src={endingImage}
+        alt={ending.title}
+        className={`h-full w-full object-cover ${
+          isUnlocked ? '' : 'grayscale opacity-55'
+        }`}
+      />
+      ) : (
         <div
           className={`flex h-full w-full items-center justify-center px-3 text-center text-[13px] font-bold leading-[1.3] ${
             isUnlocked ? 'bg-[#f7e8c7] text-[#8a5a32]' : 'bg-[#8b8071]/45 text-[#4f4439]'
@@ -33,6 +65,7 @@ export function EndingCard({ ending }: EndingCardProps) {
         >
           {isUnlocked ? 'Put Ending Image Here' : 'Locked Ending Image'}
         </div>
+        )}
       </div>
 
       <h3 className="absolute left-[50px] top-[190px] flex h-[60px] w-[188px] items-center justify-center text-center text-[15px] font-bold leading-[1.05] text-[#5a3218]">
