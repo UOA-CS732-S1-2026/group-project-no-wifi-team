@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'motion/react'
-import type { RootState } from '../store'
+import type { AppDispatch, RootState } from '../store'
 
 import {
   type AttributeSnapshot,
@@ -53,9 +53,11 @@ function numOr(v: unknown, fallback: number): number {
 export function EndingResultScreen() {
   const navigate          = useNavigate()
   const location          = useLocation()
-  const dispatch          = useDispatch()
+  const dispatch          = useDispatch<AppDispatch>()
   const selectedCharacter = useSelector((s: RootState) => s.game.selectedCharacter)
   const [showRankingsNotice, setShowRankingsNotice] = useState(false)
+  const hasFired       = useRef(false)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   const snapshot   = useMemo(() => readSnapshot(location.state),  [location.state])
   const ending     = useMemo(() => resolveEnding(snapshot),       [snapshot])
@@ -68,7 +70,11 @@ export function EndingResultScreen() {
 
   const [resultId] = useState(() => generateId())
 
+  // Guard prevents the double-invocation React 18 StrictMode causes in dev.
   useEffect(() => {
+    if (hasFired.current) return
+    hasFired.current = true
+
     const now = Date.now()
     const achCount = ACH_COUNT_BY_RANK[ending.rank] ?? 0
     const achievements = ACHIEVEMENT_IDS.slice(0, achCount)
@@ -104,7 +110,12 @@ export function EndingResultScreen() {
       achievements,
       timestamp:   now,
     }).catch(() => { /* offline or server unavailable — localStorage copy remains */ })
-  }, [dispatch, resultId])
+  }, [dispatch, resultId, ending, score, snapshot, playerName, characterId])
+
+  // Move focus into the dialog when it opens for keyboard/screen-reader accessibility.
+  useEffect(() => {
+    if (showRankingsNotice) closeButtonRef.current?.focus()
+  }, [showRankingsNotice])
 
   const achievementImages = ALL_ACHIEVEMENTS.slice(0, ACH_COUNT_BY_RANK[ending.rank] ?? 0)
 
@@ -198,17 +209,24 @@ export function EndingResultScreen() {
 
       {/* ── Rankings "not available" notice ──────────────────────────────────── */}
       {showRankingsNotice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4 backdrop-blur-sm">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="rankings-dialog-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4 backdrop-blur-sm"
+          onKeyDown={(e) => { if (e.key === 'Escape') setShowRankingsNotice(false) }}
+        >
           <div className="relative w-full max-w-sm rounded-[2rem] border-4 border-[#7a4b2b] bg-[#f7e8c6] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)] text-center">
             <div className="rounded-[1.5rem] border-2 border-[#c49a61] bg-[#fff7df]/80 px-5 py-5 shadow-inner">
               <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#9a6a3e]">Ranking List</p>
-              <h2 className="mt-2 text-2xl font-bold text-[#7a4b2b]">Coming Soon</h2>
+              <h2 id="rankings-dialog-title" className="mt-2 text-2xl font-bold text-[#7a4b2b]">Coming Soon</h2>
               <p className="mx-auto mt-3 text-sm leading-relaxed text-[#8a6446]">
                 This feature is not available yet. Check back later!
               </p>
             </div>
             <button
               type="button"
+              ref={closeButtonRef}
               onClick={() => setShowRankingsNotice(false)}
               className="mx-auto mt-5 block rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md transition hover:-translate-y-0.5 hover:bg-[#7a4b2b] active:scale-95"
             >
