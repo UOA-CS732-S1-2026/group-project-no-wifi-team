@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { CountUp } from '../utils/CountUp'
+import commonBackground from '../assets/CommonImage/common-background.png'
 import {
-  commonBg,
   quarterBg,
   quarterCalender,
   quarterArrowDown,
@@ -95,20 +95,22 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
   } = { ...initialProps, ...data }
 
   return (
-    <main className="relative flex h-dvh w-full items-center justify-center overflow-hidden bg-[#4b2f1e] font-serif text-[#5a3218]">
+    <main
+      className="relative flex h-dvh w-full items-center justify-center overflow-hidden font-serif text-[#5a3218]"
+      style={{ backgroundImage: `url(${commonBackground})`, backgroundSize: '100% 100%' }}
+    >
       <div
-        className="relative shadow-2xl overflow-hidden"
+        className="relative overflow-hidden"
         style={{
           width: `${DESIGN_WIDTH * scale}px`,
           height: `${DESIGN_HEIGHT * scale}px`,
         }}
       >
         <div
-          className="relative origin-top-left bg-cover bg-center bg-no-repeat"
+          className="relative origin-top-left"
           style={{
             width: `${DESIGN_WIDTH}px`,
             height: `${DESIGN_HEIGHT}px`,
-            backgroundImage: `url(${commonBg})`,
             transform: `scale(${scale})`,
           }}
         >
