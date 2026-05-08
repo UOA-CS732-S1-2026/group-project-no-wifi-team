@@ -22,9 +22,9 @@ app.use(express.static("public"));
 import apiRoutes from "./routes/api.js";
 app.use("/api", apiRoutes);
 
-// Use Cloudflare's DNS servers to avoid DNS resolution issues in some environments.
+// Prefer system DNS; fall back to Cloudflare if system resolver can't reach.
 import dns from "node:dns/promises";
-dns.setServers(["1.1.1.1"]);
+dns.setServers([...dns.getServers(), "1.1.1.1"]);
 
 // Start the DB running. Then, once it's connected, start the server.
 await mongoose.connect(process.env.DB_URL);
