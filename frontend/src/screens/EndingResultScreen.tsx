@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'motion/react'
+import type { RootState } from '../store'
 
 import {
   type AttributeSnapshot,
@@ -23,6 +24,7 @@ import btnAchCollection    from '../assets/endingPage-image/button-achievement-c
 
 // ── Achievement pool — order matches unlock priority ──────────────────────────
 const ALL_ACHIEVEMENTS = [achGraduate, achCulturalExplorer, achGlobalAdventurer]
+const ACHIEVEMENT_IDS = ['graduate', 'cultural-explorer', 'global-adventurer']
 const ACH_COUNT_BY_RANK: Record<string, number> = { S: 3, A: 2, B: 1, C: 0 }
 
 // ── Location state ────────────────────────────────────────────────────────────
@@ -49,21 +51,31 @@ function numOr(v: unknown, fallback: number): number {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function EndingResultScreen() {
-  const navigate  = useNavigate()
-  const location  = useLocation()
-  const dispatch  = useDispatch()
+  const navigate          = useNavigate()
+  const location          = useLocation()
+  const dispatch          = useDispatch()
+  const selectedCharacter = useSelector((s: RootState) => s.game.selectedCharacter)
+  const [showRankingsNotice, setShowRankingsNotice] = useState(false)
 
   const snapshot   = useMemo(() => readSnapshot(location.state),  [location.state])
   const ending     = useMemo(() => resolveEnding(snapshot),       [snapshot])
   const score      = useMemo(() => calculateScore(snapshot),      [snapshot])
-  const playerName = (location.state as EndingLocationState | null)?.playerName ?? 'Player'
+
+  const playerName = selectedCharacter?.title
+    ?? (location.state as EndingLocationState | null)?.playerName
+    ?? 'Player'
+  const characterId = selectedCharacter?.id ?? null
 
   const [resultId] = useState(() => generateId())
 
   useEffect(() => {
     const now = Date.now()
+    const achCount = ACH_COUNT_BY_RANK[ending.rank] ?? 0
+    const achievements = ACHIEVEMENT_IDS.slice(0, achCount)
+
     const record: GameResult = {
       id:          resultId,
+      characterId,
       playerName,
       score,
       endingId:    ending.id,
@@ -71,6 +83,7 @@ export function EndingResultScreen() {
       endingRank:  ending.rank,
       endingTheme: ending.theme,
       snapshot,
+      achievements,
       timestamp:   now,
     }
     dispatch(addRecord(record))
@@ -80,6 +93,7 @@ export function EndingResultScreen() {
     const userId = localStorage.getItem('guestId') || localStorage.getItem('guest_id') || null
     post('/game/result', {
       userId,
+      characterId,
       playerName,
       score,
       endingId:    ending.id,
@@ -87,11 +101,12 @@ export function EndingResultScreen() {
       endingRank:  ending.rank,
       endingTheme: ending.theme,
       snapshot,
+      achievements,
       timestamp:   now,
     }).catch(() => { /* offline or server unavailable — localStorage copy remains */ })
   }, [dispatch, resultId])
 
-  const achievements = ALL_ACHIEVEMENTS.slice(0, ACH_COUNT_BY_RANK[ending.rank] ?? 0)
+  const achievementImages = ALL_ACHIEVEMENTS.slice(0, ACH_COUNT_BY_RANK[ending.rank] ?? 0)
 
   // Shared spring ease
   const spring = { ease: [0.22, 1, 0.36, 1] as const }
@@ -105,7 +120,7 @@ export function EndingResultScreen() {
       {/* ── Ranking List banner (viewport-relative) ─────────────────────────── */}
       <motion.button
         className="er-banner"
-        onClick={() => navigate('/rankings')}
+        onClick={() => setShowRankingsNotice(true)}
         aria-label="Ranking List"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -154,14 +169,14 @@ export function EndingResultScreen() {
           </motion.p>
 
           {/* Achievement cards (margin-top:auto pushes to card bottom) */}
-          {achievements.length > 0 && (
+          {achievementImages.length > 0 && (
             <motion.div
               className="er-achievements"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.48, ...spring }}
             >
-              {achievements.map((src, i) => (
+              {achievementImages.map((src, i) => (
                 <img key={i} src={src} alt={`Achievement ${i + 1}`} />
               ))}
             </motion.div>
@@ -181,6 +196,27 @@ export function EndingResultScreen() {
         </motion.div>
       </div>
 
+      {/* ── Rankings "not available" notice ──────────────────────────────────── */}
+      {showRankingsNotice && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-sm rounded-[2rem] border-4 border-[#7a4b2b] bg-[#f7e8c6] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)] text-center">
+            <div className="rounded-[1.5rem] border-2 border-[#c49a61] bg-[#fff7df]/80 px-5 py-5 shadow-inner">
+              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#9a6a3e]">Ranking List</p>
+              <h2 className="mt-2 text-2xl font-bold text-[#7a4b2b]">Coming Soon</h2>
+              <p className="mx-auto mt-3 text-sm leading-relaxed text-[#8a6446]">
+                This feature is not available yet. Check back later!
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowRankingsNotice(false)}
+              className="mx-auto mt-5 block rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md transition hover:-translate-y-0.5 hover:bg-[#7a4b2b] active:scale-95"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -2,6 +2,7 @@ import type { AttributeSnapshot, EndingRank, EndingTheme } from './endingResult'
 
 export interface GameResult {
   id: string
+  characterId: string | null
   playerName: string
   score: number
   endingId: string
@@ -9,6 +10,7 @@ export interface GameResult {
   endingRank: EndingRank
   endingTheme: EndingTheme
   snapshot: AttributeSnapshot
+  achievements: string[]
   timestamp: number
 }
 

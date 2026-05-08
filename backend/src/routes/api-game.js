@@ -106,7 +106,7 @@ router.post("/task/choice", async (req, res) => {
  */
 router.post("/result", async (req, res) => {
   try {
-    const { userId, playerName, score, endingId, endingTitle, endingRank, endingTheme, snapshot, timestamp } = req.body;
+    const { userId, characterId, playerName, score, endingId, endingTitle, endingRank, endingTheme, snapshot, achievements, timestamp } = req.body;
 
     if (!playerName || !endingId || !endingTitle || !endingRank || !endingTheme || !snapshot) {
       return res.status(400).json({ success: false, message: "Missing required fields" });
@@ -114,6 +114,7 @@ router.post("/result", async (req, res) => {
 
     const result = await GameResult.create({
       userId: userId ?? null,
+      characterId: characterId ?? null,
       playerName,
       score: Number(score) || 0,
       endingId,
@@ -125,6 +126,7 @@ router.post("/result", async (req, res) => {
         health: Number(snapshot.health) || 0,
         wealth: Number(snapshot.wealth) || 0,
       },
+      achievements: Array.isArray(achievements) ? achievements : [],
       timestamp: timestamp ?? Date.now(),
     });
 
