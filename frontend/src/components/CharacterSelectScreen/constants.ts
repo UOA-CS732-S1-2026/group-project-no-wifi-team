@@ -4,6 +4,7 @@ import {
   iconFitness,
   iconOrdinary,
   iconHeavenlyDragon,
+  iconWorking,
   selectGreen,
   selectGold,
   selectBlue,
@@ -43,9 +44,9 @@ export const characters: Character[] = [
     icon: iconAcademic,
     selectButton: selectGreen,
     stats: {
-      intelligence: 96,
-      health: 30,
-      wealth: 55,
+      intelligence: 9,
+      health: 2,
+      wealth: 5,
     },
   },
   {
@@ -57,9 +58,9 @@ export const characters: Character[] = [
     icon: iconRich,
     selectButton: selectGold,
     stats: {
-      intelligence: 30,
-      health: 35,
-      wealth: 90,
+      intelligence: 2,
+      health: 3,
+      wealth: 9,
     },
   },
   {
@@ -71,9 +72,9 @@ export const characters: Character[] = [
     icon: iconFitness,
     selectButton: selectBlue,
     stats: {
-      intelligence: 50,
-      health: 95,
-      wealth: 30,
+      intelligence: 5,
+      health: 9,
+      wealth: 3,
     },
   },
   {
@@ -85,9 +86,23 @@ export const characters: Character[] = [
     icon: iconOrdinary,
     selectButton: selectRed,
     stats: {
-      intelligence: 60,
-      health: 60,
-      wealth: 60,
+      intelligence: 5,
+      health: 5,
+      wealth: 5,
+    },
+  },
+  {
+    id: 'hard-core-worker',
+    title: 'Hard-core Worker',
+    subtitle: 'MONEY-ABOVE-ALL ROUTE',
+    description:
+      'An international student who works everywhere just to make a living, never forgetting to earn money even amid a hectic study schedule.',
+    icon: iconWorking,
+    selectButton: selectGold,
+    stats: {
+      intelligence: 7,
+      health: 4,
+      wealth: 3,
     },
   },
   {
@@ -99,9 +114,9 @@ export const characters: Character[] = [
     icon: iconHeavenlyDragon,
     selectButton: selectBrown,
     stats: {
-      intelligence: 99,
-      health: 25,
-      wealth: 99,
+      intelligence: 10,
+      health: 2,
+      wealth: 10,
     },
   },
 ]
