@@ -9,10 +9,14 @@ export const store = configureStore({
   },
 })
 
+let previousRecords = store.getState().gameHistory.records
 store.subscribe(() => {
   try {
     const { records } = store.getState().gameHistory
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
+    if (records !== previousRecords) {
+      previousRecords = records
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
+    }
   } catch {
     // localStorage quota exceeded — silently degrade
   }
