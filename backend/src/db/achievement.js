@@ -30,8 +30,8 @@ const AchievementSchema = new mongoose.Schema(
 
         category: {
             type: String,
-            enum: ["study", "health", "wealth", "social", "special"],
-            default: "special",
+            enum: ["Study", "Health", "Wealth", "Crown"],
+            default: "Crown",
         },
 
         isDeleted: {
