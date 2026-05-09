@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const achievements = await Achievement.find({ isDeleted: { $ne: true } })
+    const achievements = await Achievement.find({})
       .sort({
         category: 1,
         title: 1,

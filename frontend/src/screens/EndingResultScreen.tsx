@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'motion/react'
-import type { AppDispatch, RootState } from '../store'
+import type { RootState } from '../store'
 
 import {
   type AttributeSnapshot,
@@ -23,11 +23,7 @@ import achGlobalAdventurer from '../assets/endingPage-image/achievement-card-glo
 import btnAchCollection    from '../assets/endingPage-image/button-achievement-collection.png'
 
 // ── Achievement pool — order matches unlock priority ──────────────────────────
-const ALL_ACHIEVEMENTS = [
-  { src: achGraduate,         rowClass: '[@media(orientation:landscape)]:w-[26vw] [@media(orientation:landscape)]:mb-[1vh]' },
-  { src: achCulturalExplorer, rowClass: '[@media(orientation:landscape)]:w-[27vw] [@media(orientation:landscape)]:mb-[1.5vh]' },
-  { src: achGlobalAdventurer, rowClass: '[@media(orientation:landscape)]:w-[26vw] [@media(orientation:landscape)]:mb-[1vh]' },
-]
+const ALL_ACHIEVEMENTS = [achGraduate, achCulturalExplorer, achGlobalAdventurer]
 const ACHIEVEMENT_IDS = ['graduate', 'cultural-explorer', 'global-adventurer']
 const ACH_COUNT_BY_RANK: Record<string, number> = { S: 3, A: 2, B: 1, C: 0 }
 
@@ -53,20 +49,13 @@ function numOr(v: unknown, fallback: number): number {
   return typeof v === 'number' && Number.isFinite(v) ? v : fallback
 }
 
-const BTN_ANIM = {
-  whileHover: { scale: 1.05, transition: { duration: 0.15 } },
-  whileTap:   { scale: 0.95, filter: 'drop-shadow(0 4px 16px rgba(40,20,5,0.65))', transition: { duration: 0.08 } },
-}
-
 // ── Component ─────────────────────────────────────────────────────────────────
 export function EndingResultScreen() {
   const navigate          = useNavigate()
   const location          = useLocation()
-  const dispatch          = useDispatch<AppDispatch>()
+  const dispatch          = useDispatch()
   const selectedCharacter = useSelector((s: RootState) => s.game.selectedCharacter)
   const [showRankingsNotice, setShowRankingsNotice] = useState(false)
-  const hasFired       = useRef(false)
-  const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   const snapshot   = useMemo(() => readSnapshot(location.state),  [location.state])
   const ending     = useMemo(() => resolveEnding(snapshot),       [snapshot])
@@ -79,11 +68,7 @@ export function EndingResultScreen() {
 
   const [resultId] = useState(() => generateId())
 
-  // Guard prevents the double-invocation React 18 StrictMode causes in dev.
   useEffect(() => {
-    if (hasFired.current) return
-    hasFired.current = true
-
     const now = Date.now()
     const achCount = ACH_COUNT_BY_RANK[ending.rank] ?? 0
     const achievements = ACHIEVEMENT_IDS.slice(0, achCount)
@@ -119,134 +104,116 @@ export function EndingResultScreen() {
       achievements,
       timestamp:   now,
     }).catch(() => { /* offline or server unavailable — localStorage copy remains */ })
-  }, [dispatch, resultId, ending, score, snapshot, playerName, characterId])
+  }, [dispatch, resultId])
 
-  // Move focus into the dialog when it opens for keyboard/screen-reader accessibility.
-  useEffect(() => {
-    if (showRankingsNotice) closeButtonRef.current?.focus()
-  }, [showRankingsNotice])
-
+  const achievementImages = ALL_ACHIEVEMENTS.slice(0, ACH_COUNT_BY_RANK[ending.rank] ?? 0)
 
   // Shared spring ease
   const spring = { ease: [0.22, 1, 0.36, 1] as const }
 
   return (
-    <div
-      className="relative w-screen h-dvh overflow-hidden font-serif"
-      style={{ backgroundImage: `url(${commonBg})`, backgroundSize: '100% 100%' }}
-    >
+    <div className="er-screen">
 
-      {/* ── Card ────────────────────────────────────────────────────────────── */}
-      <div className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 z-10">
+      {/* ── Background ─────────────────────────────────────────────────────── */}
+      <img src={commonBg} alt="" aria-hidden="true" className="er-bg" />
+
+      {/* ── Ranking List banner (viewport-relative) ─────────────────────────── */}
+      <motion.button
+        className="er-banner"
+        onClick={() => setShowRankingsNotice(true)}
+        aria-label="Ranking List"
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.15, ...spring }}
+      >
+        <img src={rankingListBanner} alt="Ranking List" />
+      </motion.button>
+
+      {/* ── Card position wrapper (centering via CSS transform) ─────────────── */}
+      <div className="er-card-wrap">
         <motion.div
-          className="relative w-[89vw] h-[86vh] [background-size:100%_100%] pt-[14vh] px-[9vw] flex flex-col"
+          className="er-card"
           style={{ backgroundImage: `url(${endingMiddleBg})` }}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ...spring }}
         >
-          {/* Title row + divider — wrapped so divider right-aligns with subtitle */}
+          {/* Title row */}
           <motion.div
-            className="grid grid-cols-[min-content] self-start shrink-0"
+            className="er-title-row"
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.15, ...spring }}
           >
-            <div className="flex items-baseline gap-[3.5vw]">
-              <span className="text-[4vw] font-black uppercase text-[#3d2b1f] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.6)]" style={{ fontFamily: "Georgia, Cambria, serif" }}>ENDING</span>
-              <span className="text-[2.6vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.2)]" style={{ fontFamily: '"Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif' }}>{ending.title}</span>
-            </div>
-            <motion.hr
-              className="w-full h-px bg-[#ae7437] border-0 mt-[3.5vh] mb-[3vh]"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              style={{ transformOrigin: 'left' }}
-              transition={{ duration: 0.5, delay: 0.28 }}
-            />
-
-            {/* Description — inside wrapper so right edge aligns with subtitle */}
-            <motion.p
-              className="text-[1.4vw] font-normal text-[#2D3A3A] leading-[1.4] m-0"
-              style={{ fontFamily: 'Georgia, Cambria, "Times New Roman", serif' }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.45, delay: 0.38 }}
-            >
-              {ending.description}
-            </motion.p>
+            <span className="er-title-ending">ENDING</span>
+            <span className="er-title-name">{ending.title}</span>
           </motion.div>
 
-          {/* Achievement cards row */}
-          <motion.div
-            className="absolute bottom-[10vh] left-0 right-0 flex flex-col items-center [@media(orientation:landscape)]:flex-row [@media(orientation:landscape)]:justify-center [@media(orientation:landscape)]:items-end"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.48, ...spring }}
+          {/* Gold divider */}
+          <motion.hr
+            className="er-divider"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            style={{ transformOrigin: 'left' }}
+            transition={{ duration: 0.5, delay: 0.28 }}
+          />
+
+          {/* Description */}
+          <motion.p
+            className="er-description"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.45, delay: 0.38 }}
           >
-            {ALL_ACHIEVEMENTS.map(({ src, rowClass }, i) => (
-              <img
-                key={i}
-                src={src}
-                alt={`Achievement ${i + 1}`}
-                className={`h-[16vh] w-auto [@media(orientation:landscape)]:h-auto ${rowClass} block transition-transform duration-[180ms] ease-out hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.96]`}
-              />
-            ))}
-          </motion.div>
+            {ending.description}
+          </motion.p>
 
+          {/* Achievement cards (margin-top:auto pushes to card bottom) */}
+          {achievementImages.length > 0 && (
+            <motion.div
+              className="er-achievements"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.48, ...spring }}
+            >
+              {achievementImages.map((src, i) => (
+                <img key={i} src={src} alt={`Achievement ${i + 1}`} />
+              ))}
+            </motion.div>
+          )}
+
+          {/* Achievement Collection button — inside card, centered at bottom */}
+          <motion.button
+            className="er-collect-btn"
+            onClick={() => navigate('/endings')}
+            aria-label="Achievement Collection"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.6 }}
+          >
+            <img src={btnAchCollection} alt="" aria-hidden="true" />
+          </motion.button>
         </motion.div>
-
-        {/* ── Ranking List banner — anchored to card top-right corner ──────────── */}
-        <motion.button
-          className="absolute top-[6vh] right-[9vw] p-0 cursor-pointer"
-          onClick={() => setShowRankingsNotice(true)}
-          aria-label="Ranking List"
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0, transition: { duration: 0.45, delay: 0.15, ...spring } }}
-          {...BTN_ANIM}
-          style={{ filter: 'drop-shadow(0 4px 12px rgba(40,20,5,0.5))' }}
-        >
-          <img src={rankingListBanner} alt="Ranking List" className="h-[min(26vw,32vh)] block" />
-        </motion.button>
       </div>
-
-      {/* ── Achievement Collection button ────────────────────────────────────── */}
-      <motion.button
-        className="absolute right-[9.8vw] bottom-[9.6vh] z-11 p-0 cursor-pointer"
-        onClick={() => navigate('/endings')}
-        aria-label="Achievement Collection"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { duration: 0.4, delay: 0.6 } }}
-        {...BTN_ANIM}
-      >
-        <img src={btnAchCollection} alt="Achievement Collection" aria-hidden="true" className="w-[24vw] block" />
-      </motion.button>
 
       {/* ── Rankings "not available" notice ──────────────────────────────────── */}
       {showRankingsNotice && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="rankings-dialog-title"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4 backdrop-blur-sm"
-          onKeyDown={(e) => { if (e.key === 'Escape') setShowRankingsNotice(false) }}
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4 backdrop-blur-sm">
           <div className="relative w-full max-w-sm rounded-[2rem] border-4 border-[#7a4b2b] bg-[#f7e8c6] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)] text-center">
             <div className="rounded-[1.5rem] border-2 border-[#c49a61] bg-[#fff7df]/80 px-5 py-5 shadow-inner">
               <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#9a6a3e]">Ranking List</p>
-              <h2 id="rankings-dialog-title" className="mt-2 text-2xl font-bold text-[#7a4b2b]">Coming Soon</h2>
+              <h2 className="mt-2 text-2xl font-bold text-[#7a4b2b]">Coming Soon</h2>
               <p className="mx-auto mt-3 text-sm leading-relaxed text-[#8a6446]">
                 This feature is not available yet. Check back later!
               </p>
             </div>
-            <motion.button
+            <button
               type="button"
-              ref={closeButtonRef}
               onClick={() => setShowRankingsNotice(false)}
-              className="mx-auto mt-5 block rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md"
-              {...BTN_ANIM}
+              className="mx-auto mt-5 block rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md transition hover:-translate-y-0.5 hover:bg-[#7a4b2b] active:scale-95"
             >
               Close
-            </motion.button>
+            </button>
           </div>
         </div>
       )}

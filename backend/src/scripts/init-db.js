@@ -12,91 +12,69 @@ import { achievementData } from "../data/achievementData.js";
 await mongoose.connect(process.env.DB_URL);
 console.log("Connected to database!");
 
-// ── Events ──────────────────────────────────────────────────────────────────
+// Clear existing events
+await Event.deleteMany({});
+console.log("Cleared existing events.");
 
-const eventKeys = eventData.map((e) => e.eventKey);
+// Insert all events
+const result = await Event.insertMany(eventData);
+console.log(`Inserted ${result.length} events across 4 quarters.`);
 
-const staleEvents = await Event.updateMany(
-  { eventKey: { $nin: eventKeys } },
-  { $set: { isDeleted: true } }
+const counts = [1, 2, 3, 4].map((q) => ({
+  quarter: q,
+  count: result.filter((e) => e.quarter === q).length,
+}));
+counts.forEach(({ quarter, count }) =>
+  console.log(`  Quarter ${quarter}: ${count} events`)
 );
-console.log(`Soft-deleted ${staleEvents.modifiedCount} stale events.`);
 
-for (const event of eventData) {
-  await Event.updateOne(
-    { eventKey: event.eventKey },
-    {
-      $set: {
-        title: event.title,
-        description: event.description,
-        category: event.category,
-        quarter: event.quarter,
-        options: event.options ?? [],
-        achievementKey: event.achievementKey ?? null,
-        isDeleted: false,
-      },
-    },
-    { upsert: true }
-  );
-}
-console.log(`Seeded ${eventData.length} events.`);
+// Seed endings
+await Ending.deleteMany({});
+console.log("Cleared existing endings.");
 
-// ── Endings ──────────────────────────────────────────────────────────────────
-
-const endingIds = endingData.map((e) => e.endingId);
-
-const staleEndings = await Ending.updateMany(
-  { endingId: { $nin: endingIds } },
-  { $set: { isDeleted: true } }
+const endingResult = await Ending.insertMany(
+  endingData.map((ending) => ({
+    endingId: ending.endingId,
+    endingKey: ending.endingKey,
+    title: ending.title,
+    category: ending.category,
+    description: ending.description,
+    image: ending.image,
+    status: "Locked",
+  }))
 );
-console.log(`Soft-deleted ${staleEndings.modifiedCount} stale endings.`);
 
-for (const ending of endingData) {
-  await Ending.updateOne(
-    { $or: [{ endingId: ending.endingId }, { endingKey: ending.endingKey }] },
-    {
-      $set: {
-        endingId: ending.endingId,
-        endingKey: ending.endingKey,
-        title: ending.title,
-        category: ending.category,
-        description: ending.description,
-        image: ending.image,
-        isDeleted: false,
-      },
-      $setOnInsert: { status: "Locked" },
-    },
-    { upsert: true }
-  );
-}
-console.log(`Seeded ${endingData.length} endings.`);
+console.log(`Inserted ${endingResult.length} endings.`);
 
-// ── Achievements ─────────────────────────────────────────────────────────────
+// Seed achievements
+const achievementKeys = achievementData.map((achievement) => achievement.achievementKey);
+const staleAchievements = await Achievement.deleteMany({
+  achievementKey: { $nin: achievementKeys },
+});
 
-const achievementKeys = achievementData.map((a) => a.achievementKey);
-
-const staleAchievements = await Achievement.updateMany(
-  { achievementKey: { $nin: achievementKeys } },
-  { $set: { isDeleted: true } }
-);
-console.log(`Soft-deleted ${staleAchievements.modifiedCount} stale achievements.`);
+console.log(`Removed ${staleAchievements.deletedCount} stale achievements.`);
 
 for (const achievement of achievementData) {
   await Achievement.updateOne(
-    { achievementKey: achievement.achievementKey },
+    {
+      achievementKey: achievement.achievementKey,
+    },
     {
       $set: {
+        achievementKey: achievement.achievementKey,
         title: achievement.title,
         description: achievement.description,
         badgeImage: achievement.badgeImage,
         conditionText: achievement.conditionText,
         category: achievement.category,
-        isDeleted: false,
       },
     },
-    { upsert: true }
+    {
+      upsert: true,
+    }
   );
 }
+
 console.log(`Seeded ${achievementData.length} achievements.`);
 
 await mongoose.disconnect();

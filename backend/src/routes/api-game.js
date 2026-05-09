@@ -5,7 +5,7 @@ import { applyTaskChoice, baseTaskState, buildTaskResponse } from "../data/taskD
 import { Event } from "../db/event.js";
 import { GameResult } from "../db/gameResult.js";
 import Ending from "../db/ending.js";
-import { endingData, ENDING_COLLECTION_MAP } from "../data/endingData.js";
+import { ENDING_COLLECTION_MAP } from "../data/endingData.js";
 
 const router = Router();
 
@@ -13,7 +13,7 @@ const router = Router();
 router.get("/events/random", async (req, res) => {
   try {
     const quarter = parseInt(req.query.quarter) || 1;
-    const events = await Event.find({ quarter, category: "random", isDeleted: { $ne: true } }).lean();
+    const events = await Event.find({ quarter, category: "random" }).lean();
     if (!events.length) return res.status(404).json({ error: "No random events found" });
     const random = events[Math.floor(Math.random() * events.length)];
     return res.json({ event: random });
@@ -27,7 +27,7 @@ router.get("/events", async (req, res) => {
   try {
     const quarter = parseInt(req.query.quarter) || 1;
     const events = await Event.find(
-      { quarter, category: { $ne: "random" }, isDeleted: { $ne: true } },
+      { quarter, category: { $ne: "random" } },
       { __v: 0 }
     ).lean();
     return res.json({ quarter, events });
@@ -104,9 +104,6 @@ router.post("/task/choice", async (req, res) => {
  * POST /api/game/result
  * Save a completed game result and auto-unlock the corresponding collection ending.
  */
-const VALID_ENDING_RANKS = ["S", "A", "B", "C"];
-const VALID_ENDING_THEMES = ["happy", "bad"];
-
 router.post("/result", async (req, res) => {
   try {
     const { userId, characterId, playerName, score, endingId, endingTitle, endingRank, endingTheme, snapshot, achievements, timestamp } = req.body;
@@ -115,29 +112,11 @@ router.post("/result", async (req, res) => {
       return res.status(400).json({ success: false, message: "Missing required fields" });
     }
 
-    const scoreNum = Number(score);
-    if (!Number.isFinite(scoreNum) || scoreNum < 0 || scoreNum > 100) {
-      return res.status(400).json({ success: false, message: "score must be a finite number between 0 and 100" });
-    }
-
-    if (!VALID_ENDING_RANKS.includes(endingRank)) {
-      return res.status(400).json({ success: false, message: `endingRank must be one of: ${VALID_ENDING_RANKS.join(", ")}` });
-    }
-
-    if (!VALID_ENDING_THEMES.includes(endingTheme)) {
-      return res.status(400).json({ success: false, message: `endingTheme must be one of: ${VALID_ENDING_THEMES.join(", ")}` });
-    }
-
-    const timestampNum = timestamp !== undefined ? Number(timestamp) : Date.now();
-    if (!Number.isFinite(timestampNum)) {
-      return res.status(400).json({ success: false, message: "timestamp must be a numeric value" });
-    }
-
     const result = await GameResult.create({
       userId: userId ?? null,
       characterId: characterId ?? null,
       playerName,
-      score: scoreNum,
+      score: Number(score) || 0,
       endingId,
       endingTitle,
       endingRank,
@@ -148,26 +127,14 @@ router.post("/result", async (req, res) => {
         wealth: Number(snapshot.wealth) || 0,
       },
       achievements: Array.isArray(achievements) ? achievements : [],
-      timestamp: timestampNum,
+      timestamp: timestamp ?? Date.now(),
     });
 
     const collectionKey = ENDING_COLLECTION_MAP[endingId];
     if (collectionKey) {
-      const endingDef = endingData.find((e) => e.endingKey === collectionKey);
       await Ending.findOneAndUpdate(
-        { endingKey: collectionKey, isDeleted: { $ne: true } },
-        {
-          $set: { status: "Unlocked" },
-          $setOnInsert: {
-            endingId: collectionKey,
-            title: endingDef?.title ?? collectionKey,
-            category: endingDef?.category ?? "",
-            description: endingDef?.description ?? "",
-            image: endingDef?.image ?? "",
-            isDeleted: false,
-          },
-        },
-        { upsert: true },
+        { $or: [{ endingId: collectionKey }, { endingKey: collectionKey }] },
+        { status: "Unlocked" },
       );
     }
 
