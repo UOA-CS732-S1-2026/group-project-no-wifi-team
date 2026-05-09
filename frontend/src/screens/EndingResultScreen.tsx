@@ -53,6 +53,11 @@ function numOr(v: unknown, fallback: number): number {
   return typeof v === 'number' && Number.isFinite(v) ? v : fallback
 }
 
+const BTN_ANIM = {
+  whileHover: { scale: 1.05, transition: { duration: 0.15 } },
+  whileTap:   { scale: 0.95, filter: 'drop-shadow(0 4px 16px rgba(40,20,5,0.65))', transition: { duration: 0.08 } },
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 export function EndingResultScreen() {
   const navigate          = useNavigate()
@@ -131,29 +136,10 @@ export function EndingResultScreen() {
       style={{ backgroundImage: `url(${commonBg})`, backgroundSize: '100% 100%' }}
     >
 
-      {/* ── Ranking List banner ─────────────────────────────────────────────── */}
-      <motion.button
-        className="absolute right-[14vw] top-[15vh] z-11 p-0 cursor-pointer"
-        onClick={() => setShowRankingsNotice(true)}
-        aria-label="Ranking List"
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ filter: 'drop-shadow(0 2px 10px rgba(40,20,5,0.7))' }}
-        transition={{ duration: 0.45, delay: 0.15, ...spring }}
-        style={{ filter: 'drop-shadow(0 4px 12px rgba(40,20,5,0.5))' }}
-      >
-        <img
-          src={rankingListBanner}
-          alt="Ranking List"
-          className="h-[18vw] block"
-        />
-      </motion.button>
-
       {/* ── Card ────────────────────────────────────────────────────────────── */}
       <div className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 z-10">
         <motion.div
-          className="relative w-[89vw] h-[86vh] [background-size:100%_100%] pt-[14vh] px-[9vw] pb-0 flex flex-col"
+          className="relative w-[89vw] h-[86vh] [background-size:100%_100%] pt-[14vh] px-[9vw] flex flex-col"
           style={{ backgroundImage: `url(${endingMiddleBg})` }}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -167,8 +153,8 @@ export function EndingResultScreen() {
             transition={{ duration: 0.5, delay: 0.15, ...spring }}
           >
             <div className="flex items-baseline gap-[3.5vw]">
-              <span className="text-[4vw] font-black uppercase text-[#3d2b1f] leading-none whitespace-nowrap tracking-wide inline-block [transform:scaleY(1.6)] origin-center" style={{ fontFamily: "Georgia, Cambria, serif" }}>ENDING</span>
-              <span className="text-[2.6vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide inline-block [transform:scaleY(1.2)] origin-center" style={{ fontFamily: '"Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif' }}>{ending.title}</span>
+              <span className="text-[4vw] font-black uppercase text-[#3d2b1f] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.6)]" style={{ fontFamily: "Georgia, Cambria, serif" }}>ENDING</span>
+              <span className="text-[2.6vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.2)]" style={{ fontFamily: '"Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif' }}>{ending.title}</span>
             </div>
             <motion.hr
               className="w-full h-px bg-[#ae7437] border-0 mt-[3.5vh] mb-[3vh]"
@@ -192,7 +178,7 @@ export function EndingResultScreen() {
 
           {/* Achievement cards row */}
           <motion.div
-            className="absolute bottom-[14vh] left-1/2 -translate-x-1/2 flex justify-center items-end gap-[0vw]"
+            className="absolute bottom-[14vh] left-1/2 -translate-x-1/2 flex justify-center items-end"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.48, ...spring }}
@@ -209,6 +195,19 @@ export function EndingResultScreen() {
           </motion.div>
 
         </motion.div>
+
+        {/* ── Ranking List banner — anchored to card top-right corner ──────────── */}
+        <motion.button
+          className="absolute top-[6vh] right-[9vw] p-0 cursor-pointer"
+          onClick={() => setShowRankingsNotice(true)}
+          aria-label="Ranking List"
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0, transition: { duration: 0.45, delay: 0.15, ...spring } }}
+          {...BTN_ANIM}
+          style={{ filter: 'drop-shadow(0 4px 12px rgba(40,20,5,0.5))' }}
+        >
+          <img src={rankingListBanner} alt="Ranking List" className="h-[min(26vw,32vh)] block" />
+        </motion.button>
       </div>
 
       {/* ── Achievement Collection button ────────────────────────────────────── */}
@@ -217,10 +216,8 @@ export function EndingResultScreen() {
         onClick={() => navigate('/endings')}
         aria-label="Achievement Collection"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        whileHover={{ scale: 1.05, filter: 'brightness(1.08)' }}
-        whileTap={{ scale: 0.96 }}
-        transition={{ duration: 0.4, delay: 0.6 }}
+        animate={{ opacity: 1, transition: { duration: 0.4, delay: 0.6 } }}
+        {...BTN_ANIM}
       >
         <img src={btnAchCollection} alt="Achievement Collection" aria-hidden="true" className="w-[24vw] block" />
       </motion.button>
@@ -242,14 +239,15 @@ export function EndingResultScreen() {
                 This feature is not available yet. Check back later!
               </p>
             </div>
-            <button
+            <motion.button
               type="button"
               ref={closeButtonRef}
               onClick={() => setShowRankingsNotice(false)}
-              className="mx-auto mt-5 block rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md transition hover:-translate-y-0.5 hover:bg-[#7a4b2b] active:scale-95"
+              className="mx-auto mt-5 block rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md"
+              {...BTN_ANIM}
             >
               Close
-            </button>
+            </motion.button>
           </div>
         </div>
       )}
