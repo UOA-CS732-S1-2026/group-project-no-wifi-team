@@ -34,13 +34,13 @@ export function AttributeInfoTip({ mobile = false }: { mobile?: boolean }) {
 
           <div className="space-y-[3px]">
             <p>
-              <span className="text-[#b66a5c]">Poor</span>: 0–44
+              <span className="text-[#b66a5c]">Poor</span>: 1–3
             </p>
             <p>
-              <span className="text-[#9b6540]">Average</span>: 45–84
+              <span className="text-[#9b6540]">Average</span>: 4–6
             </p>
             <p>
-              <span className="text-[#6f7b4d]">Excellent</span>: 85–100
+              <span className="text-[#6f7b4d]">Excellent</span>: 7–10
             </p>
           </div>
         </div>

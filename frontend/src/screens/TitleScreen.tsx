@@ -11,16 +11,16 @@ import { AboutModal } from '../components/TitleScreen/AboutModal'
 import { MainButtons } from '../components/TitleScreen/MainButtons'
 import { SettingsModal } from '../components/TitleScreen/SettingsModal'
 import { SignInModal } from '../components/TitleScreen/SignInModal'
+import { useMusicContext } from '../contexts/MusicContext'
 
 
 export function TitleScreen() {
   const navigate = useNavigate()
+  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
 
   const [showAboutModal, setShowAboutModal] = useState(false)
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
-  const [musicVolume, setMusicVolume] = useState(50)
-  const [sfxVolume, setSfxVolume] = useState(70)
 
   return (
     <main
@@ -41,7 +41,7 @@ export function TitleScreen() {
         <img
           src={studentImg}
           alt="Student studying at a desk"
-          className="absolute bottom-[-2%] left-1/2 z-20 w-[310px] -translate-x-1/2 drop-shadow-[0_18px_18px_rgba(40,24,12,0.32)] sm:bottom-[-14%] sm:left-[1%] sm:w-[380px] sm:translate-x-0 lg:w-[500px] xl:w-[560px]"
+          className="absolute bottom-0 left-[57%] z-20 w-[136px] -translate-x-1/2 drop-shadow-[0_18px_18px_rgba(40,24,12,0.32)] sm:bottom-0 sm:left-[8%] sm:w-[182px] sm:translate-x-0 lg:w-[324px] xl:w-[363px]"
         />
 
         <MainButtons
@@ -66,10 +66,10 @@ export function TitleScreen() {
 
       {showSettingsModal && (
         <SettingsModal
-          musicVolume={musicVolume}
-          sfxVolume={sfxVolume}
-          onMusicChange={setMusicVolume}
-          onSfxChange={setSfxVolume}
+          musicEnabled={musicEnabled}
+          sfxEnabled={sfxEnabled}
+          onMusicToggle={setMusicEnabled}
+          onSfxToggle={setSfxEnabled}
           onClose={() => setShowSettingsModal(false)}
         />
       )}

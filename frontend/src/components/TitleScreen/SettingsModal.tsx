@@ -1,14 +1,14 @@
 export function SettingsModal({
-  musicVolume,
-  sfxVolume,
-  onMusicChange,
-  onSfxChange,
+  musicEnabled,
+  sfxEnabled,
+  onMusicToggle,
+  onSfxToggle,
   onClose,
 }: {
-  musicVolume: number
-  sfxVolume: number
-  onMusicChange: (value: number) => void
-  onSfxChange: (value: number) => void
+  musicEnabled: boolean
+  sfxEnabled: boolean
+  onMusicToggle: (value: boolean) => void
+  onSfxToggle: (value: boolean) => void
   onClose: () => void
 }) {
   return (
@@ -22,44 +22,32 @@ export function SettingsModal({
         <div className="mt-6 space-y-6">
           <div className="flex items-center justify-between rounded-2xl border-2 border-[#c49a61]/70 bg-[#fff7df]/75 px-4 py-3">
             <span className="font-bold text-[#6b4427]">Music</span>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => onMusicChange(Math.max(0, musicVolume - 10))}
-                className="h-8 w-8 rounded-full border border-[#6b3f25] bg-[#d9bd87] font-bold"
-              >
-                −
-              </button>
-              <span className="w-12 text-center font-bold">{musicVolume}%</span>
-              <button
-                type="button"
-                onClick={() => onMusicChange(Math.min(100, musicVolume + 10))}
-                className="h-8 w-8 rounded-full border border-[#6b3f25] bg-[#d9bd87] font-bold"
-              >
-                +
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => onMusicToggle(!musicEnabled)}
+              className={`rounded-full border-2 px-5 py-1.5 text-sm font-bold transition active:scale-95 ${
+                musicEnabled
+                  ? 'border-[#6b3f25] bg-[#9a5f2d] text-[#fff3d2] hover:bg-[#7a4b2b]'
+                  : 'border-[#c49a61] bg-[#d9bd87] text-[#6b4427] hover:bg-[#c9ad77]'
+              }`}
+            >
+              {musicEnabled ? 'ON' : 'OFF'}
+            </button>
           </div>
 
           <div className="flex items-center justify-between rounded-2xl border-2 border-[#c49a61]/70 bg-[#fff7df]/75 px-4 py-3">
             <span className="font-bold text-[#6b4427]">Sound Effects</span>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => onSfxChange(Math.max(0, sfxVolume - 10))}
-                className="h-8 w-8 rounded-full border border-[#6b3f25] bg-[#d9bd87] font-bold"
-              >
-                −
-              </button>
-              <span className="w-12 text-center font-bold">{sfxVolume}%</span>
-              <button
-                type="button"
-                onClick={() => onSfxChange(Math.min(100, sfxVolume + 10))}
-                className="h-8 w-8 rounded-full border border-[#6b3f25] bg-[#d9bd87] font-bold"
-              >
-                +
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => onSfxToggle(!sfxEnabled)}
+              className={`rounded-full border-2 px-5 py-1.5 text-sm font-bold transition active:scale-95 ${
+                sfxEnabled
+                  ? 'border-[#6b3f25] bg-[#9a5f2d] text-[#fff3d2] hover:bg-[#7a4b2b]'
+                  : 'border-[#c49a61] bg-[#d9bd87] text-[#6b4427] hover:bg-[#c9ad77]'
+              }`}
+            >
+              {sfxEnabled ? 'ON' : 'OFF'}
+            </button>
           </div>
         </div>
 

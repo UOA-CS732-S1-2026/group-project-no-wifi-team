@@ -31,6 +31,7 @@ export function TaskCard({ task, selected, onToggle }: Props) {
   return (
     <motion.button
       onClick={onToggle}
+      data-sfx="task-select"
       whileHover={{ scale: 1.015 }}
       whileTap={{ scale: 0.985 }}
       className={[

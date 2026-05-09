@@ -10,6 +10,7 @@ import { EndingResultScreen } from './screens/EndingResultScreen'
 import { EndingCollectionScreen } from './screens/EndingCollectionScreen'
 import type { AppDispatch, RootState } from './store'
 import { advanceQuarter } from './slices/gameSlice'
+import { MusicProvider } from './contexts/MusicContext'
 
 function NextQuarterBridge() {
   const navigate = useNavigate()
@@ -77,5 +78,9 @@ const router = createBrowserRouter([
 ], { basename: import.meta.env.BASE_URL })
 
 export default function App() {
-  return <RouterProvider router={router} />
+  return (
+    <MusicProvider>
+      <RouterProvider router={router} />
+    </MusicProvider>
+  )
 }
