@@ -1,8 +1,8 @@
 import { AttributeLevel } from './constants'
 
 function getAttributeLevel(value: number): AttributeLevel {
-  if (value < 45) return 'Poor'
-  if (value < 85) return 'Average'
+  if (value <= 3) return 'Poor'
+  if (value <= 6) return 'Average'
   return 'Excellent'
 }
 

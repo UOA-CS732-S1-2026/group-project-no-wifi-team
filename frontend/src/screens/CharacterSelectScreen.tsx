@@ -104,11 +104,11 @@ export function CharacterSelectScreen() {
 
   return (
     <main
-      className="relative min-h-screen w-full overflow-auto bg-cover bg-center font-serif"
+      className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-cover bg-center font-serif"
       style={{ backgroundImage: `url(${characterBg})` }}
     >
       <div
-        className="relative mx-auto"
+        className="relative"
         style={{
           width: `${DESIGN_WIDTH * stageScale}px`,
           height: `${DESIGN_HEIGHT * stageScale}px`,

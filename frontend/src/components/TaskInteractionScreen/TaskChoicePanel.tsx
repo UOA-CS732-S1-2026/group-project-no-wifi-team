@@ -69,6 +69,7 @@ export function TaskChoicePanel({
             <button
               key={option.id}
               type="button"
+              data-sfx="make-choice"
               onClick={() => onChoice(option)}
               disabled={selectedOption !== null}
               className={[

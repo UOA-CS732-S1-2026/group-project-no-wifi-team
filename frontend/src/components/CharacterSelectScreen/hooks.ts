@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { DESIGN_WIDTH, MOBILE_BREAKPOINT } from './constants'
+import { DESIGN_WIDTH, DESIGN_HEIGHT, MOBILE_BREAKPOINT } from './constants'
 
 export function useResponsiveStageScale() {
   const [scale, setScale] = useState(1)
@@ -7,12 +7,8 @@ export function useResponsiveStageScale() {
   useEffect(() => {
     function updateScale() {
       const widthScale = window.innerWidth / DESIGN_WIDTH
-
-      /* On the computer end, it only scales by width. If the height is insufficient,
-      scroll up and down.*/
-      const nextScale = Math.min(widthScale, 1)
-
-      setScale(nextScale)
+      const heightScale = window.innerHeight / DESIGN_HEIGHT
+      setScale(Math.min(widthScale, heightScale) * 1.05)
     }
 
     updateScale()
