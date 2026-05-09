@@ -27,12 +27,19 @@ export function TaskList({ activeCategory, tasks, selectedIds, onToggle }: Props
       }}
     >
       {/* Title */}
-      <div className="shrink-0 flex items-center justify-center" style={{ paddingTop: '30px' }}>
+      <div className="shrink-0 flex items-center justify-center" style={{ padding: '30px 0 12px 0' }}>
         <p className="font-serif font-bold text-desk-dark">Available Tasks</p>
       </div>
 
       {/* Task cards */}
-      <div className="flex flex-col gap-2" style={{ padding: '22px 30px 24px' }}>
+      <div
+        className="overflow-y-scroll hide-scrollbar"
+        style={{
+          height: '410px',
+          padding: '8px 30px 24px',
+          scrollbarWidth: 'none',
+        }}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={activeCategory}

@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { AttributeInfoTip } from './AttributeInfoTip'
 import { AttributeRow } from './AttributeRow'
 import { Character } from './constants'
@@ -41,14 +42,17 @@ export function DesktopCharacterCard({
           <AttributeRow label="WEALTH" value={character.stats.wealth} />
         </div>
 
-        <button
+        <motion.button
           type="button"
           onClick={() => onSelect(character)}
-          className="mx-auto block w-[240px] transition duration-200 hover:scale-105 active:scale-95"
+          animate={{ scale: [1, 1.06, 1] }}
+          transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+          whileTap={{ scale: 0.95 }}
+          className="mx-auto block w-[240px] active:scale-95"
           aria-label={`Select ${character.title}`}
         >
           <img src={character.selectButton} alt="Select" className="w-full object-contain" />
-        </button>
+        </motion.button>
       </div>
     </article>
   )

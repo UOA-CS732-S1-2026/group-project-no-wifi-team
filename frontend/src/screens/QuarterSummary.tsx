@@ -188,7 +188,9 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                       transition={{ ease: 'easeInOut', delay: 5 * duration, duration: duration }}
                     >
                       <span className="text-4xl font-bold text-[#5c3318] leading-[54px]">
-                        {quartersRemaining > 0 ? `Graduation in <span className="font-black">${quartersRemaining}</span> Quarters` : 'Graduation Assessment Time!'}
+                        {quartersRemaining > 0 ? (
+                          <>Graduation in <span className="font-black">{quartersRemaining}</span> Quarters</>
+                        ) : 'Graduation Assessment Time!'}
                       </span>
                     </motion.div>
                     <motion.div

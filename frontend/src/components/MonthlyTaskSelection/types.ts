@@ -1,4 +1,4 @@
-import type { EventFromAPI } from '../../api/events'
+import type { EventFromAPI, EventOption } from '../../api/events'
 import { TASK_ICONS } from './images'
 
 function pickIcon(category: string, key: string): string {
@@ -16,11 +16,9 @@ export interface Task {
   category: Category
   name: string
   illustration: string
-  participateEffects?: { intelligence: number; health: number; wealth: number }
-  skipEffects?: { intelligence: number; health: number; wealth: number }
-  participateStory?: string
-  skipStory?: string
   description?: string
+  options?: EventOption[]
+  achievementKey?: string | null
 }
 
 export const MAX_PLAYER_SELECTIONS = 3
@@ -48,11 +46,9 @@ export function mapEventToTask(event: EventFromAPI): Task {
     category: CATEGORY_MAP[event.category] ?? 'Study',
     name: event.title,
     illustration: pickIcon(event.category, event.eventKey),
-    participateEffects: event.participateEffects,
-    skipEffects: event.skipEffects,
-    participateStory: event.participateStory,
-    skipStory: event.skipStory,
     description: event.description,
+    options: event.options,
+    achievementKey: event.achievementKey,
   }
 }
 
