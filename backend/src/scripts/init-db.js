@@ -1,7 +1,7 @@
 import "dotenv/config";
 import mongoose from "mongoose";
 import { Event } from "../db/event.js";
-import { eventData } from "../data/eventData.js";
+import { eventData } from "../data/updatedEventData.js";
 
 import Ending from "../db/ending.js";
 import { endingData } from "../data/endingData.js";
