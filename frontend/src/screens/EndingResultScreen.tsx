@@ -24,9 +24,9 @@ import btnAchCollection    from '../assets/endingPage-image/button-achievement-c
 
 // ── Achievement pool — order matches unlock priority ──────────────────────────
 const ALL_ACHIEVEMENTS = [
-  { src: achGraduate,         width: '26vw', bottom: '1vh' },
-  { src: achCulturalExplorer, width: '27vw', bottom: '1.5vh' },
-  { src: achGlobalAdventurer, width: '26vw', bottom: '1vh' },
+  { src: achGraduate,         rowClass: '[@media(orientation:landscape)]:w-[26vw] [@media(orientation:landscape)]:mb-[1vh]' },
+  { src: achCulturalExplorer, rowClass: '[@media(orientation:landscape)]:w-[27vw] [@media(orientation:landscape)]:mb-[1.5vh]' },
+  { src: achGlobalAdventurer, rowClass: '[@media(orientation:landscape)]:w-[26vw] [@media(orientation:landscape)]:mb-[1vh]' },
 ]
 const ACHIEVEMENT_IDS = ['graduate', 'cultural-explorer', 'global-adventurer']
 const ACH_COUNT_BY_RANK: Record<string, number> = { S: 3, A: 2, B: 1, C: 0 }
@@ -178,18 +178,17 @@ export function EndingResultScreen() {
 
           {/* Achievement cards row */}
           <motion.div
-            className="absolute bottom-[14vh] left-1/2 -translate-x-1/2 flex justify-center items-end"
+            className="absolute bottom-[10vh] left-0 right-0 flex flex-col items-center [@media(orientation:landscape)]:flex-row [@media(orientation:landscape)]:justify-center [@media(orientation:landscape)]:items-end"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.48, ...spring }}
           >
-            {ALL_ACHIEVEMENTS.map(({ src, width, bottom }, i) => (
+            {ALL_ACHIEVEMENTS.map(({ src, rowClass }, i) => (
               <img
                 key={i}
                 src={src}
                 alt={`Achievement ${i + 1}`}
-                style={{ width, marginBottom: bottom }}
-                className="block transition-transform duration-[180ms] ease-out hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.96]"
+                className={`h-[16vh] w-auto [@media(orientation:landscape)]:h-auto ${rowClass} block transition-transform duration-[180ms] ease-out hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.96]`}
               />
             ))}
           </motion.div>
@@ -212,7 +211,7 @@ export function EndingResultScreen() {
 
       {/* ── Achievement Collection button ────────────────────────────────────── */}
       <motion.button
-        className="absolute right-[9vw] bottom-[11vh] z-11 p-0 cursor-pointer"
+        className="absolute right-[9.8vw] bottom-[9.6vh] z-11 p-0 cursor-pointer"
         onClick={() => navigate('/endings')}
         aria-label="Achievement Collection"
         initial={{ opacity: 0 }}
