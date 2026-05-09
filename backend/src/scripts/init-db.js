@@ -12,7 +12,16 @@ import { achievementData } from "../data/achievementData.js";
 await mongoose.connect(process.env.DB_URL);
 console.log("Connected to database!");
 
-// Upsert events by eventKey
+// ── Events ──────────────────────────────────────────────────────────────────
+
+const eventKeys = eventData.map((e) => e.eventKey);
+
+const staleEvents = await Event.updateMany(
+  { eventKey: { $nin: eventKeys } },
+  { $set: { isDeleted: true } }
+);
+console.log(`Soft-deleted ${staleEvents.modifiedCount} stale events.`);
+
 for (const event of eventData) {
   await Event.updateOne(
     { eventKey: event.eventKey },
@@ -22,11 +31,9 @@ for (const event of eventData) {
         description: event.description,
         category: event.category,
         quarter: event.quarter,
-        participateEffects: event.participateEffects,
-        skipEffects: event.skipEffects,
-        participateStory: event.participateStory,
-        skipStory: event.skipStory,
-        possibleAchievementKey: event.possibleAchievementKey ?? "",
+        options: event.options ?? [],
+        achievementKey: event.achievementKey ?? null,
+        isDeleted: false,
       },
     },
     { upsert: true }
@@ -34,7 +41,16 @@ for (const event of eventData) {
 }
 console.log(`Seeded ${eventData.length} events.`);
 
-// Upsert endings by endingId; preserve status for existing records
+// ── Endings ──────────────────────────────────────────────────────────────────
+
+const endingIds = endingData.map((e) => e.endingId);
+
+const staleEndings = await Ending.updateMany(
+  { endingId: { $nin: endingIds } },
+  { $set: { isDeleted: true } }
+);
+console.log(`Soft-deleted ${staleEndings.modifiedCount} stale endings.`);
+
 for (const ending of endingData) {
   await Ending.updateOne(
     { $or: [{ endingId: ending.endingId }, { endingKey: ending.endingKey }] },
@@ -46,6 +62,7 @@ for (const ending of endingData) {
         category: ending.category,
         description: ending.description,
         image: ending.image,
+        isDeleted: false,
       },
       $setOnInsert: { status: "Locked" },
     },
@@ -54,14 +71,16 @@ for (const ending of endingData) {
 }
 console.log(`Seeded ${endingData.length} endings.`);
 
-// Remove achievements that no longer exist in the data file
-const achievementKeys = achievementData.map((a) => a.achievementKey);
-const staleAchievements = await Achievement.deleteMany({
-  achievementKey: { $nin: achievementKeys },
-});
-console.log(`Removed ${staleAchievements.deletedCount} stale achievements.`);
+// ── Achievements ─────────────────────────────────────────────────────────────
 
-// Upsert achievements by achievementKey
+const achievementKeys = achievementData.map((a) => a.achievementKey);
+
+const staleAchievements = await Achievement.updateMany(
+  { achievementKey: { $nin: achievementKeys } },
+  { $set: { isDeleted: true } }
+);
+console.log(`Soft-deleted ${staleAchievements.modifiedCount} stale achievements.`);
+
 for (const achievement of achievementData) {
   await Achievement.updateOne(
     { achievementKey: achievement.achievementKey },
@@ -72,6 +91,7 @@ for (const achievement of achievementData) {
         badgeImage: achievement.badgeImage,
         conditionText: achievement.conditionText,
         category: achievement.category,
+        isDeleted: false,
       },
     },
     { upsert: true }

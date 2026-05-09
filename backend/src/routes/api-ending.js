@@ -21,6 +21,7 @@ async function seedOrUpdateDefaultEndings() {
                     category: ending.category,
                     description: ending.description,
                     image: ending.image,
+                    isDeleted: false,
                 },
                 $setOnInsert: {
                     status: 'Locked',
@@ -37,7 +38,7 @@ router.get('/', async (req, res) => {
     try {
         await seedOrUpdateDefaultEndings()
 
-        const endings = await Ending.find({}).lean()
+        const endings = await Ending.find({ isDeleted: { $ne: true } }).lean()
 
         const sortedEndings = endingData
             .map((def) =>
@@ -80,6 +81,7 @@ router.get('/:endingId', async (req, res) => {
 
         const ending = await Ending.findOne({
             $or: [{ endingId }, { endingKey: endingId }],
+            isDeleted: { $ne: true },
         }).lean()
 
         if (!ending) {
@@ -112,6 +114,7 @@ router.patch('/:endingId/unlock', async (req, res) => {
         const ending = await Ending.findOneAndUpdate(
             {
                 $or: [{ endingId }, { endingKey: endingId }],
+                isDeleted: { $ne: true },
             },
             {
                 status: 'Unlocked',

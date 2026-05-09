@@ -13,7 +13,7 @@ const router = Router();
 router.get("/events/random", async (req, res) => {
   try {
     const quarter = parseInt(req.query.quarter) || 1;
-    const events = await Event.find({ quarter, category: "random" }).lean();
+    const events = await Event.find({ quarter, category: "random", isDeleted: { $ne: true } }).lean();
     if (!events.length) return res.status(404).json({ error: "No random events found" });
     const random = events[Math.floor(Math.random() * events.length)];
     return res.json({ event: random });
@@ -27,7 +27,7 @@ router.get("/events", async (req, res) => {
   try {
     const quarter = parseInt(req.query.quarter) || 1;
     const events = await Event.find(
-      { quarter, category: { $ne: "random" } },
+      { quarter, category: { $ne: "random" }, isDeleted: { $ne: true } },
       { __v: 0 }
     ).lean();
     return res.json({ quarter, events });
@@ -155,7 +155,7 @@ router.post("/result", async (req, res) => {
     if (collectionKey) {
       const endingDef = endingData.find((e) => e.endingKey === collectionKey);
       await Ending.findOneAndUpdate(
-        { endingKey: collectionKey },
+        { endingKey: collectionKey, isDeleted: { $ne: true } },
         {
           $set: { status: "Unlocked" },
           $setOnInsert: {
@@ -164,6 +164,7 @@ router.post("/result", async (req, res) => {
             category: endingDef?.category ?? "",
             description: endingDef?.description ?? "",
             image: endingDef?.image ?? "",
+            isDeleted: false,
           },
         },
         { upsert: true },
