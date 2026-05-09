@@ -1,13 +1,13 @@
-export type AttributeLevel = 'Poor' | 'Good' | 'Excellent'
+export type AttributeLevel = 'Poor' | 'Average' | 'Excellent'
 
 export const LEVEL_THRESHOLDS = {
-  excellent: 85,
-  good: 45,
+  excellent: 7,
+  average: 4,
 } as const
 
 export function getAttributeLevel(value: number): AttributeLevel {
   if (value >= LEVEL_THRESHOLDS.excellent) return 'Excellent'
-  if (value >= LEVEL_THRESHOLDS.good) return 'Good'
+  if (value >= LEVEL_THRESHOLDS.average) return 'Average'
   return 'Poor'
 }
 

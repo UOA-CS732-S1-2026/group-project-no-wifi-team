@@ -1,7 +1,7 @@
 import "dotenv/config";
 import mongoose from "mongoose";
 import { Event } from "../db/event.js";
-import { eventData } from "../data/eventData.js";
+import { eventData } from "../data/updatedEventData.js";
 
 import Ending from "../db/ending.js";
 import { endingData } from "../data/endingData.js";
@@ -53,6 +53,13 @@ for (const ending of endingData) {
   );
 }
 console.log(`Seeded ${endingData.length} endings.`);
+
+// Remove achievements that no longer exist in the data file
+const achievementKeys = achievementData.map((a) => a.achievementKey);
+const staleAchievements = await Achievement.deleteMany({
+  achievementKey: { $nin: achievementKeys },
+});
+console.log(`Removed ${staleAchievements.deletedCount} stale achievements.`);
 
 // Upsert achievements by achievementKey
 for (const achievement of achievementData) {
