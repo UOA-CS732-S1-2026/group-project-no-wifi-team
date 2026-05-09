@@ -3,18 +3,18 @@ import { clamp01to100, getAttributeLevel } from './level'
 
 describe('getAttributeLevel', () => {
   it('returns Excellent at the upper threshold', () => {
-    expect(getAttributeLevel(85)).toBe('Excellent')
-    expect(getAttributeLevel(100)).toBe('Excellent')
+    expect(getAttributeLevel(7)).toBe('Excellent')
+    expect(getAttributeLevel(10)).toBe('Excellent')
   })
 
-  it('returns Good in the middle band', () => {
-    expect(getAttributeLevel(45)).toBe('Good')
-    expect(getAttributeLevel(84)).toBe('Good')
+  it('returns Average in the middle band', () => {
+    expect(getAttributeLevel(4)).toBe('Average')
+    expect(getAttributeLevel(6)).toBe('Average')
   })
 
-  it('returns Poor below the Good threshold', () => {
+  it('returns Poor below the Average threshold', () => {
     expect(getAttributeLevel(0)).toBe('Poor')
-    expect(getAttributeLevel(44)).toBe('Poor')
+    expect(getAttributeLevel(3)).toBe('Poor')
   })
 })
 
