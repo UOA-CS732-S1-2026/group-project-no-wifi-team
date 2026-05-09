@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import commonBackground from '../assets/CommonImage/common-background.png'
 import { AttributeBar } from '../components/MonthlyTaskSelection'
 import type { AppDispatch, RootState } from '../store'
-import { updateStats } from '../slices/gameSlice'
+import { earnAchievement, updateStats } from '../slices/gameSlice'
 import {
+  AchievementToast,
   TaskArtworkPanel,
   TaskChoicePanel,
   clampStat,
@@ -30,18 +31,20 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
   const currentQuarter = useSelector((s: RootState) => s.game.currentQuarter) as 1 | 2 | 3 | 4
   const currentStats = useSelector((s: RootState) => s.game.currentStats)
   const quarterPlan = useSelector((s: RootState) => s.game.quarters[currentQuarter])
+  const earnedAchievements = useSelector((s: RootState) => s.game.earnedAchievements)
 
   const tasks = useMemo(() => {
     if (content) return [content]
     if (quarterPlan) {
-      const plannedTasks = [
-        ...quarterPlan.selectedTasks,
-        ...(quarterPlan.randomTask ? [quarterPlan.randomTask] : []),
+      return [
+        ...quarterPlan.selectedTasks.map((t, i) => taskFromRouteTask(t, i, false)),
+        ...(quarterPlan.randomTask
+          ? [taskFromRouteTask(quarterPlan.randomTask, quarterPlan.selectedTasks.length, true)]
+          : []),
       ]
-      return plannedTasks.map(taskFromRouteTask)
     }
     const selectedTasks = routeState?.tasks ?? []
-    if (selectedTasks.length > 0) return selectedTasks.map(taskFromRouteTask)
+    if (selectedTasks.length > 0) return selectedTasks.map((t, i) => taskFromRouteTask(t, i))
     return taskLibrary
   }, [content, quarterPlan, routeState?.tasks])
 
@@ -57,6 +60,7 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
   const [taskIndex, setTaskIndex] = useState(0)
   const [stats, setStats] = useState<Record<AttributeKey, number>>(initialStats)
   const [selectedOption, setSelectedOption] = useState<ChoiceOption | null>(null)
+  const [toastKey, setToastKey] = useState<string | null>(null)
 
   const currentTask = tasks[taskIndex] ?? defaultContent
   const isLastTask = taskIndex >= tasks.length - 1
@@ -67,6 +71,7 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     tasksCompleted: tasks.length,
     totalTasks: tasks.length,
     quartersRemaining: 4 - currentQuarter,
+    achievements: earnedAchievements,
     stats: [
       {
         label: 'Intelligence',
@@ -93,6 +98,10 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
       health: clampStat(current.health + option.effects.health),
       money: clampStat(current.money + option.effects.money),
     }))
+    if (option.achievementKey) {
+      dispatch(earnAchievement(option.achievementKey))
+      setToastKey(option.achievementKey)
+    }
   }
 
   const handleNext = () => {
@@ -116,7 +125,10 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     setTaskIndex(0)
     setStats(initialStats)
     setSelectedOption(null)
+    setToastKey(null)
   }
+
+  const dismissToast = useCallback(() => setToastKey(null), [])
 
   return (
     <div
@@ -161,6 +173,8 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
           ←
         </button>
       </div>
+
+      <AchievementToast achievementKey={toastKey} onDismiss={dismissToast} />
     </div>
   )
 }
