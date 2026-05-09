@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import commonBackground from '../assets/CommonImage/common-background.png'
@@ -98,7 +99,7 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
       health: clampStat(current.health + option.effects.health),
       money: clampStat(current.money + option.effects.money),
     }))
-    if (option.achievementKey) {
+    if (option.achievementKey && !earnedAchievements.includes(option.achievementKey)) {
       dispatch(earnAchievement(option.achievementKey))
       setToastKey(option.achievementKey)
     }
@@ -141,18 +142,27 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
       <AttributeBar intelligence={stats.intelligence} health={stats.health} wealth={stats.money} />
 
       <main className="flex flex-1 items-center justify-center px-8 pb-10 pt-4">
-        <div className="grid w-full max-w-[1120px] grid-cols-[minmax(0,430px)_1fr] items-stretch gap-10">
-          <TaskChoicePanel
-            currentTask={currentTask}
-            taskIndex={taskIndex}
-            totalTasks={tasks.length}
-            selectedOption={selectedOption}
-            isLastTask={isLastTask}
-            onChoice={handleChoice}
-            onNext={handleNext}
-          />
-          <TaskArtworkPanel image={currentTask.image} />
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={taskIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="grid w-full max-w-[1120px] grid-cols-[minmax(0,430px)_1fr] items-stretch gap-10"
+          >
+            <TaskChoicePanel
+              currentTask={currentTask}
+              taskIndex={taskIndex}
+              totalTasks={tasks.length}
+              selectedOption={selectedOption}
+              isLastTask={isLastTask}
+              onChoice={handleChoice}
+              onNext={handleNext}
+            />
+            <TaskArtworkPanel image={currentTask.image} />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <div className="pointer-events-none absolute left-8 top-8 flex gap-2">

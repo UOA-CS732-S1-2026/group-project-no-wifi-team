@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from 'motion/react'
 import { getLevel } from './types'
 import { statusBar } from './images'
 
@@ -36,7 +37,21 @@ export function AttributeBar({ intelligence, health, wealth }: Props) {
               letterSpacing: '0.04em',
             }}
           >
-            <span>{label}: <span className="font-bold">{getLevel(value)}</span></span>
+            <span>
+              {label}:{' '}
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={getLevel(value)}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.2 }}
+                  className="font-bold"
+                >
+                  {getLevel(value)}
+                </motion.span>
+              </AnimatePresence>
+            </span>
           </div>
         ))}
       </div>
