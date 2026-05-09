@@ -155,9 +155,9 @@ router.post("/result", async (req, res) => {
     if (collectionKey) {
       const endingDef = endingData.find((e) => e.endingKey === collectionKey);
       await Ending.findOneAndUpdate(
-        { endingKey: collectionKey, isDeleted: { $ne: true } },
+        { endingKey: collectionKey },
         {
-          $set: { status: "Unlocked" },
+          $set: { status: "Unlocked", isDeleted: false },
           $setOnInsert: {
             endingId: collectionKey,
             title: endingDef?.title ?? collectionKey,

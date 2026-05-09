@@ -65,7 +65,6 @@ export function EndingResultScreen() {
   const dispatch          = useDispatch<AppDispatch>()
   const selectedCharacter = useSelector((s: RootState) => s.game.selectedCharacter)
   const [showRankingsNotice, setShowRankingsNotice] = useState(false)
-  const hasFired       = useRef(false)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   const snapshot   = useMemo(() => readSnapshot(location.state),  [location.state])
@@ -79,13 +78,13 @@ export function EndingResultScreen() {
 
   const [resultId] = useState(() => generateId())
 
-  // Guard prevents the double-invocation React 18 StrictMode causes in dev.
+  const achCount = ACH_COUNT_BY_RANK[ending.rank] ?? 0
+
+  // Deduplicate by resultId so re-mounts (e.g. StrictMode) don't double-submit.
   useEffect(() => {
-    if (hasFired.current) return
-    hasFired.current = true
+    if (localStorage.getItem(LAST_RESULT_KEY) === resultId) return
 
     const now = Date.now()
-    const achCount = ACH_COUNT_BY_RANK[ending.rank] ?? 0
     const achievements = ACHIEVEMENT_IDS.slice(0, achCount)
 
     const record: GameResult = {
@@ -119,7 +118,7 @@ export function EndingResultScreen() {
       achievements,
       timestamp:   now,
     }).catch(() => { /* offline or server unavailable — localStorage copy remains */ })
-  }, [dispatch, resultId, ending, score, snapshot, playerName, characterId])
+  }, [dispatch, resultId, ending, score, snapshot, playerName, characterId, achCount])
 
   // Move focus into the dialog when it opens for keyboard/screen-reader accessibility.
   useEffect(() => {
@@ -183,7 +182,7 @@ export function EndingResultScreen() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.48, ...spring }}
           >
-            {ALL_ACHIEVEMENTS.map(({ src, rowClass }, i) => (
+            {ALL_ACHIEVEMENTS.slice(0, achCount).map(({ src, rowClass }, i) => (
               <img
                 key={i}
                 src={src}
@@ -211,7 +210,7 @@ export function EndingResultScreen() {
 
       {/* ── Achievement Collection button ────────────────────────────────────── */}
       <motion.button
-        className="absolute right-[9.8vw] bottom-[9.6vh] z-11 p-0 cursor-pointer"
+        className="absolute right-[9.8vw] bottom-[9.6vh] z-[11] p-0 cursor-pointer"
         onClick={() => navigate('/endings')}
         aria-label="Achievement Collection"
         initial={{ opacity: 0 }}
