@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { availableTasks, taskChoiceBg } from '../MonthlyTaskSelection/images'
 import type { ChoiceOption, TaskInteractionContent } from './types'
 
@@ -21,6 +22,7 @@ export function TaskChoicePanel({
   onNext,
 }: Props) {
   const isRandomEvent = !!currentTask.isRandomEvent
+  const isLivingExpenses = currentTask.taskId === 'living-expenses'
   const showNext = isRandomEvent || selectedOption !== null
 
   return (
@@ -33,7 +35,13 @@ export function TaskChoicePanel({
       }}
     >
       <div className="flex h-[24px] items-center justify-between font-serif text-sm font-bold text-desk-mid">
-        <span>{isRandomEvent ? 'Random Event' : currentTask.category}</span>
+        <span>
+          {isLivingExpenses
+            ? 'Living Allowance'
+            : isRandomEvent
+              ? 'Random Event'
+              : currentTask.category}
+        </span>
         <span>
           Task {taskIndex + 1}/{totalTasks}
         </span>
@@ -43,9 +51,36 @@ export function TaskChoicePanel({
         {currentTask.title}
       </h1>
 
-      <p className="mt-2 flex-1 overflow-hidden font-serif text-[15px] italic leading-[1.55] text-[#5d4935]">
-        {selectedOption ? selectedOption.resultText : currentTask.description}
-      </p>
+      {isLivingExpenses ? (() => {
+        const [allowanceText, quoteRaw] = currentTask.description.split('\n\n')
+        const lastDash = quoteRaw?.lastIndexOf(' — ') ?? -1
+        const quoteLine = lastDash >= 0 ? quoteRaw.slice(0, lastDash) : quoteRaw
+        const quoteAuthor = lastDash >= 0 ? quoteRaw.slice(lastDash + 3) : ''
+        return (
+          <div className="mt-2 flex flex-1 flex-col">
+            <p className="font-serif text-[15px] italic leading-[1.55] text-[#5d4935]">
+              {allowanceText}
+            </p>
+            <motion.div
+              initial={{ opacity: 0, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, filter: 'blur(0px)' }}
+              transition={{ delay: 0.6, duration: 1.8, ease: 'easeOut' }}
+              className="my-auto flex flex-col items-center gap-2 text-center"
+            >
+              <p className="font-serif text-[17px] italic leading-[1.7] text-[#6b4226]">
+                {quoteLine}
+              </p>
+              <p className="font-serif text-[14px] italic text-[#6b4226]">
+                — {quoteAuthor}
+              </p>
+            </motion.div>
+          </div>
+        )
+      })() : (
+        <p className="mt-2 flex-1 overflow-hidden font-serif text-[15px] italic leading-[1.55] text-[#5d4935]">
+          {selectedOption ? selectedOption.resultText : currentTask.description}
+        </p>
+      )}
 
       <div className="mt-4 flex flex-col gap-2">
         {!isRandomEvent &&
