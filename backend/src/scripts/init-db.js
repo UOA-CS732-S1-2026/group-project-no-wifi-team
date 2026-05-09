@@ -47,6 +47,13 @@ const endingResult = await Ending.insertMany(
 console.log(`Inserted ${endingResult.length} endings.`);
 
 // Seed achievements
+const achievementKeys = achievementData.map((achievement) => achievement.achievementKey);
+const staleAchievements = await Achievement.deleteMany({
+  achievementKey: { $nin: achievementKeys },
+});
+
+console.log(`Removed ${staleAchievements.deletedCount} stale achievements.`);
+
 for (const achievement of achievementData) {
   await Achievement.updateOne(
     {
