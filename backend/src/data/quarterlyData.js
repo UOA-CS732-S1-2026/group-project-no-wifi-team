@@ -9,10 +9,9 @@ async function seed() {
     await QuarterlyLog.deleteMany({});
 
     const mockUser = await User.create({
-      guestId: 'guest_mock_123456',
-      displayName: 'Test Player'
+      username: 'test_player',
     });
-    console.log('Mock user created:', mockUser.guestId);
+    console.log('Mock user created:', mockUser.userId);
 
     const mockLogs = [
       {

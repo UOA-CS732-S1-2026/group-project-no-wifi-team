@@ -53,7 +53,7 @@ console.log(`Soft-deleted ${staleEndings.modifiedCount} stale endings.`);
 
 for (const ending of endingData) {
   await Ending.updateOne(
-    { $or: [{ endingId: ending.endingId }, { endingKey: ending.endingKey }] },
+    { endingId: ending.endingId },
     {
       $set: {
         endingId: ending.endingId,

@@ -7,12 +7,7 @@ const router = express.Router()
 async function seedOrUpdateDefaultEndings() {
     for (const ending of endingData) {
         await Ending.updateOne(
-            {
-                $or: [
-                    { endingId: ending.endingId },
-                    { endingKey: ending.endingKey },
-                ],
-            },
+            { endingId: ending.endingId },
             {
                 $set: {
                     endingId: ending.endingId,
@@ -41,11 +36,7 @@ router.get('/', async (req, res) => {
         const endings = await Ending.find({ isDeleted: { $ne: true } }).lean()
 
         const sortedEndings = endingData
-            .map((def) =>
-                endings.find(
-                    (e) => e.endingId === def.endingId || e.endingKey === def.endingKey,
-                ),
-            )
+            .map((def) => endings.find((e) => e.endingId === def.endingId))
             .filter(Boolean)
 
         const unlocked = sortedEndings.filter(
@@ -80,7 +71,7 @@ router.get('/:endingId', async (req, res) => {
         const { endingId } = req.params
 
         const ending = await Ending.findOne({
-            $or: [{ endingId }, { endingKey: endingId }],
+            endingId,
             isDeleted: { $ne: true },
         }).lean()
 
@@ -113,7 +104,7 @@ router.patch('/:endingId/unlock', async (req, res) => {
 
         const ending = await Ending.findOneAndUpdate(
             {
-                $or: [{ endingId }, { endingKey: endingId }],
+                endingId,
                 isDeleted: { $ne: true },
             },
             {

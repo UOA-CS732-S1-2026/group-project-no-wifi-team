@@ -14,7 +14,7 @@ router.post('/login', async (req, res) => {
   if (!user) {
     user = await User.create({ username: name });
   }
-  res.json({ username: user.username });
+  res.json({ username: user.username, userId: user.userId });
 });
 
 export default router;

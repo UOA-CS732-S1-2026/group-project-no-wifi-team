@@ -44,7 +44,7 @@ router.get("/quarterly-summary", async (req, res) => {
     const userId = req.headers["x-user-id"];
     if (!userId) return res.status(401).json({ error: "Missing userId" });
 
-    let user = await User.findOne({ guestId: userId });
+    let user = await User.findOne({ userId });
     if (!user) {
       return res.status(404).json({ error: "No user found with this id" });
     }
@@ -155,11 +155,12 @@ router.post("/result", async (req, res) => {
     if (collectionKey) {
       const endingDef = endingData.find((e) => e.endingKey === collectionKey);
       await Ending.findOneAndUpdate(
-        { endingKey: collectionKey },
+        { endingId: collectionKey },
         {
           $set: { status: "Unlocked", isDeleted: false },
           $setOnInsert: {
             endingId: collectionKey,
+            endingKey: collectionKey,
             title: endingDef?.title ?? collectionKey,
             category: endingDef?.category ?? "",
             description: endingDef?.description ?? "",

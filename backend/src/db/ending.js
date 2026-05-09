@@ -12,7 +12,6 @@ const endingSchema = new mongoose.Schema(
         endingKey: {
             type: String,
             required: true,
-            unique: true,
             trim: true,
         },
 
