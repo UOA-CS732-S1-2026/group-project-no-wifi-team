@@ -33,6 +33,11 @@ const AchievementSchema = new mongoose.Schema(
             enum: ["Study", "Health", "Wealth", "Crown"],
             default: "Crown",
         },
+
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         timestamps: true,

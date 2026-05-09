@@ -6,16 +6,16 @@ const categoryOrder = ["Study", "Health", "Wealth", "Crown"];
 
 router.get("/", async (req, res) => {
   try {
-    const achievements = await Achievement.find({}).lean();
+    const achievements = await Achievement.find(
+      { isDeleted: { $ne: true } }).lean();
+achievements.sort((a, b) => {
+  const categoryDiff =
+    categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category);
 
-    achievements.sort((a, b) => {
-      const categoryDiff =
-        categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category);
+  if (categoryDiff !== 0) return categoryDiff;
 
-      if (categoryDiff !== 0) return categoryDiff;
-
-      return a.title.localeCompare(b.title);
-    });
+  return a.title.localeCompare(b.title);
+});
 
     return res.json({
       success: true,
