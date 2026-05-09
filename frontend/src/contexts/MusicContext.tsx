@@ -3,11 +3,15 @@ import bgm from '../assets/sound/bgm.mp3'
 import clickSfx from '../assets/sound/click.wav'
 import taskSelectedSfx from '../assets/sound/task_seleted.wav'
 import makeChoiceSfx from '../assets/sound/make_choice.wav'
+import coinSfx from '../assets/sound/coin_sound.mp3'
 
 const SFX_MAP: Record<string, string> = {
   'task-select': taskSelectedSfx,
   'make-choice': makeChoiceSfx,
+  'coin': coinSfx,
 }
+
+export { coinSfx }
 
 interface MusicContextValue {
   musicEnabled: boolean
