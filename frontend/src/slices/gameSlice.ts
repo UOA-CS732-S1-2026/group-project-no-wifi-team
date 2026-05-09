@@ -14,6 +14,7 @@ interface GameState {
   currentStats: CharacterStats
   currentQuarter: number
   quarters: Partial<Record<1 | 2 | 3 | 4, QuarterTasks>>
+  earnedAchievements: string[]
 }
 
 function readStoredCharacter(): Character | null {
@@ -33,6 +34,7 @@ const initialState: GameState = {
   currentStats: storedCharacter?.stats ?? DEFAULT_STATS,
   currentQuarter: 1,
   quarters: {},
+  earnedAchievements: [],
 }
 
 const gameSlice = createSlice({
@@ -59,11 +61,17 @@ const gameSlice = createSlice({
     setQuarter(state, action: PayloadAction<1 | 2 | 3 | 4>) {
       state.currentQuarter = action.payload
     },
+    earnAchievement(state, action: PayloadAction<string>) {
+      if (!state.earnedAchievements.includes(action.payload)) {
+        state.earnedAchievements.push(action.payload)
+      }
+    },
     resetGame(state) {
       state.selectedCharacter = null
       state.currentStats = DEFAULT_STATS
       state.currentQuarter = 1
       state.quarters = {}
+      state.earnedAchievements = []
     },
   },
 })
@@ -74,6 +82,7 @@ export const {
   updateStats,
   advanceQuarter,
   setQuarter,
+  earnAchievement,
   resetGame,
 } = gameSlice.actions
 export default gameSlice.reducer
