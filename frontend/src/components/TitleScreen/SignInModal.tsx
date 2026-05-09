@@ -1,20 +1,73 @@
-export function SignInModal({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/35 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-[2rem] border-4 border-[#7a4b2b] bg-[#f7e8c6] p-6 text-center shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
-        <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#9a6a3e]">Sign In</p>
-        <h2 className="mt-2 text-3xl font-bold text-[#7a4b2b]">Coming Soon</h2>
-        <p className="mt-3 text-sm text-[#8a6446]">
-          Account login will be connected to MongoDB later.
-        </p>
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { post } from '../../utils/request'
+import { loginButton, popupLogin, loginEnter } from '../../assets/gamebegin'
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-6 rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md transition hover:-translate-y-0.5 hover:bg-[#7a4b2b] active:scale-95"
-        >
-          Close
-        </button>
+export function SignInModal({ onClose }: { onClose: () => void }) {
+  const navigate = useNavigate()
+  const [username, setUsername] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function handleLogin() {
+    const name = username.trim()
+    if (!name) {
+      setError('Please enter a username')
+      return
+    }
+    setLoading(true)
+    setError('')
+    try {
+      const data = await post<{ username: string }>('/user/login', { username: name })
+      localStorage.setItem('username', data.username)
+      onClose()
+      navigate('/characters')
+    } catch {
+      setError('Login failed, please try again')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') handleLogin()
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative flex flex-col items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img src={popupLogin} alt="login popup" className="w-[420px] select-none" draggable={false} />
+
+        {/* Input overlaid in the centre of the popup image */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pb-5">
+          <div className="relative flex items-center justify-center">
+            <img src={loginEnter} alt="" className="w-64 select-none" draggable={false} />
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Enter username"
+              maxLength={30}
+              className="absolute inset-0 w-full bg-transparent px-4 text-center text-sm font-semibold text-[#5a3010] placeholder-[#c4a068] outline-none"
+            />
+          </div>
+          {error && <p className="text-xs font-bold text-red-600">{error}</p>}
+          <button
+            type="button"
+            onClick={handleLogin}
+            disabled={loading}
+            className="mt-7 transition active:scale-95 disabled:opacity-60"
+          >
+            <img src={loginButton} alt="Login" className="w-36 select-none" draggable={false} />
+          </button>
+        </div>
       </div>
     </div>
   )

@@ -1,157 +1,161 @@
 # Ending Design
 
-## 1. Purpose
-
-The ending system is used to show the final result of the player's international student life.  
-After four quarters, the game checks the player's final attributes and unlocks one ending.
-
-The three core attributes are:
-
-| Attribute | Meaning |
-|---|---|
-| Intelligence | Study ability, academic preparation, planning skills, and career readiness |
-| Health | Physical condition, mental state, lifestyle balance, and stress level |
-| Wealth | Money management, savings, part-time work, and future financial opportunity |
-
-Although the game can display attribute levels as `Poor`, `Average`, and `Excellent`, the internal values can still use hidden numbers from 0 to 100.
-
-## 2. Attribute Level Range
-
-| Hidden Value Range | Display Level |
-|---:|---|
-| 0–44 | Poor |
-| 45–84 | Average |
-| 85–100 | Excellent |
-
-The exact value does not need to be shown to the player.  
-The player only sees the level, while the game logic uses the hidden value to decide the ending.
-
-## 3. Ending Priority Rules
-
-Some endings should have higher priority than others.  
-For example, if Health is extremely low, the player should receive a health-related ending even if Intelligence is high.
-
-Recommended priority order:
-
-1. Happly endings
-2. Bad endings
-3. Open endings
-4. Best Ending
-
-# 4. Ending List
-
-## Ending 1: Perfect All-Rounder
-
-**Chinese Name:** 全能留学生  
-**Ending Type:** Best Ending
-
-### Trigger Condition
-
-| Intelligence | Health | Wealth |
-|---:|---:|---:|
-| ≥ 85 | ≥ 85 | ≥ 85 |
-
-### Description
-
-You managed to balance study, health, and money throughout the year.  
-You did not just survive international student life — you mastered it.
-
-### Chinese Explanation
-
-你学习优秀，身体状态好，钱也管理得不错。  
-这是最理想的结局，代表玩家在学习、健康和财富三个方面都发展得很好。
-
-### Unlock Text
-
-You became the ideal international student: capable, healthy, and financially stable.
-
----
-
-## Ending 2: Academic Star
-
-**Chinese Name:** 学术之星  
-**Ending Type:** Study Ending
-
-### Trigger Condition
-
-| Intelligence | Health | Wealth |
-|---:|---:|---:|
-| ≥ 85 | ≥ 45 | Any |
-
-### Description
-
-Your hard work paid off.  
-You achieved excellent academic results and became a reliable student in your course.
-
-### Chinese Explanation
-
-你的智力很高，而且健康没有崩溃。  
-这代表玩家成功走出了学霸路线。
-
-### Unlock Text
-
-You became known as a hardworking student. Your academic performance opened more opportunities for your future.
-
----
-
-## Ending 3: Burnout Student
-
-**Chinese Name:** 过劳留学生  
-**Ending Type:** Warning Ending
-
-### Trigger Condition
-
-| Intelligence | Health |
-|---:|---:|
-| ≥ 85 | < 45 |
-
-### Description
-
-You pushed yourself too hard.  
-Your grades were strong, but your body and mind could not keep up with the pressure.
-
-### Chinese Explanation
-
-你学习很好，但是健康太差。  
-这个结局体现了“成绩高但身体崩了”的风险。
-
-### Unlock Text
-
-You achieved strong results, but the cost was too high. The year ended with exhaustion instead of celebration.
-
----
-
-## Ending 4: Part-Time Hustler
+> Source: Ending Title.docx
 
 
-## 5. Ending Gallery Design
+## Ending Summary Table
 
-The ending gallery should show:
+| No. | Chinese Witty Title | English Witty Title | Ending Type | Unlock Condition |
+| --- | --- | --- | --- | --- |
+| 1 | 留学生人类高质量图鉴 | The Model Minority Myth: Real Version | Best / Balanced Ending | Intelligence ≥ 7, Health ≥ 7, Wealth ≥ 7 |
+| 2 | 图书馆荣誉永久房客 | Library’s Resident Landlord | Academic Ending | Intelligence ≥ 8, Health ≥ 4, Wealth ≥ 4, and Intelligence is the highest attribute |
+| 3 | 用发际线换来的 GPA | GPA: 4.0, Hairline: 0.4 | Burnout Ending | Intelligence ≥ 8, Health ≤ 3 |
+| 4 | 这学校没我得散 | The Main Character of Every Party | Social Ending | Health ≥ 8, Intelligence ≥ 4, Wealth ≥ 4, and Health is the highest attribute |
+| 5 | 打工魂，校外 CBD 总裁 | Part-time Tycoon | Wealth Ending | Wealth ≥ 8, Intelligence ≥ 4, Health ≥ 4, and Wealth is the highest attribute |
+| 6 | 满级学者，零元存款 | Smart Head, Empty Pocket | Mixed Ending | Intelligence ≥ 8, Wealth ≤ 3 |
+| 7 | 主打一个重在参与 | I Showed Up, I Survived | Normal Ending | No special ending is triggered, or all attributes are around average |
+| 8 | 光速滑跪，原地杀青 | Speedrun to Early Retirement | Bad / Game Over Ending | Any attribute ≤ 0 |
 
-- Total number of endings obtained
-- Total number of achievements obtained
-- Locked and unlocked ending cards
-- Ending title
-- Ending image or icon
-- Ending description after unlocked
-- Locked placeholder before unlocked
 
-Suggested display:
+## 📝 Detailed Ending Descriptions
 
-| Status | Display |
-|---|---|
-| Unlocked | Ending title, artwork, description, unlock condition or story summary |
-| Locked | Question mark icon, hidden title, short hint |
 
-Example locked hint:
+### 1. The Model Minority Myth: Real Version
 
-> This ending is connected to high Intelligence and poor Health.
+**The Balanced Graduate**
 
-## 7. Design Notes
+**Internal Monologue:**
+ You didn’t go bald from studying, you didn’t starve yourself to save money, and you somehow avoided becoming socially terrified of every human interaction. At this point, you are basically the all-rounder final boss of international students.
 
-The ending system should make the player feel that their choices matter.  
-If the player chooses too many Study events, Intelligence should rise but Health may drop.  
-If the player chooses too many Entertainment events, Health may improve but Intelligence or Wealth may suffer.  
-If the player chooses Social events, the result should be more mixed, improving adaptation, career chances, or emotional state.
+**Ending Summary:**
+ You have achieved the legendary balance: decent grades, decent health, and a bank account that has not completely hit rock bottom. You are not just studying abroad — you are accidentally writing the survival guide for future international students.
 
-The final ending should feel like a natural result of the player's quarterly planning.
+**Unlock Condition:**
+ Intelligence ≥ 7, Health ≥ 7, Wealth ≥ 7
+
+
+### 2. Library’s Resident Landlord
+
+**The Academic Star**
+
+**Internal Monologue:**
+ Your professor looks at you with more affection than they look at their own children.
+
+**Ending Summary:**
+ Your Intelligence stat has officially overflowed. Every seat in the library has witnessed your academic suffering, and several of them may legally count as your second home. You have earned a golden ticket to the future, although your brain is now permanently formatted in literature review style.
+
+**Unlock Condition:**
+ Intelligence ≥ 8, Health ≥ 4, Wealth ≥ 4, and Intelligence is the highest attribute
+
+
+### 3. GPA: 4.0, Hairline: 0.4
+
+**The Burned-Out High Achiever**
+
+**Internal Monologue:**
+ On the day you received your scholarship, you did not even have enough energy to post about it.
+
+**Ending Summary:**
+ Your transcript is flawless, almost suspiciously so, but your eye bags have migrated all the way to your chin. Congratulations — you defeated academia. Unfortunately, your physical condition is now more fragile than the oldest building on campus.
+
+**Unlock Condition:**
+ Intelligence ≥ 8, Health ≤ 3
+
+
+### 4. The Main Character of Every Party
+
+**The Campus Socialite**
+
+**Internal Monologue:**
+ Question: “Where do you go to university?”
+ Answer: “Mostly on Instagram.”
+
+**Ending Summary:**
+ Every student club has heard your name, and your contact list is longer than your course timetable. You may have cried a little during last-minute exam revision, but at graduation, half the crowd is cheering for you. Somehow, you turned campus life into your personal reality show.
+
+**Unlock Condition:**
+ Health ≥ 8, Intelligence ≥ 4, Wealth ≥ 4, and Health is the highest attribute
+
+Here, Health also represents wellbeing, social connection, belonging, and life satisfaction.
+
+
+### 5. Part-time Tycoon
+
+**The Side Hustle Survivor**
+
+**Internal Monologue:**
+ Supervisor: “Where is your dissertation?”
+ You: “One second, I just closed a food delivery slash personal shopping order.”
+
+**Ending Summary:**
+ Honestly, you care about your bank balance more than your degree certificate. During your time abroad, you developed enough survival skills to run a profitable convenience store on a deserted island. You may be tired, but you are financially dangerous.
+
+**Unlock Condition:**
+ Wealth ≥ 8, Intelligence ≥ 4, Health ≥ 4, and Wealth is the highest attribute
+
+
+### 6. Smart Head, Empty Pocket
+
+**The Broke but Brilliant Graduate**
+
+**Internal Monologue:**
+ Knowledge is wealth. Unfortunately, knowledge is currently the only wealth you have.
+
+**Ending Summary:**
+ Your brain is packed with cutting-edge theories, but your stomach is powered by discounted bread and emotional resilience. Spiritually, you are a billionaire. Financially, you are the reigning champion of the “living paycheck to paycheck” tournament.
+
+**Unlock Condition:**
+ Intelligence ≥ 8, Wealth ≤ 3
+
+
+### 7. I Showed Up, I Survived
+
+**The Lost but Still Graduated**
+
+**Internal Monologue:**
+ If I am not embarrassed, then the university has to be embarrassed for me.
+
+**Ending Summary:**
+ You did not become a legend, but you also did not become a cautionary tale. You gracefully dodged every chance to become a top student and somehow avoided academic disaster. With your degree in hand, your life philosophy remains simple: go with the flow and act like this was the plan all along.
+
+**Unlock Condition:**
+ No special ending is triggered.
+ Usually applies when:
+
+Intelligence, Health, and Wealth are all in the middle range, such as 4–6
+
+No attribute reaches 0
+
+No attribute strongly dominates the others
+
+The player survives, but does not reach a special route
+
+
+### 8. Speedrun to Early Retirement
+
+**The Emergency Exit**
+
+**Internal Monologue:**
+ Director, isn’t it a little early for my character to be written out?
+
+**Ending Summary:**
+ Everything collapsed. Completely. One of your attributes hit zero so hard that your life basically pressed the restart button by itself. Do not be discouraged — at least you have contributed a classic cautionary tale to the international student community.
+
+**Unlock Condition:**
+ Intelligence ≤ 0, Health ≤ 0, or Wealth ≤ 0
+
+
+## ✅ Recommended Ending Priority
+
+Because some endings may overlap, use this order when checking conditions:
+
+| Priority | Ending |
+| --- | --- |
+| 1 | Speedrun to Early Retirement |
+| 2 | GPA: 4.0, Hairline: 0.4 |
+| 3 | Smart Head, Empty Pocket |
+| 4 | The Model Minority Myth: Real Version |
+| 5 | Library’s Resident Landlord |
+| 6 | The Main Character of Every Party |
+| 7 | Part-time Tycoon |
+| 8 | I Showed Up, I Survived |

@@ -46,21 +46,49 @@ function getVisualTask(task: RouteTask, index: number) {
   return taskLibrary[index % taskLibrary.length]
 }
 
-export function taskFromRouteTask(task: RouteTask, index: number): TaskInteractionContent {
+export function taskFromRouteTask(
+  task: RouteTask,
+  index: number,
+  isRandomEvent = false,
+): TaskInteractionContent {
   const idMatch = taskLibrary.find((item) => item.taskId === task.id || item.title === task.name)
   const visualTask = idMatch ?? getVisualTask(task, index)
 
+  const isRandom = isRandomEvent || !!task.isRandomEvent || task.category?.toLowerCase() === 'random'
+
+  const base = {
+    ...visualTask,
+    taskId: task.id ?? visualTask.taskId,
+    title: task.name ?? visualTask.title,
+    description: task.description ?? visualTask.description,
+    isRandomEvent: isRandom,
+  }
+
+  if (task.options && task.options.length > 0) {
+    return {
+      ...base,
+      options: task.options.map((opt, i) => ({
+        id: `option-${i}`,
+        text: opt.label,
+        resultText: opt.story,
+        effects: {
+          intelligence: opt.effects.intelligence,
+          health: opt.effects.health,
+          money: opt.effects.wealth,
+        },
+        achievementKey: opt.achievementKey ?? null,
+      })),
+    }
+  }
+
   if (task.participateEffects && task.skipEffects) {
     return {
-      ...visualTask,
-      taskId: task.id ?? visualTask.taskId,
-      title: task.name ?? visualTask.title,
-      description: task.description ?? visualTask.description,
+      ...base,
       options: [
         {
           id: 'participate',
           text: 'Participate',
-          resultText: task.participateStory ?? visualTask.options[0].resultText,
+          resultText: task.participateStory ?? visualTask.options[0]?.resultText ?? '',
           effects: {
             intelligence: task.participateEffects.intelligence,
             health: task.participateEffects.health,
@@ -70,7 +98,7 @@ export function taskFromRouteTask(task: RouteTask, index: number): TaskInteracti
         {
           id: 'skip',
           text: 'Skip',
-          resultText: task.skipStory ?? visualTask.options[1].resultText,
+          resultText: task.skipStory ?? visualTask.options[1]?.resultText ?? '',
           effects: {
             intelligence: task.skipEffects.intelligence,
             health: task.skipEffects.health,
@@ -81,12 +109,7 @@ export function taskFromRouteTask(task: RouteTask, index: number): TaskInteracti
     }
   }
 
-  return {
-    ...visualTask,
-    taskId: task.id ?? visualTask.taskId,
-    title: task.name ?? visualTask.title,
-    description: task.description ?? visualTask.description,
-  }
+  return base
 }
 
 export { attributeLabels }

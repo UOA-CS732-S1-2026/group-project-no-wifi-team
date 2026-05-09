@@ -1,11 +1,7 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-  guestId: { type: String, unique: true, sparse: true },
-  googleId: { type: String, unique: true, sparse: true },
-  email: String,
-  displayName: String,
-  avatar: String,
+  username: { type: String, required: true, unique: true },
   createdAt: { type: Date, default: Date.now }
 });
 

@@ -1,3 +1,4 @@
+export { AchievementToast } from './AchievementToast'
 export { AttributeStatusBar } from './AttributeStatusBar'
 export { TaskArtworkPanel } from './TaskArtworkPanel'
 export { TaskChoicePanel } from './TaskChoicePanel'
