@@ -5,4 +5,7 @@ export {  default as student } from './student.png'
 export {  default as signIn } from './signin.png'
 export {  default as setting } from './setting.png'
 export  { default as aboutUs } from './aboutus.png'
+export { default as loginButton } from './loginbutton.png'
+export { default as popupLogin } from './popup-login1.png'
+export { default as loginEnter } from './loginenter.png'
 
