@@ -23,7 +23,11 @@ import achGlobalAdventurer from '../assets/endingPage-image/achievement-card-glo
 import btnAchCollection    from '../assets/endingPage-image/button-achievement-collection.png'
 
 // ── Achievement pool — order matches unlock priority ──────────────────────────
-const ALL_ACHIEVEMENTS = [achGraduate, achCulturalExplorer, achGlobalAdventurer]
+const ALL_ACHIEVEMENTS = [
+  { src: achGraduate,         width: '26vw', bottom: '1vh' },
+  { src: achCulturalExplorer, width: '27vw', bottom: '1.5vh' },
+  { src: achGlobalAdventurer, width: '26vw', bottom: '1vh' },
+]
 const ACHIEVEMENT_IDS = ['graduate', 'cultural-explorer', 'global-adventurer']
 const ACH_COUNT_BY_RANK: Record<string, number> = { S: 3, A: 2, B: 1, C: 0 }
 
@@ -117,95 +121,109 @@ export function EndingResultScreen() {
     if (showRankingsNotice) closeButtonRef.current?.focus()
   }, [showRankingsNotice])
 
-  const achievementImages = ALL_ACHIEVEMENTS.slice(0, ACH_COUNT_BY_RANK[ending.rank] ?? 0)
 
   // Shared spring ease
   const spring = { ease: [0.22, 1, 0.36, 1] as const }
 
   return (
-    <div className="er-screen">
+    <div
+      className="relative w-screen h-dvh overflow-hidden font-serif"
+      style={{ backgroundImage: `url(${commonBg})`, backgroundSize: '100% 100%' }}
+    >
 
-      {/* ── Background ─────────────────────────────────────────────────────── */}
-      <img src={commonBg} alt="" aria-hidden="true" className="er-bg" />
-
-      {/* ── Ranking List banner (viewport-relative) ─────────────────────────── */}
+      {/* ── Ranking List banner ─────────────────────────────────────────────── */}
       <motion.button
-        className="er-banner"
+        className="absolute right-[14vw] top-[15vh] z-11 p-0 cursor-pointer"
         onClick={() => setShowRankingsNotice(true)}
         aria-label="Ranking List"
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ filter: 'drop-shadow(0 2px 10px rgba(40,20,5,0.7))' }}
         transition={{ duration: 0.45, delay: 0.15, ...spring }}
+        style={{ filter: 'drop-shadow(0 4px 12px rgba(40,20,5,0.5))' }}
       >
-        <img src={rankingListBanner} alt="Ranking List" />
+        <img
+          src={rankingListBanner}
+          alt="Ranking List"
+          className="h-[18vw] block"
+        />
       </motion.button>
 
-      {/* ── Card position wrapper (centering via CSS transform) ─────────────── */}
-      <div className="er-card-wrap">
+      {/* ── Card ────────────────────────────────────────────────────────────── */}
+      <div className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 z-10">
         <motion.div
-          className="er-card"
+          className="relative w-[89vw] h-[86vh] [background-size:100%_100%] pt-[14vh] px-[9vw] pb-0 flex flex-col"
           style={{ backgroundImage: `url(${endingMiddleBg})` }}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ...spring }}
         >
-          {/* Title row */}
+          {/* Title row + divider — wrapped so divider right-aligns with subtitle */}
           <motion.div
-            className="er-title-row"
+            className="grid grid-cols-[min-content] self-start shrink-0"
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.15, ...spring }}
           >
-            <span className="er-title-ending">ENDING</span>
-            <span className="er-title-name">{ending.title}</span>
+            <div className="flex items-baseline gap-[3.5vw]">
+              <span className="text-[4vw] font-black uppercase text-[#3d2b1f] leading-none whitespace-nowrap tracking-wide inline-block [transform:scaleY(1.6)] origin-center" style={{ fontFamily: "Georgia, Cambria, serif" }}>ENDING</span>
+              <span className="text-[2.6vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide inline-block [transform:scaleY(1.2)] origin-center" style={{ fontFamily: '"Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif' }}>{ending.title}</span>
+            </div>
+            <motion.hr
+              className="w-full h-px bg-[#ae7437] border-0 mt-[3.5vh] mb-[3vh]"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              style={{ transformOrigin: 'left' }}
+              transition={{ duration: 0.5, delay: 0.28 }}
+            />
+
+            {/* Description — inside wrapper so right edge aligns with subtitle */}
+            <motion.p
+              className="text-[1.4vw] font-normal text-[#2D3A3A] leading-[1.4] m-0"
+              style={{ fontFamily: 'Georgia, Cambria, "Times New Roman", serif' }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.45, delay: 0.38 }}
+            >
+              {ending.description}
+            </motion.p>
           </motion.div>
 
-          {/* Gold divider */}
-          <motion.hr
-            className="er-divider"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            style={{ transformOrigin: 'left' }}
-            transition={{ duration: 0.5, delay: 0.28 }}
-          />
-
-          {/* Description */}
-          <motion.p
-            className="er-description"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.45, delay: 0.38 }}
+          {/* Achievement cards row */}
+          <motion.div
+            className="absolute bottom-[14vh] left-1/2 -translate-x-1/2 flex justify-center items-end gap-[0vw]"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.48, ...spring }}
           >
-            {ending.description}
-          </motion.p>
+            {ALL_ACHIEVEMENTS.map(({ src, width, bottom }, i) => (
+              <img
+                key={i}
+                src={src}
+                alt={`Achievement ${i + 1}`}
+                style={{ width, marginBottom: bottom }}
+                className="block transition-transform duration-[180ms] ease-out hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.96]"
+              />
+            ))}
+          </motion.div>
 
-          {/* Achievement cards (margin-top:auto pushes to card bottom) */}
-          {achievementImages.length > 0 && (
-            <motion.div
-              className="er-achievements"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.48, ...spring }}
-            >
-              {achievementImages.map((src, i) => (
-                <img key={i} src={src} alt={`Achievement ${i + 1}`} />
-              ))}
-            </motion.div>
-          )}
-
-          {/* Achievement Collection button — inside card, centered at bottom */}
-          <motion.button
-            className="er-collect-btn"
-            onClick={() => navigate('/endings')}
-            aria-label="Achievement Collection"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.6 }}
-          >
-            <img src={btnAchCollection} alt="" aria-hidden="true" />
-          </motion.button>
         </motion.div>
       </div>
+
+      {/* ── Achievement Collection button ────────────────────────────────────── */}
+      <motion.button
+        className="absolute right-[9vw] bottom-[11vh] z-11 p-0 cursor-pointer"
+        onClick={() => navigate('/endings')}
+        aria-label="Achievement Collection"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        whileHover={{ scale: 1.05, filter: 'brightness(1.08)' }}
+        whileTap={{ scale: 0.96 }}
+        transition={{ duration: 0.4, delay: 0.6 }}
+      >
+        <img src={btnAchCollection} alt="Achievement Collection" aria-hidden="true" className="w-[24vw] block" />
+      </motion.button>
 
       {/* ── Rankings "not available" notice ──────────────────────────────────── */}
       {showRankingsNotice && (
