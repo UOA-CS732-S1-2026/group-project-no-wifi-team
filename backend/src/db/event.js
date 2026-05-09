@@ -6,6 +6,16 @@ const effectsSchema = {
   wealth: { type: Number, default: 0 },
 };
 
+const optionSchema = new mongoose.Schema(
+  {
+    label: { type: String, required: true },
+    story: { type: String, default: "" },
+    effects: effectsSchema,
+    achievementKey: { type: String, default: null },
+  },
+  { _id: false }
+);
+
 const EventSchema = new mongoose.Schema(
   {
     eventKey: { type: String, required: true, unique: true },
@@ -17,11 +27,8 @@ const EventSchema = new mongoose.Schema(
       required: true,
     },
     quarter: { type: Number, enum: [1, 2, 3, 4], required: true },
-    participateEffects: effectsSchema,
-    skipEffects: effectsSchema,
-    participateStory: { type: String, default: "" },
-    skipStory: { type: String, default: "" },
-    possibleAchievementKey: { type: String, default: "" },
+    options: { type: [optionSchema], default: [] },
+    achievementKey: { type: String, default: null },
   },
   { timestamps: true }
 );

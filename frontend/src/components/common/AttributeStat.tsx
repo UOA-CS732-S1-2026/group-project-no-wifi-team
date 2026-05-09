@@ -11,7 +11,7 @@ const META: Record<AttributeKind, { label: string; Icon: typeof BrainIcon; accen
 
 const LEVEL_TONE: Record<AttributeLevel, string> = {
   Excellent: 'text-emerald-700',
-  Good: 'text-desk-dark',
+  Average: 'text-desk-dark',
   Poor: 'text-red-700',
 }
 
