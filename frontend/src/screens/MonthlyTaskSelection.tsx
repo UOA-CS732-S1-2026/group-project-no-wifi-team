@@ -59,16 +59,18 @@ export function MonthlyTaskSelection() {
       .map((id) => tasks.find((t) => t.id === id))
       .filter((t): t is Task => t !== undefined)
 
+    console.log('[Selected Tasks]', chosen.map(t => ({ id: t.id, name: t.name, category: t.category })))
+
     try {
       const { event } = await fetchRandomEvent(quarter)
       const randomTask = mapEventToTask(event)
+      console.log('[Random Task]', { id: randomTask.id, name: randomTask.name, category: event.category })
       dispatch(confirmQuarterTasks({
         quarter: quarter,
         selectedTasks: chosen,
         randomTask,
       }))
     } catch {
-      // fallback: dispatch without random task using a placeholder
       dispatch(confirmQuarterTasks({
         quarter: quarter,
         selectedTasks: chosen,

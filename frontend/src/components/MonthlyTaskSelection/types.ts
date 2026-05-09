@@ -9,7 +9,7 @@ function pickIcon(category: string, key: string): string {
   return pool[hash % pool.length]
 }
 
-export type Category = 'Study' | 'Entertainment' | 'Social'
+export type Category = 'Study' | 'Entertainment' | 'Social' | 'Random'
 
 export interface Task {
   id: string
@@ -38,6 +38,7 @@ const CATEGORY_MAP: Record<string, Category> = {
   study: 'Study',
   entertainment: 'Entertainment',
   social: 'Social',
+  random: 'Random',
 }
 
 export function mapEventToTask(event: EventFromAPI): Task {
