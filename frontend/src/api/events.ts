@@ -1,16 +1,21 @@
 import { get } from '../utils/request'
 
+export interface EventOption {
+  label: string
+  story: string
+  effects: { intelligence: number; health: number; wealth: number }
+  achievementKey: string | null
+}
+
 export interface EventFromAPI {
   _id: string
   eventKey: string
   title: string
   description: string
-  category: 'study' | 'entertainment' | 'social'
+  category: 'study' | 'entertainment' | 'social' | 'random'
   quarter: number
-  participateEffects: { intelligence: number; health: number; wealth: number }
-  skipEffects: { intelligence: number; health: number; wealth: number }
-  participateStory: string
-  skipStory: string
+  options: EventOption[]
+  achievementKey: string | null
 }
 
 export function fetchEventsByQuarter(quarter: number) {

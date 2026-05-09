@@ -22,9 +22,7 @@ export function MonthHeader({ quarter }: Props) {
           Current Quarter {quarter}
         </p>
         <p className="font-serif font-bold text-desk-dark drop-shadow" style={{ fontSize: 'large' }}>
-          Distance to Graduation:{' '}
-          <span>{quartersLeft}</span>{' '}
-          Quarter{quartersLeft !== 1 ? 's' : ''}
+          Graduation in <span className="font-black">{quartersLeft}</span> Quarter{quartersLeft !== 1 ? 's' : ''}
         </p>
       </div>
     </div>
