@@ -5,7 +5,7 @@ export const achievementData = [
         description: 'You chose morning classes during course selection.',
         badgeImage: 'achievement-i-love-8-am-classes.png',
         conditionText: 'Task: Course Selection; Choice: Choose morning classes',
-        category: 'study',
+        category: 'Study',
     },
     {
         achievementKey: 'benefits-first',
@@ -14,7 +14,7 @@ export const achievementData = [
         badgeImage: 'achievement-benefits-first.png',
         conditionText:
             'Task: Course Selection; Choice: Choose benefit-oriented courses',
-        category: 'wealth',
+        category: 'Wealth',
     },
     {
         achievementKey: 'lone-wolf',
@@ -22,7 +22,7 @@ export const achievementData = [
         description: 'You decided not to join any academic club.',
         badgeImage: 'achievement-lone-wolf.png',
         conditionText: 'Task: Join an Academic Club; Choice: Do not join any club',
-        category: 'social',
+        category: 'Health',
     },
     {
         achievementKey: 'social-menace',
@@ -30,7 +30,7 @@ export const achievementData = [
         description: 'You attended campus social events.',
         badgeImage: 'achievement-social-menace.png',
         conditionText: 'Task: Join Campus Events; Choice: Attend social events',
-        category: 'social',
+        category: 'Health',
     },
     {
         achievementKey: 'terminal-procrastination',
@@ -39,7 +39,7 @@ export const achievementData = [
         badgeImage: 'achievement-terminal-procrastination.png',
         conditionText:
             'Task: Make a Weekly Assignment Plan; Choice: Plans never survive reality',
-        category: 'study',
+        category: 'Study',
     },
     {
         achievementKey: 'are-you-a-ghostwriter',
@@ -48,7 +48,7 @@ export const achievementData = [
         badgeImage: 'achievement-are-you-a-ghostwriter.png',
         conditionText:
             'Task: Preview Difficult Course Content; Choice: Turn it into a paid opportunity',
-        category: 'wealth',
+        category: 'Wealth',
     },
     {
         achievementKey: 'paid-to-chill',
@@ -56,7 +56,7 @@ export const achievementData = [
         description: 'You streamed your gameplay instead of just gaming at home.',
         badgeImage: 'achievement-paid-to-chill.png',
         conditionText: 'Task: Gaming at Home; Choice: Stream your gameplay',
-        category: 'special',
+        category: 'Wealth',
     },
     {
         achievementKey: 'never-betray-your-stomach',
@@ -64,7 +64,7 @@ export const achievementData = [
         description: 'You chose takeaway instead of meal prep.',
         badgeImage: 'achievement-never-betray-your-stomach.png',
         conditionText: 'Task: Meal Prep for a Busy Week; Choice: Just order takeaway',
-        category: 'health',
+        category: 'Health',
     },
     {
         achievementKey: 'chief-price-detective',
@@ -73,7 +73,7 @@ export const achievementData = [
         badgeImage: 'achievement-chief-price-detective.png',
         conditionText:
             'Task: Help a Friend Buy Local Products; Choice: Research market prices',
-        category: 'social',
+        category: 'Wealth',
     },
     {
         achievementKey: 'freebie-hunter',
@@ -82,7 +82,7 @@ export const achievementData = [
         badgeImage: 'achievement-freebie-hunter.png',
         conditionText:
             'Task: International Student Orientation Event; Choice: Collect free giveaways',
-        category: 'wealth',
+        category: 'Wealth',
     },
     {
         achievementKey: 'stillness-is-fitness',
@@ -90,7 +90,7 @@ export const achievementData = [
         description: 'You decided that exercise was not for you.',
         badgeImage: 'achievement-stillness-is-fitness.png',
         conditionText: 'Task: Go to the Gym; Choice: You hate exercise',
-        category: 'health',
+        category: 'Health',
     },
     {
         achievementKey: 'social-anxiety-mode',
@@ -99,7 +99,7 @@ export const achievementData = [
         badgeImage: 'achievement-social-anxiety-mode.png',
         conditionText:
             'Task: Connect with Classmates on Social Media; Choice: You are afraid of making friends',
-        category: 'social',
+        category: 'Health',
     },
     {
         achievementKey: 'high-quality-sleep',
@@ -107,7 +107,7 @@ export const achievementData = [
         description: 'You chose sleep instead of an all-night study session.',
         badgeImage: 'achievement-high-quality-sleep.png',
         conditionText: 'Task: All-Night Study; Choice: Just go to sleep',
-        category: 'health',
+        category: 'Health',
     },
     {
         achievementKey: 'one-chip-for-you-one-chip-for-me',
@@ -116,7 +116,7 @@ export const achievementData = [
         badgeImage: 'achievement-one-chip-for-you-one-chip-for-me.png',
         conditionText:
             'Task: Buy Chips at the Wharf; Choice: Feed chips to the seagulls',
-        category: 'special',
+        category: 'Health',
     },
     {
         achievementKey: 'questionable-asmr-taste',
@@ -125,7 +125,7 @@ export const achievementData = [
         badgeImage: 'achievement-questionable-asmr-taste.png',
         conditionText:
             'Task: Watch One Episode After Studying; Choice: Put something random on and fall asleep',
-        category: 'special',
+        category: 'Health',
     },
     {
         achievementKey: 'cultural-ambassador',
@@ -133,7 +133,7 @@ export const achievementData = [
         description: 'You promoted your home culture during Market Day.',
         badgeImage: 'achievement-cultural-ambassador.png',
         conditionText: 'Task: Market Day; Choice: Promote your home culture',
-        category: 'social',
+        category: 'Health',
     },
     {
         achievementKey: 'file-cleanup-master',
@@ -142,7 +142,7 @@ export const achievementData = [
         badgeImage: 'achievement-file-cleanup-master.png',
         conditionText:
             'Task: Organise S2 Course Folders; Choice: Organise all course materials',
-        category: 'study',
+        category: 'Study',
     },
     {
         achievementKey: 'just-a-bit-of-smoke',
@@ -150,7 +150,7 @@ export const achievementData = [
         description: 'You triggered the fire alarm incident random event.',
         badgeImage: 'achievement-just-a-bit-of-smoke.png',
         conditionText: 'Task: The Fire Alarm Incident; Trigger this random event',
-        category: 'special',
+        category: 'Health',
     },
     {
         achievementKey: 'sleeping-over-at-school',
@@ -158,7 +158,7 @@ export const achievementData = [
         description: 'You triggered the locked in the classroom random event.',
         badgeImage: 'achievement-sleeping-over-at-school.png',
         conditionText: 'Task: Locked in the Classroom; Trigger this random event',
-        category: 'special',
+        category: 'Health',
     },
     {
         achievementKey: 'if-its-not-mouldy-its-edible',
@@ -166,7 +166,7 @@ export const achievementData = [
         description: 'You triggered the food poisoning random event.',
         badgeImage: 'achievement-if-its-not-mouldy-its-edible.png',
         conditionText: 'Task: Food Poisoning; Trigger this random event',
-        category: 'special',
+        category: 'Health',
     },
     {
         achievementKey: 'its-fine-i-still-have-money',
@@ -174,7 +174,7 @@ export const achievementData = [
         description: 'You triggered the auto-renewal random event.',
         badgeImage: 'achievement-its-fine-i-still-have-money.png',
         conditionText: 'Task: Auto-Renewal; Trigger this random event',
-        category: 'special',
+        category: 'Wealth',
     },
     {
         achievementKey: 'surprise-came-fast-gone-fast',
@@ -182,7 +182,7 @@ export const achievementData = [
         description: 'You triggered the sudden interview random event.',
         badgeImage: 'achievement-surprise-came-fast-gone-fast.png',
         conditionText: 'Task: Sudden Interview; Trigger this random event',
-        category: 'special',
+        category: 'Wealth',
     },
     {
         achievementKey: 'pre-stress-specialist',
@@ -191,7 +191,7 @@ export const achievementData = [
         badgeImage: 'achievement-pre-stress-specialist.png',
         conditionText:
             'Task: Preview Difficult Course Content; Choice: Read the lecture notes early',
-        category: 'study',
+        category: 'Study',
     },
     {
         achievementKey: 'cross-that-bridge',
@@ -200,7 +200,7 @@ export const achievementData = [
         badgeImage: 'achievement-cross-that-bridge.png',
         conditionText:
             'Task: Preview Difficult Course Content; Choice: Deal with it when class starts',
-        category: 'study',
+        category: 'Study',
     },
     {
         achievementKey: 'plenty-of-fish-in-the-sea',
@@ -208,7 +208,7 @@ export const achievementData = [
         description: 'You triggered the heartbreak random event.',
         badgeImage: 'achievement-plenty-of-fish-in-the-sea.png',
         conditionText: 'Task: Heartbreak; Trigger this random event',
-        category: 'special',
+        category: 'Health',
     },
     {
         achievementKey: 'budget-master',
@@ -217,7 +217,7 @@ export const achievementData = [
         badgeImage: 'achievement-budget-master.png',
         conditionText:
             'Task: Help a Friend Buy Local Products; Choice: Research market prices',
-        category: 'wealth',
+        category: 'Wealth',
     },
     {
         achievementKey: 'anti-exam-strategist',
@@ -226,7 +226,7 @@ export const achievementData = [
         badgeImage: 'achievement-anti-exam-strategist.png',
         conditionText:
             'Task: Complete S2 Course Enrolment; Choice: Choose courses without exams',
-        category: 'study',
+        category: 'Study',
     },
     {
         achievementKey: 'avada-kedavra',
@@ -234,7 +234,7 @@ export const achievementData = [
         description: 'You triggered the graduation name disaster random event.',
         badgeImage: 'achievement-avada-kedavra.png',
         conditionText: 'Task: Graduation Name Disaster; Trigger this random event',
-        category: 'special',
+        category: 'Health',
     },
     {
         achievementKey: 'hexagon-international-student',
@@ -244,7 +244,7 @@ export const achievementData = [
         badgeImage: 'achievement-hexagon-international-student.png',
         conditionText:
             'Attributes: Intelligence, Health, and Wealth are all greater than or equal to 10',
-        category: 'special',
+        category: 'Crown',
     },
     {
         achievementKey: 'wait-am-i-actually-a-genius',
@@ -252,7 +252,7 @@ export const achievementData = [
         description: 'Your Intelligence was greater than or equal to 10.',
         badgeImage: 'achievement-wait-am-i-actually-a-genius.png',
         conditionText: 'Attribute: Intelligence is greater than or equal to 10',
-        category: 'study',
+        category: 'Study',
     },
     {
         achievementKey: 'future-forbes-list-candidate',
@@ -260,7 +260,7 @@ export const achievementData = [
         description: 'Your Wealth was greater than or equal to 10.',
         badgeImage: 'achievement-future-forbes-list-candidate.png',
         conditionText: 'Attribute: Wealth is greater than or equal to 10',
-        category: 'wealth',
+        category: 'Wealth',
     },
     {
         achievementKey: 'doing-great',
@@ -268,6 +268,6 @@ export const achievementData = [
         description: 'Your Health was greater than or equal to 10.',
         badgeImage: 'achievement-doing-great.png',
         conditionText: 'Attribute: Health is greater than or equal to 10',
-        category: 'health',
+        category: 'Health',
     },
 ]
