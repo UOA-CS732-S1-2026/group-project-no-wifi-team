@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'motion/react'
@@ -10,6 +10,7 @@ import { generateId, type GameResult } from '../utils/gameResultTypes'
 import { post } from '../utils/request'
 import { fetchAchievements, getEarnedCategories } from '../api/achievements'
 import { AchievementCategoryModal } from '../components/EndingResultScreen/AchievementCategoryModal'
+import { RankingListModal } from '../components/EndingResultScreen/RankingListModal'
 import { SettingsModal } from '../components/TitleScreen/SettingsModal'
 import { endingBgm, useMusicContext } from '../contexts/MusicContext'
 
@@ -69,6 +70,7 @@ export function EndingResultScreen() {
   const dispatch = useDispatch<AppDispatch>()
   const selectedCharacter = useSelector((s: RootState) => s.game.selectedCharacter)
   const earnedAchievements = useSelector((s: RootState) => s.game.earnedAchievements)
+  const auth = useSelector((s: RootState) => s.auth)
   const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled, setCustomBgm } = useMusicContext()
 
   useEffect(() => {
@@ -77,10 +79,9 @@ export function EndingResultScreen() {
   }, [setCustomBgm])
 
   const [showSettingsModal, setShowSettingsModal] = useState(false)
-  const [showRankingsNotice, setShowRankingsNotice] = useState(false)
+  const [showRankingsModal, setShowRankingsModal] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [earnedCategories, setEarnedCategories] = useState<string[]>([])
-  const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   // Typewriter state
   const [revealedLen, setRevealedLen] = useState(0)
@@ -164,10 +165,8 @@ export function EndingResultScreen() {
     }
 
     // Logged-in players persist to backend; guests keep their results in local game history only.
-    const userId = localStorage.getItem('guestId') || localStorage.getItem('guest_id') || null
-    if (userId) {
+    if (auth.token) {
       post('/game/result', {
-        userId,
         characterId,
         playerName,
         score,
@@ -182,12 +181,7 @@ export function EndingResultScreen() {
         /* offline or server unavailable — localStorage copy remains */
       })
     }
-  }, [dispatch, resultId, ending, score, snapshot, playerName, characterId, earnedAchievements])
-
-  // Move focus into the dialog when it opens for keyboard/screen-reader accessibility.
-  useEffect(() => {
-    if (showRankingsNotice) closeButtonRef.current?.focus()
-  }, [showRankingsNotice])
+  }, [dispatch, resultId, ending, score, snapshot, playerName, characterId, earnedAchievements, auth.token])
 
   // Shared spring ease
   const spring = { type: 'spring' as const, stiffness: 300, damping: 20 }
@@ -327,7 +321,7 @@ export function EndingResultScreen() {
         {/* Wave 4: Ranking List banner — anchored to card top-right corner */}
         <motion.button
           className="absolute top-[4.5vh] right-[9vw] p-0 cursor-pointer btn-filter hover:scale-105 active:scale-95"
-          onClick={() => setShowRankingsNotice(true)}
+          onClick={() => setShowRankingsModal(true)}
           aria-label="Ranking List"
           initial={{ opacity: 0, scale: 2, y: -16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -390,39 +384,9 @@ export function EndingResultScreen() {
         <img src={settingImg} alt="Settings" className="h-[min(10vh,8vw)] w-auto block" />
       </motion.button>
 
-      {/* ── Rankings "not available" notice ──────────────────────────────────── */}
-      {showRankingsNotice && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="rankings-dialog-title"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4 backdrop-blur-sm"
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') setShowRankingsNotice(false)
-          }}
-        >
-          <div className="relative w-full max-w-sm rounded-[2rem] border-4 border-[#7a4b2b] bg-[#f7e8c6] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)] text-center">
-            <div className="rounded-[1.5rem] border-2 border-[#c49a61] bg-[#fff7df]/80 px-5 py-5 shadow-inner">
-              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#9a6a3e]">
-                Ranking List
-              </p>
-              <h2 id="rankings-dialog-title" className="mt-2 text-2xl font-bold text-[#7a4b2b]">
-                Coming Soon
-              </h2>
-              <p className="mx-auto mt-3 text-sm leading-relaxed text-[#8a6446]">
-                This feature is not available yet. Check back later!
-              </p>
-            </div>
-            <motion.button
-              type="button"
-              ref={closeButtonRef}
-              onClick={() => setShowRankingsNotice(false)}
-              className="mx-auto mt-5 block cursor-pointer rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md btn-filter hover:scale-105 active:scale-95"
-            >
-              Close
-            </motion.button>
-          </div>
-        </div>
+      {/* ── Rankings modal ────────────────────────────────────────────────── */}
+      {showRankingsModal && (
+        <RankingListModal onClose={() => setShowRankingsModal(false)} />
       )}
 
       {/* ── Achievement category detail modal ──────────────────────────────── */}

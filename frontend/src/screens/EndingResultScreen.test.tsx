@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import gameReducer, { earnAchievement } from '../slices/gameSlice'
 import gameHistoryReducer, { LAST_RESULT_KEY } from '../store/gameHistorySlice'
+import authReducer, { loginSuccess } from '../slices/authSlice'
 import { EndingResultScreen } from './EndingResultScreen'
 import { AchievementCategoryModal } from '../components/EndingResultScreen/AchievementCategoryModal'
 
@@ -61,13 +62,35 @@ function makeStore() {
     reducer: {
       game: gameReducer,
       gameHistory: gameHistoryReducer,
+      auth: authReducer,
     },
   })
+}
+
+function makeAuthedStore() {
+  const store = makeStore()
+  store.dispatch(loginSuccess({
+    token: 'test-token',
+    userId: 'user-test',
+    username: 'tester',
+    email: 'test@test.com',
+  }))
+  return store
 }
 
 function renderAt(initial: { pathname: string; state?: unknown }) {
   return render(
     <Provider store={makeStore()}>
+      <MemoryRouter initialEntries={[initial]}>
+        <EndingResultScreen />
+      </MemoryRouter>
+    </Provider>,
+  )
+}
+
+function renderAuthed(initial: { pathname: string; state?: unknown }) {
+  return render(
+    <Provider store={makeAuthedStore()}>
       <MemoryRouter initialEntries={[initial]}>
         <EndingResultScreen />
       </MemoryRouter>
@@ -517,27 +540,27 @@ describe('EndingResultScreen', () => {
     expect(screen.getByRole('button', { name: /ranking list/i })).toBeInTheDocument()
   })
 
-  // ── Rankings "Coming Soon" popup ──────────────────────────────────────────────
+  // ── Rankings modal ──────────────────────────────────────────────────────────
 
-  it('opens the Coming-Soon popup when clicking Ranking List', () => {
+  it('opens the ranking list modal when clicking Ranking List', () => {
     renderAt({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 80, health: 80, wealth: 80 } },
     })
     fireEvent.click(screen.getByRole('button', { name: /ranking list/i }))
-    expect(screen.getByText('Coming Soon')).toBeInTheDocument()
-    expect(screen.getByText(/this feature is not available yet/i)).toBeInTheDocument()
+    expect(screen.getByText('Top 10 Players')).toBeInTheDocument()
+    expect(screen.getByText(/guest mode/i)).toBeInTheDocument()
   })
 
-  it('closes the popup when clicking Close', () => {
+  it('closes the ranking list modal when clicking Close', () => {
     renderAt({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 80, health: 80, wealth: 80 } },
     })
     fireEvent.click(screen.getByRole('button', { name: /ranking list/i }))
-    expect(screen.getByText('Coming Soon')).toBeInTheDocument()
+    expect(screen.getByText('Top 10 Players')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /^close$/i }))
-    expect(screen.queryByText('Coming Soon')).not.toBeInTheDocument()
+    expect(screen.queryByText('Top 10 Players')).not.toBeInTheDocument()
   })
 
   // ── Redux and localStorage side effects ───────────────────────────────────────
@@ -552,7 +575,7 @@ describe('EndingResultScreen', () => {
       </Provider>,
     )
     await waitFor(() => expect(store.getState().gameHistory.records).toHaveLength(1))
-    expect(store.getState().gameHistory.records[0].endingId).toBe('perfect-all-rounder')
+    expect(store.getState().gameHistory.records[0].endingId).toBe('model-minority-real-version')
   })
 
   it('writes the result id to localStorage under LAST_RESULT_KEY after render', async () => {
@@ -568,7 +591,7 @@ describe('EndingResultScreen', () => {
   // ── Backend persistence ───────────────────────────────────────────────────────
 
   it('POSTs game result to /game/result with earned achievements from Redux', async () => {
-    const store = makeStore()
+    const store = makeAuthedStore()
     store.dispatch(earnAchievement('study-master'))
     store.dispatch(earnAchievement('health-guru'))
 
@@ -584,7 +607,7 @@ describe('EndingResultScreen', () => {
     const [path, payload] = mockPost.mock.calls[0] as [string, Record<string, unknown>]
     expect(path).toBe('/game/result')
     expect(payload).toMatchObject({
-      endingId: 'perfect-all-rounder',
+      endingId: 'model-minority-real-version',
       endingRank: 'S',
       endingTheme: 'happy',
       snapshot: { intelligence: 90, health: 90, wealth: 90 },
@@ -593,7 +616,7 @@ describe('EndingResultScreen', () => {
   })
 
   it('POSTs empty achievements array when nothing is earned', async () => {
-    renderAt({
+    renderAuthed({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 60, health: 60, wealth: 60 } },
     })
@@ -603,18 +626,18 @@ describe('EndingResultScreen', () => {
   })
 
   it('includes the correct score and endingTitle in the POST payload', async () => {
-    renderAt({
+    renderAuthed({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 90, health: 90, wealth: 90 } },
     })
     await waitFor(() => expect(mockPost).toHaveBeenCalledTimes(1))
     const [, payload] = mockPost.mock.calls[0] as [string, Record<string, unknown>]
-    expect(payload.score).toBe(90)
-    expect(payload.endingTitle).toBe('Perfect All-Rounder')
+    expect(payload.score).toBe(100)
+    expect(payload.endingTitle).toBe('The Model Minority Myth: Real Version')
   })
 
   it('uses playerName from location.state when no character is selected', async () => {
-    renderAt({
+    renderAuthed({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 80, health: 80, wealth: 80 }, playerName: 'TestPlayer' },
     })
@@ -624,41 +647,48 @@ describe('EndingResultScreen', () => {
   })
 
   it("defaults playerName to 'Player' when neither character nor state provides a name", async () => {
-    renderAt({ pathname: '/ending-result' })
+    renderAuthed({ pathname: '/ending-result' })
     await waitFor(() => expect(mockPost).toHaveBeenCalledTimes(1))
     const [, payload] = mockPost.mock.calls[0] as [string, Record<string, unknown>]
     expect(payload.playerName).toBe('Player')
   })
 
-  it('reads userId from localStorage guestId and includes it in the POST', async () => {
-    window.localStorage.setItem('guestId', 'test-guest-123')
+  it('does not POST to backend when guest (no auth token)', async () => {
     renderAt({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 80, health: 80, wealth: 80 } },
     })
-    await waitFor(() => expect(mockPost).toHaveBeenCalledTimes(1))
-    const [, payload] = mockPost.mock.calls[0] as [string, Record<string, unknown>]
-    expect(payload.userId).toBe('test-guest-123')
+    // Wait for effects to settle — post should NOT be called for guests
+    await new Promise((r) => setTimeout(r, 100))
+    const postCalls = mockPost.mock.calls.filter(
+      (call: unknown[]) => call[0] === '/game/result',
+    )
+    expect(postCalls.length).toBe(0)
   })
 
-  it('reads userId from legacy localStorage guest_id key as fallback', async () => {
-    window.localStorage.setItem('guest_id', 'legacy-guest-456')
-    renderAt({
-      pathname: '/ending-result',
-      state: { snapshot: { intelligence: 80, health: 80, wealth: 80 } },
+  it('POSTs to backend without userId when logged in (auth token present)', async () => {
+    const store = configureStore({
+      reducer: { game: gameReducer, gameHistory: gameHistoryReducer, auth: authReducer },
     })
+    store.dispatch(loginSuccess({
+      token: 'test-token',
+      userId: 'user-abc',
+      username: 'tester',
+      email: 't@t.com',
+    }))
+    render(
+      <Provider store={store}>
+        <MemoryRouter initialEntries={[{ pathname: '/ending-result', state: { snapshot: { intelligence: 80, health: 80, wealth: 80 } } }]}>
+          <EndingResultScreen />
+        </MemoryRouter>
+      </Provider>,
+    )
     await waitFor(() => expect(mockPost).toHaveBeenCalledTimes(1))
-    const [, payload] = mockPost.mock.calls[0] as [string, Record<string, unknown>]
-    expect(payload.userId).toBe('legacy-guest-456')
-  })
-
-  it('sends null userId when no guest key is present in localStorage', async () => {
-    renderAt({
-      pathname: '/ending-result',
-      state: { snapshot: { intelligence: 80, health: 80, wealth: 80 } },
-    })
-    await waitFor(() => expect(mockPost).toHaveBeenCalledTimes(1))
-    const [, payload] = mockPost.mock.calls[0] as [string, Record<string, unknown>]
-    expect(payload.userId).toBeNull()
+    const calls = mockPost.mock.calls.filter(
+      (call: unknown[]) => call[0] === '/game/result',
+    )
+    expect(calls.length).toBe(1)
+    const [, payload] = calls[0] as [string, Record<string, unknown>]
+    expect(payload.userId).toBeUndefined()
   })
 })

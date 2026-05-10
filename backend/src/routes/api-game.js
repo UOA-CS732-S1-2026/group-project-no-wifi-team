@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { QuarterlyLog } from "../db/quarterlyLog.js";
 import { User } from "../db/user.js";
+import { UserStats } from "../db/userStats.js";
 import { applyTaskChoice, baseTaskState, buildTaskResponse } from "../data/taskData.js";
 import { Event } from "../db/event.js";
 import { GameResult } from "../db/gameResult.js";
 import { ENDING_COLLECTION_MAP } from "../data/endingData.js";
+import { authOptional } from "../middleware/auth.js";
 
 const router = Router();
 
@@ -106,9 +108,9 @@ router.post("/task/choice", async (req, res) => {
 const VALID_ENDING_RANKS = ["S", "A", "B", "C"];
 const VALID_ENDING_THEMES = ["happy", "bad"];
 
-router.post("/result", async (req, res) => {
+router.post("/result", authOptional, async (req, res) => {
   try {
-    const { userId, characterId, playerName, score, endingId, endingTitle, endingRank, endingTheme, snapshot, achievements, timestamp } = req.body;
+    const { characterId, playerName, score, endingId, endingTitle, endingRank, endingTheme, snapshot, achievements, timestamp } = req.body;
 
     if (!playerName || !endingId || !endingTitle || !endingRank || !endingTheme || !snapshot) {
       return res.status(400).json({ success: false, message: "Missing required fields" });
@@ -132,8 +134,13 @@ router.post("/result", async (req, res) => {
       return res.status(400).json({ success: false, message: "timestamp must be a numeric value" });
     }
 
-    const result = await GameResult.create({
-      userId: userId ?? null,
+    // Guest: skip DB entirely
+    if (!req.userId) {
+      return res.status(200).json({ success: true, saved: false });
+    }
+
+    await GameResult.create({
+      userId: req.userId,
       characterId: characterId ?? null,
       playerName,
       score: scoreNum,
@@ -150,24 +157,21 @@ router.post("/result", async (req, res) => {
       timestamp: timestampNum,
     });
 
+    // Update UserStats
     const collectionKey = ENDING_COLLECTION_MAP[endingId];
-    if (userId) {
-      const addToSet = {};
-      if (collectionKey) addToSet.endings = collectionKey;
-      if (Array.isArray(achievements) && achievements.length > 0) {
-        addToSet.achievements = { $each: achievements };
-      }
-
-      if (Object.keys(addToSet).length > 0) {
-        await User.findOneAndUpdate(
-          { userId },
-          { $addToSet: addToSet },
-          { new: true },
-        );
-      }
+    const statsUpdate = { $inc: { totalPlays: 1 } };
+    const addToSet = {};
+    if (collectionKey) addToSet.endings = collectionKey;
+    if (Array.isArray(achievements) && achievements.length > 0) {
+      addToSet.achievements = { $each: achievements };
+    }
+    if (Object.keys(addToSet).length > 0) {
+      statsUpdate.$addToSet = addToSet;
     }
 
-    return res.status(201).json({ success: true, data: result });
+    await UserStats.updateOne({ userId: req.userId }, statsUpdate, { upsert: true });
+
+    return res.status(201).json({ success: true, saved: true });
   } catch (error) {
     console.error("Failed to save game result:", error);
     return res.status(500).json({ success: false, message: "Failed to save game result", error: error.message });
@@ -191,12 +195,11 @@ router.get("/results", async (req, res) => {
 
 /**
  * GET /api/game/result/latest
- * Returns the most recent result. Pass x-user-id header to filter by user.
+ * Returns the most recent result for the authenticated user, or any result for guests.
  */
-router.get("/result/latest", async (req, res) => {
+router.get("/result/latest", authOptional, async (req, res) => {
   try {
-    const userId = req.headers["x-user-id"] || null;
-    const query = userId ? { userId } : {};
+    const query = req.userId ? { userId: req.userId } : {};
     const result = await GameResult.findOne(query).sort({ timestamp: -1 }).lean();
     if (!result) {
       return res.status(404).json({ success: false, message: "No result found" });
