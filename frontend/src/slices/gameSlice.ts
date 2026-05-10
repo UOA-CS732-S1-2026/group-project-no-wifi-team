@@ -7,7 +7,7 @@ interface QuarterTasks {
   randomTask: Task | null // 1 system-assigned random task
 }
 
-const DEFAULT_STATS: CharacterStats = { intelligence: 55, health: 60, wealth: 50 }
+const DEFAULT_STATS: CharacterStats = { intelligence: 5, health: 5, wealth: 5 }
 
 interface GameState {
   selectedCharacter: Character | null

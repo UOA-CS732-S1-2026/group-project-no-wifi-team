@@ -34,14 +34,13 @@ function getLivingExpenses(wealth: number): number {
 }
 
 const LIVING_EXPENSES_QUOTES: Record<number, string> = {
-  1: '"The rent doesn\'t care about your grades." — Your Landlord',
-  2: '"Life is not free." — Reality',
+  2: '"The rent doesn\'t care about your grades." — Your Landlord',
   3: '"Money flies, and so does your youth." — Anonymous',
   4: '"Welcome to adulting." — Your Bank Account',
 }
 
 function buildLivingExpensesTask(amount: number, image: string, quarter: number): TaskInteractionContent {
-  const quote = LIVING_EXPENSES_QUOTES[quarter] ?? LIVING_EXPENSES_QUOTES[1]
+  const quote = LIVING_EXPENSES_QUOTES[quarter] ?? LIVING_EXPENSES_QUOTES[2]
   return {
     taskId: 'living-expenses',
     title: 'Living Expenses',
@@ -86,8 +85,10 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
     const amount = getLivingExpenses(selectedCharacter?.stats.wealth ?? 5)
     const image = baseTasks[0]?.image ?? defaultContent.image
-    return [buildLivingExpensesTask(amount, image, currentQuarter), ...baseTasks]
-  }, [content, quarterPlan, routeState?.tasks, selectedCharacter])
+    return currentQuarter === 1
+      ? baseTasks
+      : [buildLivingExpensesTask(amount, image, currentQuarter), ...baseTasks]
+  }, [content, quarterPlan, routeState?.tasks, selectedCharacter, currentQuarter])
 
   const initialStats = useMemo(
     () => ({
@@ -180,6 +181,10 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
       : stats
 
     if (fx) setStats(nextStats)
+
+    if (currentTask.achievementKey) {
+      tryEarnAchievement(currentTask.achievementKey)
+    }
 
     if (isLastTask) {
       dispatch(updateStats({ intelligence: nextStats.intelligence, health: nextStats.health, wealth: nextStats.money }))
