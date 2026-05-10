@@ -85,10 +85,10 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
     const amount = getLivingExpenses(selectedCharacter?.stats.wealth ?? 5)
     const image = baseTasks[0]?.image ?? defaultContent.image
-    return currentQuarter === 1
-      ? baseTasks
-      : [buildLivingExpensesTask(amount, image, currentQuarter), ...baseTasks]
-  }, [content, quarterPlan, routeState?.tasks, selectedCharacter, currentQuarter])
+    return currentQuarter >= 2
+      ? [buildLivingExpensesTask(amount, image, currentQuarter), ...baseTasks]
+      : baseTasks
+  }, [content, quarterPlan, routeState?.tasks, selectedCharacter])
 
   const initialStats = useMemo(
     () => ({
@@ -172,15 +172,27 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
   const handleNext = () => {
     const fx = currentTask.autoEffects
+    const autoOption =
+      !fx && currentTask.isRandomEvent && currentTask.options.length > 0
+        ? currentTask.options[0]
+        : null
+
     const nextStats = fx
       ? {
           intelligence: clampStat(stats.intelligence + (fx.intelligence ?? 0)),
           health: clampStat(stats.health + (fx.health ?? 0)),
           money: clampStat(stats.money + (fx.money ?? 0)),
         }
-      : stats
+      : autoOption
+        ? {
+            intelligence: clampStat(stats.intelligence + autoOption.effects.intelligence),
+            health: clampStat(stats.health + autoOption.effects.health),
+            money: clampStat(stats.money + autoOption.effects.money),
+          }
+        : stats
 
-    if (fx) setStats(nextStats)
+    if (fx || autoOption) setStats(nextStats)
+    if (autoOption?.achievementKey) tryEarnAchievement(autoOption.achievementKey)
 
     if (currentTask.achievementKey) {
       tryEarnAchievement(currentTask.achievementKey)
