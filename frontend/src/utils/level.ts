@@ -11,7 +11,9 @@ export function getAttributeLevel(value: number): AttributeLevel {
   return 'Poor'
 }
 
-export function clamp01to100(value: number): number {
+export function clamp0to10(value: number): number {
   if (Number.isNaN(value)) return 0
-  return Math.max(0, Math.min(100, Math.round(value)))
+  return Math.max(0, Math.min(10, Math.round(value)))
 }
+
+export const clamp01to100 = clamp0to10

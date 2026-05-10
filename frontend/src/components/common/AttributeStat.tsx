@@ -60,7 +60,7 @@ export function AttributeStat({
       </span>
       <span className={`font-serif text-lg font-bold ${LEVEL_TONE[level]}`}>{level}</span>
       {hideValue ? null : (
-        <span className="font-mono text-xs text-desk-dark/70">{value}/100</span>
+        <span className="font-mono text-xs text-desk-dark/70">{value}/10</span>
       )}
     </div>
   )

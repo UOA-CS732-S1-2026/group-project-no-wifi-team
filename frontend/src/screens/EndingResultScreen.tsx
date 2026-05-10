@@ -45,7 +45,7 @@ interface EndingLocationState {
   playerName?: string
 }
 
-const FALLBACK_SNAPSHOT: AttributeSnapshot = { intelligence: 70, health: 65, wealth: 60 }
+const FALLBACK_SNAPSHOT: AttributeSnapshot = { intelligence: 7, health: 6, wealth: 6 }
 
 function readSnapshot(state: unknown): AttributeSnapshot {
   const incoming = (state as EndingLocationState | null)?.snapshot
@@ -209,12 +209,12 @@ export function EndingResultScreen() {
         >
           {/* Title row + divider + description — individual entry animations */}
           <div className="grid grid-cols-[min-content] self-start shrink-0">
-            <div className="flex items-baseline gap-[4vw]">
+            <div className="flex flex-col items-start gap-[1.2vh]">
               {/* Wave 1: main title */}
               <motion.span
                 className="pl-[0.2vw] text-[4.4vw] font-black uppercase text-[#3d2b1f] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.6)]"
                 style={{ fontFamily: "Georgia, Cambria, serif" }}
-                initial={{ opacity: 0, x: -12 }}
+                initial={{ opacity: 0, x: -2 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.1, ...spring }}
               >

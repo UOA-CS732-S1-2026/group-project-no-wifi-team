@@ -14,7 +14,7 @@ import type { BackendEndingItem } from './types'
 
 type EndingCardProps = {
   ending: BackendEndingItem
-  
+  isCurrent?: boolean
 }
 
 const endingImageMap: Record<string, string> = {
@@ -27,13 +27,17 @@ const endingImageMap: Record<string, string> = {
   'ending-showed-up-survived.png': endingShowedUpSurvived,
   'ending-speedrun-early-retirement.png': endingSpeedrunEarlyRetirement,
 }
-export function EndingCard({ ending }: EndingCardProps) {
+export function EndingCard({ ending, isCurrent = false }: EndingCardProps) {
   const isUnlocked = ending.status === 'Unlocked'
   const frameImage = isUnlocked ? endingCardFrame : endingCardLockedFrame
   const endingImage = ending.image ? endingImageMap[ending.image] : undefined
-console.log(ending.image, endingImage)
+
   return (
-    <article className="relative h-[305px] w-[295px] shrink-0 transition duration-200 hover:-translate-y-1 hover:scale-[1.02]">
+    <article
+      className={`relative h-[305px] w-[295px] shrink-0 transition duration-200 hover:-translate-y-1 hover:scale-[1.02] ${
+        isCurrent ? 'drop-shadow-[0_0_18px_rgba(255,228,150,0.85)]' : ''
+      }`}
+    >
       <img
         src={frameImage}
         alt=""
@@ -77,7 +81,7 @@ console.log(ending.image, endingImage)
           isUnlocked ? 'text-[#526b37]' : 'text-[#6b4427]'
         }`}
       >
-        {ending.status}
+        {isCurrent ? 'Current Ending' : ending.status}
       </div>
     </article>
   )

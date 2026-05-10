@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clamp01to100, getAttributeLevel } from './level'
+import { clamp0to10, getAttributeLevel } from './level'
 
 describe('getAttributeLevel', () => {
   it('returns Excellent at the upper threshold', () => {
@@ -18,20 +18,20 @@ describe('getAttributeLevel', () => {
   })
 })
 
-describe('clamp01to100', () => {
+describe('clamp0to10', () => {
   it('clamps below zero to zero', () => {
-    expect(clamp01to100(-5)).toBe(0)
+    expect(clamp0to10(-5)).toBe(0)
   })
 
-  it('clamps above 100 to 100', () => {
-    expect(clamp01to100(150)).toBe(100)
+  it('clamps above 10 to 10', () => {
+    expect(clamp0to10(150)).toBe(10)
   })
 
   it('rounds non-integer inputs', () => {
-    expect(clamp01to100(45.7)).toBe(46)
+    expect(clamp0to10(4.7)).toBe(5)
   })
 
   it('coerces NaN to zero', () => {
-    expect(clamp01to100(NaN)).toBe(0)
+    expect(clamp0to10(NaN)).toBe(0)
   })
 })
