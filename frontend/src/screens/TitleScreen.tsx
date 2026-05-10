@@ -72,7 +72,7 @@ export function TitleScreen() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 2.2, duration: 0.4 }}
           onClick={() => setShowSettingsModal(true)}
-          className="absolute bottom-[8%] right-[12%] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:right-[8%] sm:w-[74px]"
+          className="absolute bottom-[8%] right-[12%] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:right-[8%] sm:w-[74px] cursor-pointer"
           aria-label="Settings"
         >
           <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />

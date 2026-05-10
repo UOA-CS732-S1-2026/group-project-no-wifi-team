@@ -25,7 +25,7 @@ export function SettingsModal({
             <button
               type="button"
               onClick={() => onMusicToggle(!musicEnabled)}
-              className={`rounded-full border-2 px-5 py-1.5 text-sm font-bold transition active:scale-95 ${
+              className={`rounded-full border-2 px-5 py-1.5 text-sm font-bold transition active:scale-95 cursor-pointer ${
                 musicEnabled
                   ? 'border-[#6b3f25] bg-[#9a5f2d] text-[#fff3d2] hover:bg-[#7a4b2b]'
                   : 'border-[#c49a61] bg-[#d9bd87] text-[#6b4427] hover:bg-[#c9ad77]'
@@ -40,7 +40,7 @@ export function SettingsModal({
             <button
               type="button"
               onClick={() => onSfxToggle(!sfxEnabled)}
-              className={`rounded-full border-2 px-5 py-1.5 text-sm font-bold transition active:scale-95 ${
+              className={`rounded-full border-2 px-5 py-1.5 text-sm font-bold transition active:scale-95 cursor-pointer ${
                 sfxEnabled
                   ? 'border-[#6b3f25] bg-[#9a5f2d] text-[#fff3d2] hover:bg-[#7a4b2b]'
                   : 'border-[#c49a61] bg-[#d9bd87] text-[#6b4427] hover:bg-[#c9ad77]'
@@ -54,7 +54,7 @@ export function SettingsModal({
         <button
           type="button"
           onClick={onClose}
-          className="mx-auto mt-6 block rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md transition hover:-translate-y-0.5 hover:bg-[#7a4b2b] active:scale-95"
+          className="mx-auto mt-6 block rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md transition hover:-translate-y-0.5 hover:bg-[#7a4b2b] active:scale-95 cursor-pointer"
         >
           Close
         </button>
