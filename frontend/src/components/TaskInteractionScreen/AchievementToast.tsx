@@ -47,7 +47,7 @@ export function AchievementToast({ achievementKey, onDismiss }: Props) {
 
   useEffect(() => {
     if (!achievementKey) return
-    const timer = setTimeout(onDismiss, 3000)
+    const timer = setTimeout(onDismiss, 5000)
     return () => clearTimeout(timer)
   }, [achievementKey, onDismiss])
 
@@ -64,7 +64,7 @@ export function AchievementToast({ achievementKey, onDismiss }: Props) {
           transition={{ duration: 0.35, ease: 'easeOut' }}
           className="pointer-events-none fixed bottom-8 right-8 z-[9999] w-72"
         >
-          <div className="relative">
+          <div className="relative cursor-pointer pointer-events-auto" onClick={onDismiss}>
             <img
               src={icon}
               alt={label}

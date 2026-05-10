@@ -88,7 +88,7 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     return currentQuarter >= 2
       ? [buildLivingExpensesTask(amount, image, currentQuarter), ...baseTasks]
       : baseTasks
-  }, [content, quarterPlan, routeState?.tasks, selectedCharacter])
+  }, [content, quarterPlan, routeState?.tasks, selectedCharacter, currentQuarter])
 
   const initialStats = useMemo(
     () => ({
@@ -113,7 +113,6 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
   const [stats, setStats] = useState<Record<AttributeKey, number>>(initialStats)
   const [selectedOption, setSelectedOption] = useState<ChoiceOption | null>(null)
   const [toastKey, setToastKey] = useState<string | null>(null)
-  const [pendingSummary, setPendingSummary] = useState<object | null>(null)
 
   const currentTask = tasks[taskIndex] ?? defaultContent
   const isLastTask = taskIndex >= tasks.length - 1
@@ -209,12 +208,7 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
       if (nextStats.intelligence >= 10 && nextStats.health >= 10 && nextStats.money >= 10) {
         tryEarnAchievement('hexagon-international-student', false)
       }
-      const summary = buildSummaryState(nextStats)
-      if (toastKey) {
-        setPendingSummary(summary)
-      } else {
-        navigate('/quarterly-summary', { state: summary })
-      }
+      navigate('/quarterly-summary', { state: buildSummaryState(nextStats) })
       return
     }
 
@@ -227,16 +221,9 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     setStats(initialStats)
     setSelectedOption(null)
     setToastKey(null)
-    setPendingSummary(null)
   }
 
-  const dismissToast = useCallback(() => {
-    setToastKey(null)
-    if (pendingSummary) {
-      navigate('/quarterly-summary', { state: pendingSummary })
-      setPendingSummary(null)
-    }
-  }, [pendingSummary, navigate])
+  const dismissToast = useCallback(() => setToastKey(null), [])
 
   return (
     <div
