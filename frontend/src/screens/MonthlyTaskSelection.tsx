@@ -205,7 +205,7 @@ export function MonthlyTaskSelection() {
       <button
         type="button"
         onClick={() => setShowSettingsModal(true)}
-        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px]"
+        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px] cursor-pointer"
         aria-label="Settings"
       >
         <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
