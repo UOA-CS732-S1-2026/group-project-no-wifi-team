@@ -1,6 +1,7 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'motion/react'
 
 import { arrowLeft, arrowRight, backHomeBtn, characterBg, heroLeft, heroPlane, heroRight } from '../assets/CharacterSelect'
 import { characters, DESIGN_HEIGHT, DESIGN_WIDTH, Character } from '../components/CharacterSelectScreen/constants'
@@ -16,6 +17,7 @@ export function CharacterSelectScreen() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const stageScale = useResponsiveStageScale()
   const isMobile = useIsMobile()
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   function scrollLeftHandler() {
     scrollRef.current?.scrollBy({
@@ -32,9 +34,29 @@ export function CharacterSelectScreen() {
   }
 
   function chooseCharacter(character: Character) {
-    localStorage.setItem('selectedCharacter', JSON.stringify(character))
-    dispatch(selectCharacter(character))
-    navigate('/monthly-task-selection')
+    // 如果当前点击的角色已经是选中状态，则执行确认跳转
+    if (selectedId === character.id) {
+      localStorage.setItem('selectedCharacter', JSON.stringify(character))
+      dispatch(selectCharacter(character))
+      navigate('/monthly-task-selection')
+    } else {
+      // 否则仅将其设为选中（高亮）
+      setSelectedId(character.id)
+    }
+  }
+
+  // 定义列表容器的动画变体，用于交错显示子元素
+  const listContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 1.2 },
+    },
+  }
+
+  const listItemVariants = {
+    hidden: { opacity: 0, x: 30 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
   }
 
   if (isMobile) {
@@ -43,16 +65,24 @@ export function CharacterSelectScreen() {
         className="min-h-screen w-full overflow-y-auto bg-cover bg-center px-4 py-5 font-serif text-[#5a3218]"
         style={{ backgroundImage: `url(${characterBg})` }}
       >
-        <button
+        <motion.button
           type="button"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.8 }}
           onClick={() => navigate('/')}
-          className="mb-5 w-[165px] transition duration-200 active:scale-95"
+          className="mb-5 w-[165px] transition duration-200 active:scale-95 cursor-pointer"
           aria-label="Back to Home"
         >
           <img src={backHomeBtn} alt="Back to Home" className="w-full" />
-        </button>
+        </motion.button>
 
-        <section className="relative overflow-hidden rounded-[24px] border-[3px] border-[#cfa472] bg-[#fff2d9]/90 px-4 py-6 text-center shadow-[0_10px_18px_rgba(83,50,24,0.12)]">
+        <motion.section
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="relative overflow-hidden rounded-[24px] border-[3px] border-[#cfa472] bg-[#fff2d9]/90 px-4 py-6 text-center shadow-[0_10px_18px_rgba(83,50,24,0.12)]"
+        >
           <div className="pointer-events-none absolute inset-[10px] rounded-[18px] border border-[#e7c89d]" />
 
           <img src={heroPlane} alt="" className="absolute left-3 top-2 w-[115px] opacity-85" />
@@ -77,26 +107,49 @@ export function CharacterSelectScreen() {
               attributes will affect your student life and possible endings.
             </p>
           </div>
-        </section>
+        </motion.section>
 
         <section className="mt-7">
-          <div className="mb-4 flex items-center gap-3">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="mb-4 flex items-center gap-3"
+          >
             <span className="text-[30px] leading-none text-[#b5804e]">▌</span>
 
             <h2 className="text-[20px] font-bold tracking-[0.13em] text-[#724624]">
               CHARACTER LIST
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="flex flex-col gap-5 pb-8">
+          <motion.div
+            variants={listContainerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex flex-col gap-5 pb-12 px-2 py-4" // 增加内边距防止移动端裁剪
+          >
             {characters.map((character) => (
-              <MobileCharacterCard
-                key={character.id}
-                character={character}
-                onSelect={chooseCharacter}
-              />
+            <motion.div
+              key={character.id}
+              variants={listItemVariants}
+              onClick={() => setSelectedId(character.id)}
+              className="cursor-pointer"
+              whileHover={!selectedId ? { scale: 1.02, x: 5 } : {}}
+              whileTap={!selectedId ? { scale: 0.98 } : {}}
+              animate={
+                selectedId === character.id
+                  ? { scale: 1.05, filter: 'brightness(1.1)', opacity: 1, x: 0 }
+                  : undefined
+              }
+            >
+                <MobileCharacterCard
+                  character={character}
+                  onSelect={chooseCharacter}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
       </main>
     )
@@ -122,16 +175,24 @@ export function CharacterSelectScreen() {
             transform: `scale(${stageScale})`,
           }}
         >
-          <button
+          <motion.button
             type="button"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
             onClick={() => navigate('/')}
-            className="absolute left-[82px] top-[48px] z-30 w-[215px] transition duration-200 hover:scale-105 active:scale-95"
+            className="absolute left-[82px] top-[48px] z-30 w-[215px] transition duration-200 hover:scale-105 active:scale-95 cursor-pointer"
             aria-label="Back to Home"
           >
             <img src={backHomeBtn} alt="Back to Home" className="w-full" />
-          </button>
+          </motion.button>
 
-          <section className="absolute left-[120px] top-[120px] z-20 h-[275px] w-[1125px] rounded-[28px] border-[3px] border-[#cfa472] bg-[#fff2d9]/88 shadow-[0_10px_18px_rgba(83,50,24,0.12)]">
+          <motion.section
+            initial={{ y: 250, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="absolute left-[120px] top-[120px] z-20 h-[275px] w-[1125px] rounded-[28px] border-[3px] border-[#cfa472] bg-[#fff2d9]/88 shadow-[0_10px_18px_rgba(83,50,24,0.12)]"
+          >
             <div className="absolute inset-[12px] rounded-[22px] border border-[#e7c89d]" />
 
             <img src={heroLeft} alt="" className="absolute bottom-[-20px] left-[30px] w-[255px]" />
@@ -161,9 +222,14 @@ export function CharacterSelectScreen() {
                 Scroll horizontally to view all character options.
               </p>
             </div>
-          </section>
+          </motion.section>
 
-          <section className="absolute left-[105px] top-[440px] z-20 flex w-[1070px] items-center justify-between">
+          <motion.section
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="absolute left-[105px] top-[440px] z-20 flex w-[1070px] items-center justify-between"
+          >
             <div className="flex items-center gap-4">
               <span className="text-[36px] leading-none text-[#b5804e]">▌</span>
 
@@ -171,14 +237,19 @@ export function CharacterSelectScreen() {
                 CHARACTER LIST
               </h2>
             </div>
-          </section>
+          </motion.section>
 
-          <section className="absolute left-[95px] top-[485px] z-20 w-[1185px]">
-            <div className="relative rounded-[28px] border-[2px] border-[#ddb788]/70 bg-[#fff3dd]/28 px-[18px] py-[20px]">
+          <section className="absolute left-[95px] top-[485px] z-20 w-[1150px]">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.1, duration: 0.4 }}
+              className="relative rounded-[28px] border-[2px] border-[#ddb788]/70 bg-[#fff3dd]/28 px-[18px] py-[20px]"
+            >
               <button
                 type="button"
                 onClick={scrollLeftHandler}
-                className="absolute left-[-65px] top-[235px] z-30 w-[100px] transition duration-200 hover:scale-110 active:scale-95"
+                className="absolute left-[-65px] top-[235px] z-30 w-[100px] transition duration-200 hover:scale-110 active:scale-95 cursor-pointer"
                 aria-label="Scroll left"
               >
                 <img src={arrowLeft} alt="left" className="w-full" />
@@ -187,29 +258,51 @@ export function CharacterSelectScreen() {
               <button
                 type="button"
                 onClick={scrollRightHandler}
-                className="absolute right-[-65px] top-[235px] z-30 w-[100px] transition duration-200 hover:scale-110 active:scale-95"
+                className="absolute right-[-65px] top-[235px] z-30 w-[100px] transition duration-200 hover:scale-110 active:scale-95 cursor-pointer"
                 aria-label="Scroll right"
               >
                 <img src={arrowRight} alt="right" className="w-full" />
               </button>
 
-              <div
+              <motion.div
                 ref={scrollRef}
-                className="flex gap-[14px] overflow-x-auto overflow-y-hidden scroll-smooth pb-[6px]"
+                variants={listContainerVariants}
+                initial="hidden"
+                animate="visible"
+                className="flex gap-6 overflow-x-auto scroll-smooth py-12 px-4 -my-8" 
                 style={{
                   scrollbarWidth: 'none',
                   msOverflowStyle: 'none',
                 }}
               >
                 {characters.map((character) => (
-                  <DesktopCharacterCard
+                  <motion.div
                     key={character.id}
-                    character={character}
-                    onSelect={chooseCharacter}
-                  />
+                    variants={listItemVariants}
+                    className="shrink-0 cursor-pointer"
+                    whileHover={!selectedId ? { scale: 1.05, y: -10 } : {}}
+                    whileTap={!selectedId ? { scale: 0.95 } : {}}
+                    onClick={() => setSelectedId(character.id)}
+                    animate={
+                      selectedId === character.id
+                        ? {
+                            scale: 1.1,
+                            filter: 'brightness(1.1) drop-shadow(0 0 20px rgba(255,223,128,0.4))',
+                            zIndex: 50,
+                            opacity: 1,
+                            x: 0,
+                          }
+                        : undefined
+                    }
+                  >
+                    <DesktopCharacterCard
+                      character={character}
+                      onSelect={chooseCharacter}
+                    />
+                  </motion.div>
                 ))}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </section>
         </div>
       </div>
