@@ -67,8 +67,10 @@ export function CharacterSelectScreen() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.8 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => navigate('/')}
-          className="mb-5 w-[165px] transition duration-200 active:scale-95 cursor-pointer"
+          className="mb-5 w-[165px] cursor-pointer"
           aria-label="Back to Home"
         >
           <img src={backHomeBtn} alt="Back to Home" className="w-full" />
@@ -177,8 +179,10 @@ export function CharacterSelectScreen() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => navigate('/')}
-            className="absolute left-[82px] top-[48px] z-30 w-[215px] transition duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+            className="absolute left-[82px] top-[48px] z-30 w-[215px] cursor-pointer"
             aria-label="Back to Home"
           >
             <img src={backHomeBtn} alt="Back to Home" className="w-full" />
@@ -243,23 +247,27 @@ export function CharacterSelectScreen() {
               transition={{ delay: 1.1, duration: 0.4 }}
               className="relative rounded-[28px] border-[2px] border-[#ddb788]/70 bg-[#fff3dd]/28 px-[18px] py-[20px]"
             >
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={scrollLeftHandler}
-                className="absolute left-[-65px] top-[235px] z-30 w-[100px] transition duration-200 hover:scale-110 active:scale-95 cursor-pointer"
+                className="absolute left-[-65px] top-[235px] z-30 w-[100px] cursor-pointer"
                 aria-label="Scroll left"
               >
                 <img src={arrowLeft} alt="left" className="w-full" />
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={scrollRightHandler}
-                className="absolute right-[-65px] top-[235px] z-30 w-[100px] transition duration-200 hover:scale-110 active:scale-95 cursor-pointer"
+                className="absolute right-[-65px] top-[235px] z-30 w-[100px] cursor-pointer"
                 aria-label="Scroll right"
               >
                 <img src={arrowRight} alt="right" className="w-full" />
-              </button>
+              </motion.button>
 
               <motion.div
                 ref={scrollRef}

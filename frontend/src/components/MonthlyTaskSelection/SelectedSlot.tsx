@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react'
 import { type Task } from './types'
 import { selectedTasks as selectedTaskBg, availableTasks } from './images'
-import { h1 } from 'motion/react-client'
 
 // Slot card: 300×68px (full width within the px-[30px] padded panel).
 // selected-task-bg.png: 1086×1448 (portrait) — CSS background stretched to slot.
@@ -14,23 +13,21 @@ interface Props {
 
 export function SelectedSlot({ task, onRemove, placeholder = '— Pending —' }: Props) {
   return (
-    <div
-      className="flex w-full items-center rounded transition-all duration-200"
-      style={{
-        height: '68px',
-        backgroundImage: `url(${task ? availableTasks : selectedTaskBg})`,
-        backgroundSize: '100% 100%',
-        backgroundRepeat: 'no-repeat',
-      }}
-    >
-      <AnimatePresence mode="popLayout">
+    <div className="relative flex w-full items-center rounded overflow-hidden" style={{ height: '68px' }}>
+      <AnimatePresence mode="popLayout" initial={false}>
         {task ? (
           <motion.div
             key={task.id}
             layoutId={task.id}
             className="flex w-full items-center gap-2 px-3"
+            style={{
+              height: '68px',
+              backgroundImage: `url(${availableTasks})`,
+              backgroundSize: '100% 100%',
+              backgroundRepeat: 'no-repeat',
+            }}
             transition={{ type: 'spring', stiffness: 350, damping: 32 }}
-            exit={{ opacity: 0, scale: 0.9 }}
+            exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
           >
             <img
               src={task.illustration}
@@ -49,15 +46,24 @@ export function SelectedSlot({ task, onRemove, placeholder = '— Pending —' }
             </button>
           </motion.div>
         ) : (
-          <motion.p
+          <motion.div
             key="placeholder"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-full text-center font-serif text-xs font-bold leading-2xl text-desk-dark"
+            exit={{ opacity: 0 }}
+            className="flex w-full items-center justify-center font-serif text-xs font-bold leading-2xl text-desk-dark"
+            style={{
+              height: '68px',
+              backgroundImage: `url(${selectedTaskBg})`,
+              backgroundSize: '100% 100%',
+              backgroundRepeat: 'no-repeat',
+            }}
           >
-            {placeholder === 'Random Task' && <span className="text-2xl">🎲 </span>}
-            {placeholder}
-          </motion.p>
+            <p className="w-full text-center">
+              {placeholder === 'Random Task' && <span className="text-2xl">🎲 </span>}
+              {placeholder}
+            </p>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

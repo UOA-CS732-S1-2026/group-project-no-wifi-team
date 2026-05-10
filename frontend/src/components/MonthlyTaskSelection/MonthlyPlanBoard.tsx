@@ -75,6 +75,7 @@ export function MonthlyPlanBoard({
           {allSelected && (
             <motion.div
               key="random-task-slot"
+              layout
               initial={{ opacity: 0, scale: 1.05, y: -40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 1.05, y: -40 }}
