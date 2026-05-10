@@ -207,7 +207,7 @@ export function EndingResultScreen() {
           {/* Achievement category buttons */}
           {visibleCategories.length > 0 && (
             <motion.div
-              className="absolute bottom-[10vh] left-0 right-0 flex flex-row justify-center items-end gap-[2vw] px-[4vw]"
+              className="absolute bottom-[16vh] left-0 right-0 flex flex-col md:flex-row justify-center items-center md:items-end gap-[0vh] md:gap-[0vw] px-[4vw]"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.48, ...spring }}
@@ -224,7 +224,7 @@ export function EndingResultScreen() {
                   <img
                     src={CATEGORY_BUTTONS[cat].src}
                     alt={CATEGORY_BUTTONS[cat].label}
-                    className="h-[16vh] w-auto block transition-transform duration-[180ms] ease-out hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.96]"
+                    className="h-[22vh] w-auto block transition-transform duration-[180ms] ease-out hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.96]"
                   />
                 </motion.button>
               ))}
