@@ -64,7 +64,7 @@ export function TaskChoicePanel({
             <motion.div
               initial={{ opacity: 0, filter: 'blur(6px)' }}
               animate={{ opacity: 1, filter: 'blur(0px)' }}
-              transition={{ delay: 0.6, duration: 1.8, ease: 'easeOut' }}
+              transition={{ delay: 0.3, duration: 0.9, ease: 'easeOut' }}
               className="my-auto flex flex-col items-center gap-2 text-center"
             >
               <p className="font-serif text-[17px] italic leading-[1.7] text-[#6b4226]">

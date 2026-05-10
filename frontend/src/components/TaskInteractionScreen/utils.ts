@@ -2,7 +2,7 @@ import { attributeLabels, taskLibrary } from './constants'
 import type { AttributeLevel, RouteTask, TaskInteractionContent } from './types'
 
 export function clampStat(value: number) {
-  return Math.max(0, Math.min(100, value))
+  return Math.max(0, Math.min(10, value))
 }
 
 export function getLevel(value: number): AttributeLevel {
@@ -65,6 +65,19 @@ export function taskFromRouteTask(
   }
 
   if (task.options && task.options.length > 0) {
+    if (isRandom) {
+      const picked = task.options[Math.floor(Math.random() * task.options.length)]
+      return {
+        ...base,
+        options: [],
+        autoEffects: {
+          intelligence: picked.effects.intelligence,
+          health: picked.effects.health,
+          money: picked.effects.wealth,
+        },
+        ...(picked.achievementKey ? { achievementKey: picked.achievementKey } : {}),
+      }
+    }
     return {
       ...base,
       options: task.options.map((opt, i) => ({
