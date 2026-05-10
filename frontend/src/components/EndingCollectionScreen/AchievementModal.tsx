@@ -1,41 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { fetchAchievements, type BackendAchievement } from '../../api/achievements'
 
 type AchievementModalProps = {
+  earnedKeys: string[]
   onClose: () => void
 }
-type BackendAchievement = {
-  _id?: string
-  achievementKey: string
-  title: string
-  description: string
-  category: string
-  conditionText?: string
-  unlocked?: boolean
-}
 
-type AchievementsApiResponse = {
-  success: boolean
-  total: number
-  data: BackendAchievement[]
-}
-
-export function AchievementModal({ onClose }: AchievementModalProps) {
+export function AchievementModal({ earnedKeys, onClose }: AchievementModalProps) {
   const [achievements, setAchievements] = useState<BackendAchievement[]>([])
 
   useEffect(() => {
-    fetch('/api/achievements')
-      .then((res) => res.json())
-      .then((result: AchievementsApiResponse) => {
-        if (result.success) {
-          setAchievements(result.data)
-        }
-      })
+    fetchAchievements()
+      .then(setAchievements)
       .catch((error) => {
         console.error('Failed to load achievements:', error)
       })
   }, [])
 
-  const unlockedCount = achievements.filter((item) => item.unlocked ?? true).length
+  const earnedSet = useMemo(() => new Set(earnedKeys), [earnedKeys])
+  const unlockedCount = achievements.filter((item) => earnedSet.has(item.achievementKey)).length
 
   return (
     <div
@@ -72,7 +55,7 @@ export function AchievementModal({ onClose }: AchievementModalProps) {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 {achievements.map((achievement) => {
-  const isUnlocked = achievement.unlocked ?? true
+  const isUnlocked = earnedSet.has(achievement.achievementKey)
 
   return (
     <article

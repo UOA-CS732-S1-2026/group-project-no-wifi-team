@@ -23,3 +23,14 @@ export type EndingsApiResponse = {
   data: BackendEndingItem[]
   message?: string
 }
+
+export type LatestGameResult = {
+  endingId: string
+  achievements: string[]
+}
+
+export type LatestGameResultResponse = {
+  success: boolean
+  data: LatestGameResult
+  message?: string
+}

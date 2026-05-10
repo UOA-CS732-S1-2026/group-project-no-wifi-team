@@ -7,46 +7,51 @@ import {
 } from './endingResult'
 
 describe('resolveEnding', () => {
-  it('picks Burnout Student when intelligence is high but health is low', () => {
-    const ending = resolveEnding({ intelligence: 90, health: 30, wealth: 60 })
-    expect(ending.id).toBe('burnout-student')
+  it('picks GPA: 4.0, Hairline: 0.4 when intelligence is high but health is low', () => {
+    const ending = resolveEnding({ intelligence: 9, health: 3, wealth: 6 })
+    expect(ending.id).toBe('gpa-4-hairline-04')
     expect(ending.theme).toBe('bad')
   })
 
-  it('picks Lost Year when any attribute is critically low', () => {
-    const ending = resolveEnding({ intelligence: 50, health: 20, wealth: 50 })
-    expect(ending.id).toBe('lost-year')
+  it('picks Speedrun to Early Retirement when any attribute hits zero', () => {
+    const ending = resolveEnding({ intelligence: 5, health: 0, wealth: 5 })
+    expect(ending.id).toBe('speedrun-early-retirement')
   })
 
-  it('picks Perfect All-Rounder when every attribute is excellent', () => {
-    const ending = resolveEnding({ intelligence: 90, health: 90, wealth: 90 })
-    expect(ending.id).toBe('perfect-all-rounder')
+  it('picks The Model Minority Myth: Real Version when every attribute is strong', () => {
+    const ending = resolveEnding({ intelligence: 9, health: 9, wealth: 9 })
+    expect(ending.id).toBe('model-minority-real-version')
     expect(ending.rank).toBe('S')
   })
 
-  it('picks Academic Star for high intelligence with okay health', () => {
-    const ending = resolveEnding({ intelligence: 88, health: 60, wealth: 50 })
-    expect(ending.id).toBe('academic-star')
+  it('picks Library’s Resident Landlord for dominant intelligence', () => {
+    const ending = resolveEnding({ intelligence: 9, health: 6, wealth: 5 })
+    expect(ending.id).toBe('library-resident-landlord')
   })
 
-  it('picks Part-Time Hustler for high wealth, low intelligence', () => {
-    const ending = resolveEnding({ intelligence: 30, health: 70, wealth: 90 })
-    expect(ending.id).toBe('part-time-hustler')
+  it('picks Part-time Tycoon for dominant wealth', () => {
+    const ending = resolveEnding({ intelligence: 3, health: 7, wealth: 9 })
+    expect(ending.id).toBe('part-time-tycoon')
   })
 
-  it('falls back to Steady Graduate for balanced average values', () => {
-    const ending = resolveEnding({ intelligence: 60, health: 60, wealth: 60 })
-    expect(ending.id).toBe('steady-graduate')
+  it('picks The Main Character of Every Party for dominant health', () => {
+    const ending = resolveEnding({ intelligence: 5, health: 9, wealth: 4 })
+    expect(ending.id).toBe('main-character-party')
+  })
+
+  it('falls back to I Showed Up, I Survived for balanced average values', () => {
+    const ending = resolveEnding({ intelligence: 6, health: 6, wealth: 6 })
+    expect(ending.id).toBe('showed-up-survived')
   })
 
   it('clamps out-of-range values before evaluating predicates', () => {
     const ending = resolveEnding({ intelligence: 200, health: 200, wealth: 200 })
-    expect(ending.id).toBe('perfect-all-rounder')
+    expect(ending.id).toBe('model-minority-real-version')
   })
 
-  it('treats negative or NaN values as zero (Lost Year)', () => {
+  it('treats negative or NaN values as zero (Speedrun to Early Retirement)', () => {
     const ending = resolveEnding({ intelligence: -10, health: NaN, wealth: -5 })
-    expect(ending.id).toBe('lost-year')
+    expect(ending.id).toBe('speedrun-early-retirement')
   })
 
   it('returns a non-empty ending list', () => {
@@ -54,21 +59,21 @@ describe('resolveEnding', () => {
   })
 
   it('always returns an ending (final entry is a catch-all)', () => {
-    expect(resolveEnding({ intelligence: 50, health: 50, wealth: 50 })).toBeDefined()
+    expect(resolveEnding({ intelligence: 5, health: 5, wealth: 5 })).toBeDefined()
   })
 })
 
 describe('calculateScore', () => {
   it('averages the three attributes', () => {
-    expect(calculateScore({ intelligence: 60, health: 60, wealth: 60 })).toBe(60)
+    expect(calculateScore({ intelligence: 6, health: 6, wealth: 6 })).toBe(60)
   })
 
   it('rounds to the nearest integer', () => {
-    expect(calculateScore({ intelligence: 70, health: 70, wealth: 71 })).toBe(70)
+    expect(calculateScore({ intelligence: 7, health: 7, wealth: 8 })).toBe(73)
   })
 
-  it('clamps inputs to 0–100 before averaging', () => {
-    expect(calculateScore({ intelligence: 200, health: -50, wealth: 50 })).toBe(50)
+  it('clamps inputs to 0-10 before averaging', () => {
+    expect(calculateScore({ intelligence: 20, health: -5, wealth: 5 })).toBe(50)
   })
 
   it('respects the 100-point total score scale', () => {

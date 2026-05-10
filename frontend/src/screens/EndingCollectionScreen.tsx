@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import {
-  endingBackHome,
+  buttonBack,
   endingBg,
   endingReplayButton,
   endingTitleBanner,
 } from '../assets/EndingCollection'
 import {
   AchievementModal,
-  API_BASE_URL,
   EndingCard,
   ProgressPanel,
   STAGE_HEIGHT,
@@ -18,14 +18,22 @@ import {
   useResponsiveStageScale,
   type BackendEndingItem,
   type EndingsApiResponse,
+  type LatestGameResultResponse,
 } from '../components/EndingCollectionScreen'
+import { get } from '../utils/request'
+import type { RootState } from '../store'
 
 export function EndingCollectionScreen() {
   const navigate = useNavigate()
   const { scale: stageScale, isMobile } = useResponsiveStageScale()
+  const reduxEarnedAchievements = useSelector((s: RootState) => s.game.earnedAchievements)
+  const localResults = useSelector((s: RootState) => s.gameHistory.records)
+  const latestLocalResult = localResults[localResults.length - 1] ?? null
 
   const [showAchievements, setShowAchievements] = useState(false)
   const [endings, setEndings] = useState<BackendEndingItem[]>([])
+  const [latestEndingId, setLatestEndingId] = useState<string | null>(null)
+  const [latestAchievements, setLatestAchievements] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -35,19 +43,38 @@ export function EndingCollectionScreen() {
         setLoading(true)
         setError('')
 
-        const response = await fetch(`${API_BASE_URL}/api/endings`)
-
-        if (!response.ok) {
-          throw new Error(`Backend error: ${response.status}`)
-        }
-
-        const result = (await response.json()) as EndingsApiResponse
+        const result = await get<EndingsApiResponse>('/endings')
 
         if (!result.success) {
           throw new Error(result.message || 'Failed to load endings')
         }
 
-        setEndings(result.data)
+        let currentEndingId: string | null = latestLocalResult?.endingId ?? null
+        let currentAchievements: string[] = latestLocalResult?.achievements ?? []
+
+        if (!currentEndingId) {
+          try {
+            const userId = localStorage.getItem('guestId') || localStorage.getItem('guest_id')
+            const latest = await get<LatestGameResultResponse>(
+              '/game/result/latest',
+              userId ? { headers: { 'x-user-id': userId } } : undefined,
+            )
+            currentEndingId = latest.data.endingId
+            currentAchievements = latest.data.achievements ?? []
+          } catch {
+            // No saved result yet; keep the full collection locked as returned by backend.
+          }
+        }
+
+        setLatestEndingId(currentEndingId)
+        setLatestAchievements(currentAchievements)
+        setEndings(
+          result.data.map((ending) =>
+            ending.endingId === currentEndingId
+              ? { ...ending, status: 'Unlocked' as const }
+              : ending,
+          ),
+        )
       } catch (err) {
         console.error(err)
         setError('Failed to load ending collection from backend.')
@@ -57,7 +84,7 @@ export function EndingCollectionScreen() {
     }
 
     fetchEndings()
-  }, [])
+  }, [latestLocalResult])
 
   const unlockedCount = useMemo(() => {
     return endings.filter((ending) => ending.status === 'Unlocked').length
@@ -67,6 +94,20 @@ export function EndingCollectionScreen() {
 
   const progressPercent =
     endings.length === 0 ? 0 : Math.round((unlockedCount / endings.length) * 100)
+  const earnedAchievementKeys = useMemo(
+    () => Array.from(new Set([...reduxEarnedAchievements, ...latestAchievements])),
+    [reduxEarnedAchievements, latestAchievements],
+  )
+  const handleBackToResult = () => {
+    navigate('/ending-result', {
+      state: latestLocalResult
+        ? {
+            snapshot: latestLocalResult.snapshot,
+            playerName: latestLocalResult.playerName,
+          }
+        : undefined,
+    })
+  }
 
   if (loading) {
     return (
@@ -85,9 +126,9 @@ export function EndingCollectionScreen() {
         extra={
           <>
             <p className="mt-3 text-[14px] leading-[1.6] text-[#7a5030]">
-              Please make sure your backend is running at:
+              Please make sure your backend is running and reachable at the configured API URL:
               <br />
-              <span className="font-bold">http://localhost:3001/api/endings</span>
+              <span className="font-bold">/api/endings</span>
             </p>
 
             <button
@@ -130,14 +171,14 @@ export function EndingCollectionScreen() {
             transformOrigin: 'top center',
           }}
         >
-          {/* Back Home */}
+          {/* Back */}
           <button
             type="button"
-            onClick={() => navigate('/')}
-            className="absolute left-[-100px] top-[-40px] z-30 w-[450px] transition duration-200 hover:scale-105 active:scale-95"
-            aria-label="Back to Home"
+            onClick={handleBackToResult}
+            className="absolute left-[100px] top-[10px] z-30 w-[210px] transition duration-200 hover:scale-105 active:scale-95"
+            aria-label="Back to Ending Result"
           >
-            <img src={endingBackHome} alt="Back to Home" className="w-full" />
+            <img src={buttonBack} alt="Back to Ending Result" className="w-full" />
           </button>
 
           {/* Title Banner */}
@@ -161,7 +202,11 @@ export function EndingCollectionScreen() {
           <section className="absolute left-1/2 top-[360px] z-20 w-[1080px] -translate-x-1/2">
             <div className="grid grid-cols-4 justify-items-center gap-x-[0px] gap-y-[0px]">
               {endings.map((ending) => (
-                <EndingCard key={ending.endingId} ending={ending} />
+                <EndingCard
+                  key={ending.endingId}
+                  ending={ending}
+                  isCurrent={ending.endingId === latestEndingId}
+                />
               ))}
             </div>
           </section>
@@ -185,7 +230,12 @@ export function EndingCollectionScreen() {
         </div>
       </div>
 
-      {showAchievements && <AchievementModal onClose={() => setShowAchievements(false)} />}
+      {showAchievements && (
+        <AchievementModal
+          earnedKeys={earnedAchievementKeys}
+          onClose={() => setShowAchievements(false)}
+        />
+      )}
     </main>
   )
 }

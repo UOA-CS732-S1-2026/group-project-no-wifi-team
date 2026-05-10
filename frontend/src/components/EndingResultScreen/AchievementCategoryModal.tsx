@@ -27,9 +27,10 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
   const earnedSet = useMemo(() => new Set(earnedKeys), [earnedKeys])
 
   const categoryAchievements = useMemo(
-    () => allAchievements.filter((a) => a.category === category && earnedSet.has(a.achievementKey)),
-    [allAchievements, category, earnedSet],
+    () => allAchievements.filter((a) => a.category === category),
+    [allAchievements, category],
   )
+  const earnedCount = categoryAchievements.filter((a) => earnedSet.has(a.achievementKey)).length
 
   return (
     <div
@@ -56,7 +57,7 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
               {CATEGORY_LABELS[category] ?? category}
             </h2>
             <p className="mt-2 text-[15px] text-[#7a5030]">
-              Earned: {categoryAchievements.length}
+              Earned: {earnedCount} / {categoryAchievements.length}
             </p>
           </div>
           <button
@@ -69,24 +70,37 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
         </header>
 
         <div className="grid grid-cols-3 gap-4">
-          {categoryAchievements.map((achievement) => (
-            <article
-              key={achievement.achievementKey}
-              className="rounded-[18px] border-[2px] border-[#cfa472] bg-[#fff8e8] p-4 shadow-sm"
-            >
-              <h3 className="text-[16px] font-bold leading-tight text-[#5c3318]">
-                {achievement.title}
-              </h3>
-              <p className="mt-2 min-h-[60px] rounded-[10px] bg-[#f4e4c8]/80 px-3 py-2 text-[13px] leading-[1.45] text-[#714729]">
-                {achievement.description}
-              </p>
-              {achievement.conditionText && (
-                <p className="mt-3 rounded-[10px] bg-[#e9d0a8] px-3 py-2 text-[11px] leading-[1.4] text-[#6b4427]">
-                  {achievement.conditionText}
+          {categoryAchievements.map((achievement) => {
+            const isUnlocked = earnedSet.has(achievement.achievementKey)
+
+            return (
+              <article
+                key={achievement.achievementKey}
+                className={`rounded-[18px] border-[2px] p-4 shadow-sm ${
+                  isUnlocked
+                    ? 'border-[#cfa472] bg-[#fff8e8]'
+                    : 'border-[#b9a28b] bg-[#e9dfd0]'
+                }`}
+              >
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[#9a6840]">
+                  {isUnlocked ? 'Unlocked' : 'Locked'}
                 </p>
-              )}
-            </article>
-          ))}
+                <h3 className="text-[16px] font-bold leading-tight text-[#5c3318]">
+                  {achievement.title}
+                </h3>
+                <p className="mt-2 min-h-[60px] rounded-[10px] bg-[#f4e4c8]/80 px-3 py-2 text-[13px] leading-[1.45] text-[#714729]">
+                  {isUnlocked
+                    ? achievement.description
+                    : 'This achievement is still locked. Continue playing to unlock it.'}
+                </p>
+                {achievement.conditionText && (
+                  <p className="mt-3 rounded-[10px] bg-[#e9d0a8] px-3 py-2 text-[11px] leading-[1.4] text-[#6b4427]">
+                    {achievement.conditionText}
+                  </p>
+                )}
+              </article>
+            )
+          })}
         </div>
 
         {categoryAchievements.length === 0 && (

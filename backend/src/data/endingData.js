@@ -82,7 +82,5 @@ export const endingData = [
 ]
 
 export const ENDING_COLLECTION_MAP = Object.fromEntries(
-    endingData
-        .filter((e) => e.gameResultId !== null)
-        .map((e) => [e.gameResultId, e.endingKey]),
+    endingData.map((e) => [e.gameResultId ?? e.endingId, e.endingKey]),
 )
