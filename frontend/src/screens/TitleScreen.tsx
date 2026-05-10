@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '../store'
+import { resetGame } from '../slices/gameSlice'
 
 import {
   background as backgroundImg,
@@ -16,6 +19,7 @@ import { useMusicContext } from '../contexts/MusicContext'
 
 export function TitleScreen() {
   const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
   const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
 
   const [showAboutModal, setShowAboutModal] = useState(false)
@@ -45,7 +49,7 @@ export function TitleScreen() {
         />
 
         <MainButtons
-          onStart={() => navigate('/characters')}
+          onStart={() => { dispatch(resetGame()); navigate('/characters') }}
           onAbout={() => setShowAboutModal(true)}
           onSignIn={() => setShowSignInModal(true)}
         />
