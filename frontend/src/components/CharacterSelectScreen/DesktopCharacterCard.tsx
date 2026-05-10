@@ -45,7 +45,7 @@ export function DesktopCharacterCard({
         <motion.button
           type="button"
           onClick={(e) => {
-            e.stopPropagation() // 阻止触发父级的卡片选中点击
+            e.stopPropagation()
             onSelect(character)
           }}
           variants={{

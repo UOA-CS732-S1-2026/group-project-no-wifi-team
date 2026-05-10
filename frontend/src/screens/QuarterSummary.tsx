@@ -23,8 +23,8 @@ const DESIGN_HEIGHT = 1024
 const statusIcons = [statusBrain, statusHealth, statusWealth]
 
 interface QuarterlySummaryProps {
-  quarterName?: string // 例如 "Quarter 1" 或 "Orientation"
-  quarterIndex?: number // 1, 2, 3, 4
+  quarterName?: string // e.g. "Quarter 1" or "Orientation"
+  quarterIndex?: number
   stats?: {
     label: string
     value: number

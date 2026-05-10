@@ -106,10 +106,10 @@ export function EndingCollectionScreen() {
   return (
     <main className="min-h-dvh w-full overflow-auto bg-[#4b2f1e] font-serif text-[#5a3218]">
       {/*
-        手机端：
-        - 外层大小 = 缩放后的舞台大小
-        - 内层舞台 = 原始 1365 x 1040
-        - 背景和组件都在内层舞台，所以会一起滚动、一起缩放
+        Mobile optimization:
+        - Outer size = scaled stage size
+        - Inner stage = original 1365 x 1040
+        - Background and components scale together
       */}
       <div
         className="relative mx-auto"

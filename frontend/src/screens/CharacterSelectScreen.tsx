@@ -34,28 +34,25 @@ export function CharacterSelectScreen() {
   }
 
   function chooseCharacter(character: Character) {
-    // 如果当前点击的角色已经是选中状态，则执行确认跳转
     if (selectedId === character.id) {
       localStorage.setItem('selectedCharacter', JSON.stringify(character))
       dispatch(selectCharacter(character))
       navigate('/monthly-task-selection')
     } else {
-      // 否则仅将其设为选中（高亮）
       setSelectedId(character.id)
     }
   }
 
-  // 定义列表容器的动画变体，用于交错显示子元素
   const listContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 1.2 },
+      transition: { staggerChildren: 0.1, delayChildren: 0.8 },
     },
   }
 
   const listItemVariants = {
-    hidden: { opacity: 0, x: 30 },
+    hidden: { opacity: 0, x: 40 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
   }
 
@@ -127,7 +124,7 @@ export function CharacterSelectScreen() {
             variants={listContainerVariants}
             initial="hidden"
             animate="visible"
-            className="flex flex-col gap-5 pb-12 px-2 py-4" // 增加内边距防止移动端裁剪
+            className="flex flex-col gap-5 pb-12 px-2 py-4"
           >
             {characters.map((character) => (
             <motion.div
