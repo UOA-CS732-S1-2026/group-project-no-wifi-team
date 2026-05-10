@@ -23,6 +23,10 @@ import {
 import { get } from '../utils/request'
 import type { RootState } from '../store'
 
+type UserAchievementsResponse = {
+  achievements: string[]
+}
+
 export function EndingCollectionScreen() {
   const navigate = useNavigate()
   const { scale: stageScale, isMobile } = useResponsiveStageScale()
@@ -34,6 +38,7 @@ export function EndingCollectionScreen() {
   const [endings, setEndings] = useState<BackendEndingItem[]>([])
   const [latestEndingId, setLatestEndingId] = useState<string | null>(null)
   const [latestAchievements, setLatestAchievements] = useState<string[]>([])
+  const [storedAchievements, setStoredAchievements] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -43,7 +48,14 @@ export function EndingCollectionScreen() {
         setLoading(true)
         setError('')
 
-        const result = await get<EndingsApiResponse>('/endings')
+        const userId = localStorage.getItem('guestId') || localStorage.getItem('guest_id')
+        const username = localStorage.getItem('username')
+        const userHeaders = userId ? { headers: { 'x-user-id': userId } } : undefined
+        const guestUnlockedEndingIds = new Set(
+          userId ? [] : localResults.map((record) => record.endingId),
+        )
+
+        const result = await get<EndingsApiResponse>('/endings', userHeaders)
 
         if (!result.success) {
           throw new Error(result.message || 'Failed to load endings')
@@ -52,12 +64,11 @@ export function EndingCollectionScreen() {
         let currentEndingId: string | null = latestLocalResult?.endingId ?? null
         let currentAchievements: string[] = latestLocalResult?.achievements ?? []
 
-        if (!currentEndingId) {
+        if (!currentEndingId && userHeaders) {
           try {
-            const userId = localStorage.getItem('guestId') || localStorage.getItem('guest_id')
             const latest = await get<LatestGameResultResponse>(
               '/game/result/latest',
-              userId ? { headers: { 'x-user-id': userId } } : undefined,
+              userHeaders,
             )
             currentEndingId = latest.data.endingId
             currentAchievements = latest.data.achievements ?? []
@@ -68,9 +79,23 @@ export function EndingCollectionScreen() {
 
         setLatestEndingId(currentEndingId)
         setLatestAchievements(currentAchievements)
+
+        if (username) {
+          try {
+            const userAchievements = await get<UserAchievementsResponse>(
+              `/user/achievements/${encodeURIComponent(username)}`,
+            )
+            setStoredAchievements(userAchievements.achievements ?? [])
+          } catch {
+            setStoredAchievements([])
+          }
+        } else {
+          setStoredAchievements([])
+        }
+
         setEndings(
           result.data.map((ending) =>
-            ending.endingId === currentEndingId
+            ending.endingId === currentEndingId || guestUnlockedEndingIds.has(ending.endingId)
               ? { ...ending, status: 'Unlocked' as const }
               : ending,
           ),
@@ -84,7 +109,7 @@ export function EndingCollectionScreen() {
     }
 
     fetchEndings()
-  }, [latestLocalResult])
+  }, [latestLocalResult, localResults])
 
   const unlockedCount = useMemo(() => {
     return endings.filter((ending) => ending.status === 'Unlocked').length
@@ -94,9 +119,22 @@ export function EndingCollectionScreen() {
 
   const progressPercent =
     endings.length === 0 ? 0 : Math.round((unlockedCount / endings.length) * 100)
+  const playerName = localStorage.getItem('username') || 'Guest'
   const earnedAchievementKeys = useMemo(
-    () => Array.from(new Set([...reduxEarnedAchievements, ...latestAchievements])),
-    [reduxEarnedAchievements, latestAchievements],
+    () => {
+      const hasLoggedInUser = Boolean(localStorage.getItem('guestId') || localStorage.getItem('guest_id'))
+      const guestAchievements = hasLoggedInUser
+        ? []
+        : localResults.flatMap((record) => record.achievements)
+
+      return Array.from(new Set([
+        ...reduxEarnedAchievements,
+        ...latestAchievements,
+        ...storedAchievements,
+        ...guestAchievements,
+      ]))
+    },
+    [reduxEarnedAchievements, latestAchievements, storedAchievements, localResults],
   )
   const handleBackToResult = () => {
     navigate('/ending-result', {
@@ -191,6 +229,7 @@ export function EndingCollectionScreen() {
           </div>
 
           <ProgressPanel
+            playerName={playerName}
             unlockedCount={unlockedCount}
             totalCount={endings.length}
             lockedCount={lockedCount}

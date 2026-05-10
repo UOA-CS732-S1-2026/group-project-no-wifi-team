@@ -4,8 +4,7 @@ import { User } from "../db/user.js";
 import { applyTaskChoice, baseTaskState, buildTaskResponse } from "../data/taskData.js";
 import { Event } from "../db/event.js";
 import { GameResult } from "../db/gameResult.js";
-import Ending from "../db/ending.js";
-import { endingData, ENDING_COLLECTION_MAP } from "../data/endingData.js";
+import { ENDING_COLLECTION_MAP } from "../data/endingData.js";
 
 const router = Router();
 
@@ -152,24 +151,20 @@ router.post("/result", async (req, res) => {
     });
 
     const collectionKey = ENDING_COLLECTION_MAP[endingId];
-    if (collectionKey) {
-      const endingDef = endingData.find((e) => e.endingKey === collectionKey);
-      await Ending.findOneAndUpdate(
-        { endingId: collectionKey },
-        {
-          $set: { status: "Unlocked", isDeleted: false },
-          $setOnInsert: {
-            endingId: collectionKey,
-            endingKey: collectionKey,
-            title: endingDef?.title ?? collectionKey,
-            category: endingDef?.category ?? "",
-            description: endingDef?.description ?? "",
-            image: endingDef?.image ?? "",
-            isDeleted: false,
-          },
-        },
-        { upsert: true },
-      );
+    if (userId) {
+      const addToSet = {};
+      if (collectionKey) addToSet.endings = collectionKey;
+      if (Array.isArray(achievements) && achievements.length > 0) {
+        addToSet.achievements = { $each: achievements };
+      }
+
+      if (Object.keys(addToSet).length > 0) {
+        await User.findOneAndUpdate(
+          { userId },
+          { $addToSet: addToSet },
+          { new: true },
+        );
+      }
     }
 
     return res.status(201).json({ success: true, data: result });

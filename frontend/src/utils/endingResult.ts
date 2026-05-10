@@ -12,7 +12,6 @@ export interface AttributeSnapshot {
 export interface Ending {
   id: string
   title: string
-  chineseName: string
   type: string
   theme: EndingTheme
   rank: EndingRank
