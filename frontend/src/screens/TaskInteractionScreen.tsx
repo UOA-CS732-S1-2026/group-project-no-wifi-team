@@ -113,6 +113,7 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
   const [stats, setStats] = useState<Record<AttributeKey, number>>(initialStats)
   const [selectedOption, setSelectedOption] = useState<ChoiceOption | null>(null)
   const [toastKey, setToastKey] = useState<string | null>(null)
+  const [pendingSummary, setPendingSummary] = useState<object | null>(null)
 
   const currentTask = tasks[taskIndex] ?? defaultContent
   const isLastTask = taskIndex >= tasks.length - 1
@@ -158,6 +159,12 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     if (showToast) setToastKey(key)
   }
 
+  useEffect(() => {
+    if (currentTask.isRandomEvent && currentTask.achievementKey) {
+      tryEarnAchievement(currentTask.achievementKey)
+    }
+  }, [taskIndex])
+
   const handleChoice = (option: ChoiceOption) => {
     setSelectedOption(option)
     setStats((current) => ({
@@ -182,10 +189,6 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
     if (fx) setStats(nextStats)
 
-    if (currentTask.achievementKey) {
-      tryEarnAchievement(currentTask.achievementKey)
-    }
-
     if (isLastTask) {
       dispatch(updateStats({ intelligence: nextStats.intelligence, health: nextStats.health, wealth: nextStats.money }))
       if (nextStats.intelligence >= 10) tryEarnAchievement('wait-am-i-actually-a-genius', false)
@@ -194,7 +197,12 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
       if (nextStats.intelligence >= 10 && nextStats.health >= 10 && nextStats.money >= 10) {
         tryEarnAchievement('hexagon-international-student', false)
       }
-      navigate('/quarterly-summary', { state: buildSummaryState(nextStats) })
+      const summary = buildSummaryState(nextStats)
+      if (toastKey) {
+        setPendingSummary(summary)
+      } else {
+        navigate('/quarterly-summary', { state: summary })
+      }
       return
     }
 
@@ -207,9 +215,16 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     setStats(initialStats)
     setSelectedOption(null)
     setToastKey(null)
+    setPendingSummary(null)
   }
 
-  const dismissToast = useCallback(() => setToastKey(null), [])
+  const dismissToast = useCallback(() => {
+    setToastKey(null)
+    if (pendingSummary) {
+      navigate('/quarterly-summary', { state: pendingSummary })
+      setPendingSummary(null)
+    }
+  }, [pendingSummary, navigate])
 
   return (
     <div
