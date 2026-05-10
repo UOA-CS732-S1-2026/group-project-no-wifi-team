@@ -33,11 +33,12 @@ export function TaskList({ activeCategory, tasks, selectedIds, onToggle }: Props
 
       {/* Task cards */}
       <div
-        className="overflow-y-scroll hide-scrollbar"
+        className="overflow-y-auto hide-scrollbar"
         style={{
           height: '410px',
           padding: '8px 30px 24px',
           scrollbarWidth: 'none',
+          overflowX: 'visible',
         }}
       >
         <AnimatePresence mode="wait">
@@ -49,14 +50,16 @@ export function TaskList({ activeCategory, tasks, selectedIds, onToggle }: Props
             transition={{ duration: 0.15 }}
             className="flex flex-col gap-2"
           >
-            {tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                selected={selectedIds.includes(task.id)}
-                onToggle={() => onToggle(task.id)}
-              />
-            ))}
+            <AnimatePresence mode="popLayout">
+              {tasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  selected={selectedIds.includes(task.id)}
+                  onToggle={() => onToggle(task.id)}
+                />
+              ))}
+            </AnimatePresence>
           </motion.div>
         </AnimatePresence>
       </div>

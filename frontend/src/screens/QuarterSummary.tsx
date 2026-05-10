@@ -3,6 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { CountUp } from '../utils/CountUp'
 import commonBackground from '../assets/CommonImage/common-background.png'
+import { SettingsModal } from '../components/TitleScreen/SettingsModal'
+import { useMusicContext } from '../contexts/MusicContext'
+import settingImg from '../assets/CommonImage/setting.png'
 import {
   quarterBg,
   quarterCalender,
@@ -10,10 +13,10 @@ import {
   quarterArrowUp,
   quarterTitle,
   nextBtn,
-  viewEndingBtn,
   statusBrain,
   statusHealth,
   statusWealth,
+  viewEnding,
 } from '../assets/QuarterPage'
 
 // Explicit design dimensions requested
@@ -23,8 +26,8 @@ const DESIGN_HEIGHT = 1024
 const statusIcons = [statusBrain, statusHealth, statusWealth]
 
 interface QuarterlySummaryProps {
-  quarterName?: string // 例如 "Quarter 1" 或 "Orientation"
-  quarterIndex?: number // 1, 2, 3, 4
+  quarterName?: string // e.g. "Quarter 1" or "Orientation"
+  quarterIndex?: number
   stats?: {
     label: string
     value: number
@@ -41,6 +44,8 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
   const location = useLocation()
   const routeSummary = location.state as QuarterlySummaryProps | null
   const [scale, setScale] = useState(1)
+  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   // Handle responsive scaling for the 1182x886 design stage
   useEffect(() => {
@@ -310,12 +315,31 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                 onClick={() => navigate('/next-quarter')}
                 className="w-[540px] h-[115px] cursor-pointer"
               >
-                <img src={quartersRemaining === 0 ? viewEndingBtn : nextBtn} alt={quartersRemaining === 0 ? 'View Ending' : 'Next Quarter'} className="w-full" />
+                <img src={quartersRemaining > 0 ? nextBtn : viewEnding} alt={quartersRemaining === 0 ? 'View Ending' : 'Next Quarter'} className="w-full" />
               </motion.button>
             </motion.div>
           </motion.div>
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={() => setShowSettingsModal(true)}
+        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px] cursor-pointer"
+        aria-label="Settings"
+      >
+        <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
+      </button>
+
+      {showSettingsModal && (
+        <SettingsModal
+          musicEnabled={musicEnabled}
+          sfxEnabled={sfxEnabled}
+          onMusicToggle={setMusicEnabled}
+          onSfxToggle={setSfxEnabled}
+          onClose={() => setShowSettingsModal(false)}
+        />
+      )}
     </main>
   )
 }

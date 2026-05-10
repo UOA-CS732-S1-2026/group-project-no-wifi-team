@@ -9,6 +9,8 @@ import { earnAchievement, updateStats } from '../slices/gameSlice'
 import { post } from '../utils/request'
 import { coinSfx } from '../contexts/MusicContext'
 import { useMusicContext } from '../contexts/MusicContext'
+import { SettingsModal } from '../components/TitleScreen/SettingsModal'
+import settingImg from '../assets/CommonImage/setting.png'
 import {
   AchievementToast,
   TaskArtworkPanel,
@@ -99,7 +101,8 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     [currentStats],
   )
 
-  const { sfxEnabled } = useMusicContext()
+  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   const [taskIndex, setTaskIndex] = useState(0)
 
@@ -233,52 +236,104 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
         backgroundSize: '100% 100%',
       }}
     >
-      <AttributeBar intelligence={stats.intelligence} health={stats.health} wealth={stats.money} />
+      <motion.div
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.6, duration: 0.5, ease: 'easeOut' }}
+      >
+        <AttributeBar intelligence={stats.intelligence} health={stats.health} wealth={stats.money} />
+      </motion.div>
 
       <main className="flex flex-1 items-center justify-center px-8 pb-10 pt-4">
         <AnimatePresence mode="wait">
           <motion.div
             key={taskIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1 },
+              exit: { opacity: 0 },
+            }}
+            transition={{ duration: 0.3 }}
             className="grid w-full max-w-[1120px] grid-cols-[minmax(0,430px)_1fr] items-stretch gap-10"
           >
-            <TaskChoicePanel
-              currentTask={currentTask}
-              taskIndex={taskIndex}
-              totalTasks={tasks.length}
-              selectedOption={selectedOption}
-              isLastTask={isLastTask}
-              onChoice={handleChoice}
-              onNext={handleNext}
-            />
-            <TaskArtworkPanel image={currentTask.image} />
+            <motion.div
+              variants={{
+                hidden: { x: -60, opacity: 0 },
+                visible: { x: 0, opacity: 1 },
+                exit: { x: -60, opacity: 0 },
+              }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              <TaskChoicePanel
+                currentTask={currentTask}
+                taskIndex={taskIndex}
+                totalTasks={tasks.length}
+                selectedOption={selectedOption}
+                isLastTask={isLastTask}
+                onChoice={handleChoice}
+                onNext={handleNext}
+              />
+            </motion.div>
+            <motion.div
+              variants={{
+                hidden: { x: 60, opacity: 0 },
+                visible: { x: 0, opacity: 1 },
+                exit: { x: 60, opacity: 0 },
+              }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              <TaskArtworkPanel image={currentTask.image} />
+            </motion.div>
           </motion.div>
         </AnimatePresence>
       </main>
 
-      <div className="pointer-events-none absolute left-8 top-8 flex gap-2">
-        <button
+      <div className="absolute left-8 top-8 flex gap-2">
+        <motion.button
           type="button"
           aria-label="Reset task interaction"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={handleReset}
-          className="pointer-events-auto h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark transition hover:scale-105"
+          className="h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark cursor-pointer"
         >
           ↺
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           type="button"
           aria-label="Back to monthly task selection"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => navigate('/monthly-task-selection')}
-          className="pointer-events-auto h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark transition hover:scale-105"
+          className="h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark cursor-pointer"
         >
           ←
-        </button>
+        </motion.button>
       </div>
 
       <AchievementToast achievementKey={toastKey} onDismiss={dismissToast} />
+
+      <button
+        type="button"
+        onClick={() => setShowSettingsModal(true)}
+        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px] cursor-pointer"
+        aria-label="Settings"
+      >
+        <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
+      </button>
+
+      {showSettingsModal && (
+        <SettingsModal
+          musicEnabled={musicEnabled}
+          sfxEnabled={sfxEnabled}
+          onMusicToggle={setMusicEnabled}
+          onSfxToggle={setSfxEnabled}
+          onClose={() => setShowSettingsModal(false)}
+        />
+      )}
     </div>
   )
 }
