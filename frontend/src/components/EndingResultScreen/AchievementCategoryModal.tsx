@@ -90,7 +90,7 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
             type="button"
             onClick={onClose}
             className="rounded-full border-2 border-[#8a5a32] bg-[#d9b16f] px-4 py-2 text-[14px] font-bold text-[#5c3318] cursor-pointer"
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.15 }}
             whileTap={{ scale: 0.95 }}
           >
             Close
