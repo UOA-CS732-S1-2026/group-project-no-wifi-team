@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { type Task, MAX_PLAYER_SELECTIONS } from './types'
 import { SelectedSlot } from './SelectedSlot'
@@ -23,9 +24,18 @@ export function MonthlyPlanBoard({
   onRemove,
   onConfirm,
 }: Props) {
+  const [randomSlotFinished, setRandomSlotFinished] = useState(false)
+
+  // Reset the sequence if player removes a task and selectedCount drops
+  useEffect(() => {
+    if (!allSelected) {
+      setRandomSlotFinished(false)
+    }
+  }, [allSelected])
+
   return (
     <div
-      className="relative flex shrink-0 flex-col overflow-hidden"
+      className="relative flex shrink-0 flex-col"
       style={{
         width: '360px',
         height: 'auto',
@@ -60,16 +70,34 @@ export function MonthlyPlanBoard({
           />
         ))}
 
-        {/* Random event slot */}
-        <SelectedSlot
-          task={undefined}
-          onRemove={() => {}}
-          placeholder="🎲 Random Task"
-        />
-
-        {/* Confirm button — appears in flow after all slots when all selected */}
+        {/* Random event slot - only shows when all tasks are selected */}
         <AnimatePresence>
           {allSelected && (
+            <motion.div
+              key="random-task-slot"
+              initial={{ opacity: 0, scale: 1.05, y: -40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 1.05, y: -40 }}
+              transition={{ delay: 0.6, duration: 0.4, ease: 'easeOut' }}
+              onAnimationComplete={(definition) => {
+                // Only trigger the button appearance after the entrance animation (opacity 1) is done
+                if (typeof definition === 'object' && definition.opacity === 1) {
+                  setRandomSlotFinished(true)
+                }
+              }}
+            >
+              <SelectedSlot
+                task={undefined}
+                onRemove={() => {}}
+                placeholder="Random Task"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Confirm button — appears only after random slot animation finishes */}
+        <AnimatePresence>
+          {allSelected && randomSlotFinished && (
             <motion.button
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0, scale: [1, 1.04, 1] }}

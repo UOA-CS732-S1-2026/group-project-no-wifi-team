@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, LayoutGroup } from 'motion/react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import type { RootState } from '../store'
@@ -21,6 +21,17 @@ import {
   type Task,
 } from '../components/MonthlyTaskSelection'
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+}
+
 export function MonthlyTaskSelection() {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
@@ -37,7 +48,9 @@ export function MonthlyTaskSelection() {
       .catch(() => {})
   }, [quarter])
 
-  const visibleTasks = tasks.filter((t) => t.category === activeCategory)
+  const visibleTasks = tasks.filter(
+    (t) => t.category === activeCategory && !selectedIds.includes(t.id)
+  )
   const selectedTasks: (Task | undefined)[] = selectedIds.map(
     (id) => tasks.find((t) => t.id === id)
   )
@@ -89,34 +102,69 @@ export function MonthlyTaskSelection() {
         backgroundSize: '100% 100%',
       }}
     >
-      <AttributeBar
-        intelligence={currentStats.intelligence}
-        health={currentStats.health}
-        wealth={currentStats.wealth}
-      />
+      <motion.div
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 1, duration: 0.6 }}
+      >
+        <AttributeBar
+          intelligence={currentStats.intelligence}
+          health={currentStats.health}
+          wealth={currentStats.wealth}
+        />
+      </motion.div>
 
       <div className="flex flex-1 flex-col items-center" style={{ marginTop: -34 }}>
-        <MonthHeader quarter={quarter} />
+        <motion.div
+          initial={{ y: '30vh', scale: 1.2, opacity: 0 }}
+          animate={{ y: 0, scale: 1, opacity: 1 }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+        >
+          <MonthHeader quarter={quarter} />
+        </motion.div>
 
-        <div className="flex" style={{ width: '1090px', height: '100%', marginTop: 100 }}>
-          <CategoryPanel active={activeCategory} onSelect={setActiveCategory} />
-          <TaskList
-            activeCategory={activeCategory}
-            tasks={visibleTasks}
-            selectedIds={selectedIds}
-            onToggle={toggleTask}
-          />
-          <MonthlyPlanBoard
-            selectedTasks={selectedTasks}
-            selectedCount={selectedIds.length}
-            allSelected={selectedIds.length === MAX_PLAYER_SELECTIONS}
-            onRemove={toggleTask}
-            onConfirm={handleConfirm}
-          />
-        </div>
+        <LayoutGroup id="selection-sync">
+          <motion.div
+            className="flex" 
+            style={{ width: '1090px', height: '100%', marginTop: 100 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+          >
+            <CategoryPanel active={activeCategory} onSelect={setActiveCategory} />
+            
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                key={activeCategory}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex flex-1"
+              >
+                <TaskList
+                  activeCategory={activeCategory}
+                  tasks={visibleTasks}
+                  selectedIds={selectedIds}
+                  onToggle={toggleTask}
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="flex">
+              <MonthlyPlanBoard
+                selectedTasks={selectedTasks}
+                selectedCount={selectedIds.length}
+                allSelected={selectedIds.length === MAX_PLAYER_SELECTIONS}
+                onRemove={toggleTask}
+                onConfirm={handleConfirm}
+              />
+            </div>
+          </motion.div>
+        </LayoutGroup>
       </div>
 
-      {/* Toast */}
       <AnimatePresence>
         {showFullToast && (
           <motion.div
@@ -133,14 +181,21 @@ export function MonthlyTaskSelection() {
         )}
       </AnimatePresence>
 
-      <div className="w-full shrink-0" style={{ height: '104px', marginBottom: 100 }}>
+      {/* Task selection tip at the bottom */}
+      <motion.div
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 1.5, duration: 0.5 }}
+        className="w-full shrink-0"
+        style={{ height: '104px', marginBottom: 100 }}
+      >
         <img
           src={taskTip}
           alt="Tip"
           className="h-full w-full"
           style={{ objectFit: 'contain', objectPosition: 'center' }}
         />
-      </div>
+      </motion.div>
     </div>
   )
 }
