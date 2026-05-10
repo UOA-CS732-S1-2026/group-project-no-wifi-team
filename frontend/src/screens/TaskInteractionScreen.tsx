@@ -6,6 +6,7 @@ import commonBackground from '../assets/CommonImage/common-background.png'
 import { AttributeBar } from '../components/MonthlyTaskSelection'
 import type { AppDispatch, RootState } from '../store'
 import { earnAchievement, updateStats } from '../slices/gameSlice'
+import { post } from '../utils/request'
 import { coinSfx } from '../contexts/MusicContext'
 import { useMusicContext } from '../contexts/MusicContext'
 import {
@@ -33,14 +34,13 @@ function getLivingExpenses(wealth: number): number {
 }
 
 const LIVING_EXPENSES_QUOTES: Record<number, string> = {
-  1: '"The rent doesn\'t care about your grades." — Your Landlord',
-  2: '"Life is not free." — Reality',
+  2: '"The rent doesn\'t care about your grades." — Your Landlord',
   3: '"Money flies, and so does your youth." — Anonymous',
   4: '"Welcome to adulting." — Your Bank Account',
 }
 
 function buildLivingExpensesTask(amount: number, image: string, quarter: number): TaskInteractionContent {
-  const quote = LIVING_EXPENSES_QUOTES[quarter] ?? LIVING_EXPENSES_QUOTES[1]
+  const quote = LIVING_EXPENSES_QUOTES[quarter] ?? LIVING_EXPENSES_QUOTES[2]
   return {
     taskId: 'living-expenses',
     title: 'Living Expenses',
@@ -85,8 +85,10 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
     const amount = getLivingExpenses(selectedCharacter?.stats.wealth ?? 5)
     const image = baseTasks[0]?.image ?? defaultContent.image
-    return [buildLivingExpensesTask(amount, image, currentQuarter), ...baseTasks]
-  }, [content, quarterPlan, routeState?.tasks, selectedCharacter])
+    return currentQuarter >= 2
+      ? [buildLivingExpensesTask(amount, image, currentQuarter), ...baseTasks]
+      : baseTasks
+  }, [content, quarterPlan, routeState?.tasks, selectedCharacter, currentQuarter])
 
   const initialStats = useMemo(
     () => ({
@@ -143,6 +145,25 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     ],
   })
 
+  const persistAchievement = (key: string) => {
+    const username = localStorage.getItem('username')
+    if (!username) return
+    post('/user/achievement', { username, achievementKey: key }).catch(() => {})
+  }
+
+  const tryEarnAchievement = (key: string, showToast = true) => {
+    if (earnedAchievements.includes(key)) return
+    dispatch(earnAchievement(key))
+    persistAchievement(key)
+    if (showToast) setToastKey(key)
+  }
+
+  useEffect(() => {
+    if (currentTask.isRandomEvent && currentTask.achievementKey) {
+      tryEarnAchievement(currentTask.achievementKey)
+    }
+  }, [taskIndex])
+
   const handleChoice = (option: ChoiceOption) => {
     setSelectedOption(option)
     setStats((current) => ({
@@ -150,26 +171,43 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
       health: clampStat(current.health + option.effects.health),
       money: clampStat(current.money + option.effects.money),
     }))
-    if (option.achievementKey && !earnedAchievements.includes(option.achievementKey)) {
-      dispatch(earnAchievement(option.achievementKey))
-      setToastKey(option.achievementKey)
+    if (option.achievementKey) {
+      tryEarnAchievement(option.achievementKey)
     }
   }
 
   const handleNext = () => {
     const fx = currentTask.autoEffects
+    const autoOption =
+      !fx && currentTask.isRandomEvent && currentTask.options.length > 0
+        ? currentTask.options[0]
+        : null
+
     const nextStats = fx
       ? {
           intelligence: clampStat(stats.intelligence + (fx.intelligence ?? 0)),
           health: clampStat(stats.health + (fx.health ?? 0)),
           money: clampStat(stats.money + (fx.money ?? 0)),
         }
-      : stats
+      : autoOption
+        ? {
+            intelligence: clampStat(stats.intelligence + autoOption.effects.intelligence),
+            health: clampStat(stats.health + autoOption.effects.health),
+            money: clampStat(stats.money + autoOption.effects.money),
+          }
+        : stats
 
-    if (fx) setStats(nextStats)
+    if (fx || autoOption) setStats(nextStats)
+    if (autoOption?.achievementKey) tryEarnAchievement(autoOption.achievementKey)
 
     if (isLastTask) {
       dispatch(updateStats({ intelligence: nextStats.intelligence, health: nextStats.health, wealth: nextStats.money }))
+      if (nextStats.intelligence >= 10) tryEarnAchievement('wait-am-i-actually-a-genius', false)
+      if (nextStats.health >= 10) tryEarnAchievement('doing-great', false)
+      if (nextStats.money >= 10) tryEarnAchievement('future-forbes-list-candidate', false)
+      if (nextStats.intelligence >= 10 && nextStats.health >= 10 && nextStats.money >= 10) {
+        tryEarnAchievement('hexagon-international-student', false)
+      }
       navigate('/quarterly-summary', { state: buildSummaryState(nextStats) })
       return
     }

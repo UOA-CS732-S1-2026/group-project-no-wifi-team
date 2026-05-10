@@ -4,8 +4,7 @@ import { User } from "../db/user.js";
 import { applyTaskChoice, baseTaskState, buildTaskResponse } from "../data/taskData.js";
 import { Event } from "../db/event.js";
 import { GameResult } from "../db/gameResult.js";
-import Ending from "../db/ending.js";
-import { endingData, ENDING_COLLECTION_MAP } from "../data/endingData.js";
+import { ENDING_COLLECTION_MAP } from "../data/endingData.js";
 
 const router = Router();
 
@@ -44,7 +43,7 @@ router.get("/quarterly-summary", async (req, res) => {
     const userId = req.headers["x-user-id"];
     if (!userId) return res.status(401).json({ error: "Missing userId" });
 
-    let user = await User.findOne({ guestId: userId });
+    let user = await User.findOne({ userId });
     if (!user) {
       return res.status(404).json({ error: "No user found with this id" });
     }
@@ -152,23 +151,20 @@ router.post("/result", async (req, res) => {
     });
 
     const collectionKey = ENDING_COLLECTION_MAP[endingId];
-    if (collectionKey) {
-      const endingDef = endingData.find((e) => e.endingKey === collectionKey);
-      await Ending.findOneAndUpdate(
-        { endingKey: collectionKey, isDeleted: { $ne: true } },
-        {
-          $set: { status: "Unlocked" },
-          $setOnInsert: {
-            endingId: collectionKey,
-            title: endingDef?.title ?? collectionKey,
-            category: endingDef?.category ?? "",
-            description: endingDef?.description ?? "",
-            image: endingDef?.image ?? "",
-            isDeleted: false,
-          },
-        },
-        { upsert: true },
-      );
+    if (userId) {
+      const addToSet = {};
+      if (collectionKey) addToSet.endings = collectionKey;
+      if (Array.isArray(achievements) && achievements.length > 0) {
+        addToSet.achievements = { $each: achievements };
+      }
+
+      if (Object.keys(addToSet).length > 0) {
+        await User.findOneAndUpdate(
+          { userId },
+          { $addToSet: addToSet },
+          { new: true },
+        );
+      }
     }
 
     return res.status(201).json({ success: true, data: result });

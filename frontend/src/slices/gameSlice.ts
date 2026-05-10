@@ -7,7 +7,7 @@ interface QuarterTasks {
   randomTask: Task | null // 1 system-assigned random task
 }
 
-const DEFAULT_STATS: CharacterStats = { intelligence: 55, health: 60, wealth: 50 }
+const DEFAULT_STATS: CharacterStats = { intelligence: 5, health: 5, wealth: 5 }
 
 interface GameState {
   selectedCharacter: Character | null
@@ -66,6 +66,9 @@ const gameSlice = createSlice({
         state.earnedAchievements.push(action.payload)
       }
     },
+    setInitialAchievements(state, action: PayloadAction<string[]>) {
+      state.earnedAchievements = action.payload
+    },
     resetGame(state) {
       state.selectedCharacter = null
       state.currentStats = DEFAULT_STATS
@@ -83,6 +86,7 @@ export const {
   advanceQuarter,
   setQuarter,
   earnAchievement,
+  setInitialAchievements,
   resetGame,
 } = gameSlice.actions
 export default gameSlice.reducer

@@ -10,6 +10,7 @@ import {
   quarterArrowUp,
   quarterTitle,
   nextBtn,
+  viewEndingBtn,
   statusBrain,
   statusHealth,
   statusWealth,
@@ -310,7 +311,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                 onClick={() => navigate('/next-quarter')}
                 className="w-[540px] h-[115px] cursor-pointer"
               >
-                <img src={quartersRemaining > 0 ? nextBtn : viewEnding} alt="Next Quarter" className="w-full" />
+                <img src={quartersRemaining > 0 ? nextBtn : viewEnding} alt={quartersRemaining === 0 ? 'View Ending' : 'Next Quarter'} className="w-full" />
               </motion.button>
             </motion.div>
           </motion.div>

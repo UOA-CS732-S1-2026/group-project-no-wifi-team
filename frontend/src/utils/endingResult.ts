@@ -1,4 +1,4 @@
-import { clamp01to100 } from './level'
+import { clamp0to10 } from './level'
 
 export type EndingTheme = 'happy' | 'bad'
 export type EndingRank = 'S' | 'A' | 'B' | 'C'
@@ -12,7 +12,6 @@ export interface AttributeSnapshot {
 export interface Ending {
   id: string
   title: string
-  chineseName: string
   type: string
   theme: EndingTheme
   rank: EndingRank
@@ -21,104 +20,125 @@ export interface Ending {
   predicate: (s: AttributeSnapshot) => boolean
 }
 
-const isHigh = (v: number) => v >= 85
-const isLow = (v: number) => v < 45
-const isCritical = (v: number) => v < 30
+const isHigh = (v: number) => v >= 8
+const isStrong = (v: number) => v >= 7
+const isLow = (v: number) => v <= 3
+const isCritical = (v: number) => v <= 0
 
 /**
- * Order matters — first match wins. Priority follows ending-design.md §3:
- * warning > bad > best > thematic > open fallback. The Burnout case
- * deliberately fires before "Perfect" so an exhausted student is never
- * mislabelled as a perfect run.
+ * Order matters: first match wins. Failure and warning routes are checked
+ * before positive routes, then the strongest 0-10 attribute determines the
+ * thematic ending. The final ending is the open fallback.
  */
 export const ENDINGS: readonly Ending[] = [
   {
-    id: 'burnout-student',
-    title: 'Burnout Student',
-    chineseName: '过劳留学生',
-    type: 'Warning Ending',
-    theme: 'bad',
-    rank: 'A',
-    description:
-      'You pushed yourself too hard. Your grades were strong, but your body and mind could not keep up with the pressure.',
-    unlockText:
-      'You achieved strong results, but the cost was too high. The year ended with exhaustion instead of celebration.',
-    predicate: ({ intelligence, health }) => isHigh(intelligence) && isLow(health),
-  },
-  {
-    id: 'lost-year',
-    title: 'Lost Year',
-    chineseName: '迷失的一年',
-    type: 'Bad Ending',
+    id: 'speedrun-early-retirement',
+    title: 'Speedrun to Early Retirement',
+    type: 'Game Over',
     theme: 'bad',
     rank: 'C',
     description:
-      'The year slipped through your fingers. You ran out of energy, money, or focus before you could find your footing.',
+      'Everything collapsed. One of your attributes hit zero so hard that your life basically pressed the restart button by itself.',
     unlockText:
-      'Not every year ends in triumph. Take a breath, rebuild your habits, and try again.',
+      'One of your key attributes dropped to zero, ending the run before graduation could become a victory lap.',
     predicate: ({ intelligence, health, wealth }) =>
       isCritical(health) || isCritical(intelligence) || isCritical(wealth),
   },
   {
-    id: 'perfect-all-rounder',
-    title: 'Perfect All-Rounder',
-    chineseName: '全能留学生',
-    type: 'Best Ending',
+    id: 'gpa-4-hairline-04',
+    title: 'GPA: 4.0, Hairline: 0.4',
+    type: 'Warning Ending',
+    theme: 'bad',
+    rank: 'A',
+    description:
+      'Your transcript is flawless, almost suspiciously so, but your eye bags have migrated all the way to your chin. You defeated academia, but your physical condition became fragile.',
+    unlockText:
+      'Your study stat soared, but your health fell too low to call the victory painless.',
+    predicate: ({ intelligence, health }) => isHigh(intelligence) && isLow(health),
+  },
+  {
+    id: 'smart-head-empty-pocket',
+    title: 'Smart Head, Empty Pocket',
+    type: 'Study Ending',
+    theme: 'bad',
+    rank: 'B',
+    description:
+      'Your brain is packed with cutting-edge theories, but your stomach is powered by discounted bread and emotional resilience. Spiritually, you are a billionaire. Financially, not so much.',
+    unlockText:
+      'Your study stat was excellent, but your wealth stat dropped too low to support the lifestyle.',
+    predicate: ({ intelligence, wealth }) => isHigh(intelligence) && isLow(wealth),
+  },
+  {
+    id: 'model-minority-real-version',
+    title: 'The Model Minority Myth: Real Version',
+    type: 'Balance Ending',
     theme: 'happy',
     rank: 'S',
     description:
-      'You managed to balance study, health, and money throughout the year. You did not just survive international student life — you mastered it.',
+      'You achieved the legendary balance: decent grades, decent health, and a bank account that has not completely hit rock bottom. You are not just studying abroad — you are accidentally writing the survival guide for future international students.',
     unlockText:
-      'You became the ideal international student: capable, healthy, and financially stable.',
+      'All three attributes stayed strong, creating the cleanest all-round finish.',
     predicate: ({ intelligence, health, wealth }) =>
-      isHigh(intelligence) && isHigh(health) && isHigh(wealth),
+      isStrong(intelligence) && isStrong(health) && isStrong(wealth),
   },
   {
-    id: 'academic-star',
-    title: 'Academic Star',
-    chineseName: '学术之星',
+    id: 'library-resident-landlord',
+    title: 'Library’s Resident Landlord',
     type: 'Study Ending',
     theme: 'happy',
     rank: 'A',
     description:
-      'Your hard work paid off. You achieved excellent academic results and became a reliable student in your course.',
+      'Your Intelligence stat has officially overflowed. Every seat in the library has witnessed your academic suffering, and several of them may legally count as your second home.',
     unlockText:
-      'You became known as a hardworking student. Your academic performance opened more opportunities for your future.',
-    predicate: ({ intelligence, health }) => isHigh(intelligence) && !isLow(health),
+      'Your intelligence stat became your strongest attribute without collapsing health or wealth.',
+    predicate: ({ intelligence, health, wealth }) =>
+      isHigh(intelligence) && intelligence >= health && intelligence >= wealth,
   },
   {
-    id: 'part-time-hustler',
-    title: 'Part-Time Hustler',
-    chineseName: '兼职打工人',
+    id: 'part-time-tycoon',
+    title: 'Part-time Tycoon',
     type: 'Wealth Ending',
     theme: 'happy',
     rank: 'B',
     description:
-      'You spent the year stacking shifts and saving every dollar. You leave with a healthy bank balance — and a few regrets about the lectures you missed.',
+      'During your time abroad, you developed enough survival skills to run a profitable convenience store on a deserted island. You may be tired, but you are financially dangerous.',
     unlockText:
-      'Your hustle kept the lights on. The grades suffered, but the wallet smiled.',
-    predicate: ({ intelligence, wealth }) => isHigh(wealth) && isLow(intelligence),
+      'Your wealth stat became the dominant force of the year.',
+    predicate: ({ intelligence, health, wealth }) =>
+      isHigh(wealth) && wealth >= intelligence && wealth >= health,
   },
   {
-    id: 'steady-graduate',
-    title: 'Steady Graduate',
-    chineseName: '稳健毕业生',
-    type: 'Open Ending',
+    id: 'main-character-party',
+    title: 'The Main Character of Every Party',
+    type: 'Health Ending',
     theme: 'happy',
     rank: 'B',
     description:
-      'No big triumphs, no big disasters — you kept things in balance and made it through the year on your own terms.',
+      'Every student club has heard your name, and your contact list is longer than your course timetable. Somehow, you turned campus life into your personal reality show.',
     unlockText:
-      'A quiet, honest finish. Sometimes that is exactly what international student life calls for.',
+      'Your health and lifestyle stat became your strongest attribute, carrying the year through social energy.',
+    predicate: ({ intelligence, health, wealth }) =>
+      isHigh(health) && health >= intelligence && health >= wealth,
+  },
+  {
+    id: 'showed-up-survived',
+    title: 'I Showed Up, I Survived',
+    type: 'Normal Ending',
+    theme: 'happy',
+    rank: 'B',
+    description:
+      'You did not become a legend, but you also did not become a cautionary tale. With your degree in hand, your life philosophy remains simple: go with the flow and act like this was the plan all along.',
+    unlockText:
+      'No single attribute created a specialized route, but you made it to the end.',
     predicate: () => true,
   },
 ] as const
 
 export function resolveEnding(snapshot: AttributeSnapshot): Ending {
   const safe: AttributeSnapshot = {
-    intelligence: clamp01to100(snapshot.intelligence),
-    health: clamp01to100(snapshot.health),
-    wealth: clamp01to100(snapshot.wealth),
+    intelligence: clamp0to10(snapshot.intelligence),
+    health: clamp0to10(snapshot.health),
+    wealth: clamp0to10(snapshot.wealth),
   }
 
   const match = ENDINGS.find((e) => e.predicate(safe))
@@ -127,13 +147,13 @@ export function resolveEnding(snapshot: AttributeSnapshot): Ending {
   return match ?? ENDINGS[ENDINGS.length - 1]!
 }
 
-/** Final score: average of the three attributes, on a 0–100 scale. */
+/** Final score: average of the three 0-10 attributes, expressed on a 0-100 scale. */
 export const TOTAL_SCORE = 100
 
 export function calculateScore(snapshot: AttributeSnapshot): number {
   const sum =
-    clamp01to100(snapshot.intelligence) +
-    clamp01to100(snapshot.health) +
-    clamp01to100(snapshot.wealth)
-  return Math.round(sum / 3)
+    clamp0to10(snapshot.intelligence) +
+    clamp0to10(snapshot.health) +
+    clamp0to10(snapshot.wealth)
+  return Math.round((sum / 3) * 10)
 }
