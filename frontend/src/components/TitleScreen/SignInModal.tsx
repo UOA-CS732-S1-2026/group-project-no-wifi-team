@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { post } from '../../utils/request'
 import { loginButton, popupLogin, loginEnter } from '../../assets/gamebegin'
+import { setInitialAchievements } from '../../slices/gameSlice'
+import type { AppDispatch } from '../../store'
 
 export function SignInModal({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
   const [username, setUsername] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -18,8 +22,10 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
     setLoading(true)
     setError('')
     try {
-      const data = await post<{ username: string }>('/user/login', { username: name })
+      const data = await post<{ username: string; userId: string; achievements: string[] }>('/user/login', { username: name })
       localStorage.setItem('username', data.username)
+      localStorage.setItem('guestId', data.userId)
+      dispatch(setInitialAchievements(data.achievements ?? []))
       onClose()
       navigate('/characters')
     } catch {

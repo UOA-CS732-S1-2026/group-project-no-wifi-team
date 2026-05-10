@@ -6,6 +6,7 @@ import commonBackground from '../assets/CommonImage/common-background.png'
 import { AttributeBar } from '../components/MonthlyTaskSelection'
 import type { AppDispatch, RootState } from '../store'
 import { earnAchievement, updateStats } from '../slices/gameSlice'
+import { post } from '../utils/request'
 import { coinSfx } from '../contexts/MusicContext'
 import { useMusicContext } from '../contexts/MusicContext'
 import {
@@ -143,6 +144,19 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     ],
   })
 
+  const persistAchievement = (key: string) => {
+    const username = localStorage.getItem('username')
+    if (!username) return
+    post('/user/achievement', { username, achievementKey: key }).catch(() => {})
+  }
+
+  const tryEarnAchievement = (key: string, showToast = true) => {
+    if (earnedAchievements.includes(key)) return
+    dispatch(earnAchievement(key))
+    persistAchievement(key)
+    if (showToast) setToastKey(key)
+  }
+
   const handleChoice = (option: ChoiceOption) => {
     setSelectedOption(option)
     setStats((current) => ({
@@ -150,9 +164,8 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
       health: clampStat(current.health + option.effects.health),
       money: clampStat(current.money + option.effects.money),
     }))
-    if (option.achievementKey && !earnedAchievements.includes(option.achievementKey)) {
-      dispatch(earnAchievement(option.achievementKey))
-      setToastKey(option.achievementKey)
+    if (option.achievementKey) {
+      tryEarnAchievement(option.achievementKey)
     }
   }
 
@@ -170,6 +183,12 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
     if (isLastTask) {
       dispatch(updateStats({ intelligence: nextStats.intelligence, health: nextStats.health, wealth: nextStats.money }))
+      if (nextStats.intelligence >= 10) tryEarnAchievement('wait-am-i-actually-a-genius', false)
+      if (nextStats.health >= 10) tryEarnAchievement('doing-great', false)
+      if (nextStats.money >= 10) tryEarnAchievement('future-forbes-list-candidate', false)
+      if (nextStats.intelligence >= 10 && nextStats.health >= 10 && nextStats.money >= 10) {
+        tryEarnAchievement('hexagon-international-student', false)
+      }
       navigate('/quarterly-summary', { state: buildSummaryState(nextStats) })
       return
     }
