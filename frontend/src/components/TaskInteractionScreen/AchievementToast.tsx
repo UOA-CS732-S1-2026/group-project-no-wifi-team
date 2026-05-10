@@ -83,8 +83,8 @@ export function AchievementToast({ achievementKey, onDismiss }: Props) {
               draggable={false}
             />
             <div className="absolute inset-0 flex items-center">
-              <div className="ml-[49%] mb-2 translate-y-3 flex flex-col justify-center gap-0.5 pr-4">
-                <p className="font-serif text-[13px] font-bold leading-tight text-[#5a3010]">
+              <div className="ml-[47%] mb-2 pr-10 translate-y-3 flex flex-col justify-center gap-0.5 pr-4">
+                <p className="pt-8 font-serif text-[13px] font-bold leading-tight text-[#5a3010]">
                   {label}
                 </p>
               </div>
