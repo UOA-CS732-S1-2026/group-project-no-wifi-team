@@ -18,6 +18,7 @@ export interface TaskInteractionContent {
   image: string
   options: ChoiceOption[]
   isRandomEvent?: boolean
+  autoEffects?: Record<AttributeKey, number>
 }
 
 export interface RouteTask {
