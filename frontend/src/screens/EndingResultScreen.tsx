@@ -20,7 +20,7 @@ import { useMusicContext } from '../contexts/MusicContext'
 // ── Assets ────────────────────────────────────────────────────────────────────
 import commonBg          from '../assets/CommonImage/common-background.png'
 import backHomeBtnImg    from '../assets/CommonImage/back-home-btn.png'
-import arrowRightImg     from '../assets/CommonImage/arrow-right.png'
+import endingCollectBtnImg from '../assets/endingPage-image/button-endingcollect.png'
 import settingImg        from '../assets/CommonImage/setting.png'
 import endingMiddleBg    from '../assets/endingPage-image/ending-middle-bg.png'
 import rankingListBanner from '../assets/endingPage-image/ranking-list-banner.png'
@@ -66,15 +66,15 @@ const baseBtnFilter = 'drop-shadow(0 4px 12px rgba(40,20,5,0.5)) brightness(1)'
 
 const BTN_ANIM = {
   whileHover: {
-    scale: 1.08,
+    scale: 1.05,
     filter: 'drop-shadow(0 8px 22px rgba(40,20,5,0.7)) brightness(1.12)',
+    transition: { duration: 0.1 },
   },
   whileTap: {
-    scale: 0.92,
+    scale: 0.95,
     filter: 'drop-shadow(0 2px 6px rgba(40,20,5,0.8)) brightness(0.9)',
-    transition: { duration: 0.06 },
+    transition: { duration: 0.05 },
   },
-  transition: { duration: 0.18 },
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -226,18 +226,18 @@ export function EndingResultScreen() {
                 style={{ fontFamily: '"Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif' }}
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.35, ...spring }}
+                transition={{ duration: 0.5, delay: 0.4, ...spring }}
               >
                 {ending.title}
               </motion.span>
             </div>
             {/* Wave 3: divider */}
             <motion.hr
-              className="w-[calc(100%+2vw)] h-px bg-[#ae7437] border-0 mt-[3.5vh] mb-[2vh]"
+              className="w-[calc(100%+2vw)] h-px bg-[#ae7437] border-0 mt-[2.5vh] mb-[2vh]"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               style={{ transformOrigin: 'left' }}
-              transition={{ duration: 0.5, delay: 0.55 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
             />
             {/* Wave 3: streaming description */}
             <motion.p
@@ -248,7 +248,7 @@ export function EndingResultScreen() {
               }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.35, delay: 0.55 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
               onClick={() => { if (!descFullyRevealed) setDescFullyRevealed(true) }}
             >
               {descFullyRevealed
@@ -266,7 +266,7 @@ export function EndingResultScreen() {
               className="absolute bottom-[18vh] left-0 right-0 flex flex-col md:flex-row justify-center items-center md:items-end gap-[1.5vh] md:gap-[1.5vw] px-[4vw]"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.75, ...spring }}
+              transition={{ duration: 0.5, delay: 0.8, ...spring }}
             >
               {visibleCategories.map((cat) => (
                 <motion.button
@@ -296,8 +296,8 @@ export function EndingResultScreen() {
           aria-label="Ranking List"
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.75, ...spring }}
           {...BTN_ANIM}
+          transition={{ duration: 0.5, delay: 0.8, ...spring }}
           style={{ filter: baseBtnFilter }}
         >
           <img src={rankingListBanner} alt="Ranking List" className="h-[min(26vw,34vh)] block" />
@@ -312,25 +312,25 @@ export function EndingResultScreen() {
         aria-label="Back to Home"
         initial={{ opacity: 0, x: -16 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.1, ...spring }}
         {...BTN_ANIM}
+        transition={{ duration: 0.5, delay: 0.1, ...spring }}
         style={{ filter: baseBtnFilter }}
       >
         <img src={backHomeBtnImg} alt="Back to Home" className="h-[min(10vh,8vw)] w-auto block" />
       </motion.button>
 
-      {/* Arrow Right — top-right */}
+      {/* Ending Collection — top-right */}
       <motion.button
         className="absolute top-[1.5vh] right-[2vw] z-30 p-0 cursor-pointer"
         onClick={() => navigate('/endings')}
         aria-label="Ending Collection"
         initial={{ opacity: 0, x: 16 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.1, ...spring }}
         {...BTN_ANIM}
+        transition={{ duration: 0.5, delay: 0.8, ...spring }}
         style={{ filter: baseBtnFilter }}
       >
-        <img src={arrowRightImg} alt="Ending Collection" className="h-[min(12vh,10vw)] w-auto block" />
+        <img src={endingCollectBtnImg} alt="Ending Collection" className="h-[min(12vh,10vw)] w-auto block" />
       </motion.button>
 
       {/* Wave 4: Replay — bottom-center */}
@@ -340,8 +340,8 @@ export function EndingResultScreen() {
         aria-label="Replay"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.75, ...spring }}
         {...BTN_ANIM}
+        transition={{ duration: 0.5, delay: 0.8, ...spring }}
         style={{ filter: baseBtnFilter }}
       >
         <img src={endingReplayButton} alt="Replay" className="h-[min(12vh,10vw)] w-auto block" />
@@ -354,8 +354,8 @@ export function EndingResultScreen() {
         aria-label="Settings"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.1, ...spring }}
         {...BTN_ANIM}
+        transition={{ duration: 0.5, delay: 0.1, ...spring }}
         style={{ filter: baseBtnFilter }}
       >
         <img src={settingImg} alt="Settings" className="h-[min(10vh,8vw)] w-auto block" />
