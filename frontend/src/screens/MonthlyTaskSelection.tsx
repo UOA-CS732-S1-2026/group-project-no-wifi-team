@@ -126,7 +126,7 @@ export function MonthlyTaskSelection() {
         <LayoutGroup id="selection-sync">
           <motion.div
             className="flex" 
-            style={{ width: '1090px', height: '100%', marginTop: 100 }}
+            style={{ width: '1090px', height: '100%', marginTop: 100, position: 'relative', overflow: 'visible' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.5 }}

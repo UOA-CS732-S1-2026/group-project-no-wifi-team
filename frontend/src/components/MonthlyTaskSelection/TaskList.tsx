@@ -38,7 +38,6 @@ export function TaskList({ activeCategory, tasks, selectedIds, onToggle }: Props
           height: '410px',
           padding: '8px 30px 24px',
           scrollbarWidth: 'none',
-          position: 'relative',
           overflowX: 'visible',
         }}
       >

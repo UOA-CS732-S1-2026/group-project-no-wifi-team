@@ -13,7 +13,7 @@ interface Props {
 
 export function SelectedSlot({ task, onRemove, placeholder = '— Pending —' }: Props) {
   return (
-    <div className="relative flex w-full items-center rounded overflow-hidden" style={{ height: '68px' }}>
+    <div className="flex w-full items-center rounded" style={{ height: '68px', position: 'static' }}>
       <AnimatePresence mode="popLayout" initial={false}>
         {task ? (
           <motion.div

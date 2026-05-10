@@ -40,7 +40,7 @@ export function TaskCard({ task, selected, onToggle }: Props) {
       </div>
 
       {/* Title */}
-      <div className="flex flex-1 flex-col justify-center px-3 py-2">
+      <div className="flex flex-1 flex-col justify-center px-3 py-2 pr-6">
         <p className="font-serif text-sm font-semibold leading-snug text-desk-dark">
           {task.name}
         </p>
