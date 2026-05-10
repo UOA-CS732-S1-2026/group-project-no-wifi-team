@@ -20,16 +20,21 @@ import {
   type Category,
   type Task,
 } from '../components/MonthlyTaskSelection'
+import { SettingsModal } from '../components/TitleScreen/SettingsModal'
+import { useMusicContext } from '../contexts/MusicContext'
+import settingImg from '../assets/CommonImage/setting.png'
 
 export function MonthlyTaskSelection() {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const quarter = useSelector((s: RootState) => s.game.currentQuarter) as 1 | 2 | 3 | 4
   const currentStats = useSelector((s: RootState) => s.game.currentStats)
+  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
   const [activeCategory, setActiveCategory] = useState<Category>('Study')
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [tasks, setTasks] = useState<Task[]>(TASKS)
   const [showFullToast, setShowFullToast] = useState(false)
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   useEffect(() => {
     fetchEventsByQuarter(quarter)
@@ -141,6 +146,25 @@ export function MonthlyTaskSelection() {
           style={{ objectFit: 'contain', objectPosition: 'center' }}
         />
       </div>
+
+      <button
+        type="button"
+        onClick={() => setShowSettingsModal(true)}
+        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px]"
+        aria-label="Settings"
+      >
+        <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
+      </button>
+
+      {showSettingsModal && (
+        <SettingsModal
+          musicEnabled={musicEnabled}
+          sfxEnabled={sfxEnabled}
+          onMusicToggle={setMusicEnabled}
+          onSfxToggle={setSfxEnabled}
+          onClose={() => setShowSettingsModal(false)}
+        />
+      )}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
@@ -7,8 +7,11 @@ import { characters, DESIGN_HEIGHT, DESIGN_WIDTH, Character } from '../component
 import { DesktopCharacterCard } from '../components/CharacterSelectScreen/DesktopCharacterCard'
 import { useIsMobile, useResponsiveStageScale } from '../components/CharacterSelectScreen/hooks'
 import { MobileCharacterCard } from '../components/CharacterSelectScreen/MobileCharacterCard'
+import { SettingsModal } from '../components/TitleScreen/SettingsModal'
+import { useMusicContext } from '../contexts/MusicContext'
 import { selectCharacter } from '../slices/gameSlice'
 import type { AppDispatch } from '../store'
+import settingImg from '../assets/CommonImage/setting.png'
 
 export function CharacterSelectScreen() {
   const navigate = useNavigate()
@@ -16,6 +19,8 @@ export function CharacterSelectScreen() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const stageScale = useResponsiveStageScale()
   const isMobile = useIsMobile()
+  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   function scrollLeftHandler() {
     scrollRef.current?.scrollBy({
@@ -50,6 +55,15 @@ export function CharacterSelectScreen() {
           aria-label="Back to Home"
         >
           <img src={backHomeBtn} alt="Back to Home" className="w-full" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setShowSettingsModal(true)}
+          className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95"
+          aria-label="Settings"
+        >
+          <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
         </button>
 
         <section className="relative overflow-hidden rounded-[24px] border-[3px] border-[#cfa472] bg-[#fff2d9]/90 px-4 py-6 text-center shadow-[0_10px_18px_rgba(83,50,24,0.12)]">
@@ -98,6 +112,16 @@ export function CharacterSelectScreen() {
             ))}
           </div>
         </section>
+
+        {showSettingsModal && (
+          <SettingsModal
+            musicEnabled={musicEnabled}
+            sfxEnabled={sfxEnabled}
+            onMusicToggle={setMusicEnabled}
+            onSfxToggle={setSfxEnabled}
+            onClose={() => setShowSettingsModal(false)}
+          />
+        )}
       </main>
     )
   }
@@ -213,6 +237,25 @@ export function CharacterSelectScreen() {
           </section>
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={() => setShowSettingsModal(true)}
+        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px]"
+        aria-label="Settings"
+      >
+        <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
+      </button>
+
+      {showSettingsModal && (
+        <SettingsModal
+          musicEnabled={musicEnabled}
+          sfxEnabled={sfxEnabled}
+          onMusicToggle={setMusicEnabled}
+          onSfxToggle={setSfxEnabled}
+          onClose={() => setShowSettingsModal(false)}
+        />
+      )}
     </main>
   )
 }
