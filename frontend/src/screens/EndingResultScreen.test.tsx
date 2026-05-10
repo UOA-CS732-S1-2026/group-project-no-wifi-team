@@ -75,19 +75,6 @@ function renderAt(initial: { pathname: string; state?: unknown }) {
   )
 }
 
-/** Returns the store so callers can inspect Redux state or dispatch actions before render. */
-function renderWithStore(initial: { pathname: string; state?: unknown }) {
-  const store = makeStore()
-  const result = render(
-    <Provider store={store}>
-      <MemoryRouter initialEntries={[initial]}>
-        <EndingResultScreen />
-      </MemoryRouter>
-    </Provider>,
-  )
-  return { store, ...result }
-}
-
 describe('EndingResultScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -110,21 +97,26 @@ describe('EndingResultScreen', () => {
   })
 
   it('renders the ending description', () => {
-    renderAt({
+    const { container } = renderAt({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 95, health: 95, wealth: 95 } },
     })
+    // Click the description to skip the typewriter and reveal full text
+    const cursor = container.querySelector('.animate-pulse')
+    if (cursor?.parentElement) fireEvent.click(cursor.parentElement)
     expect(
       screen.getByText(/you did not just survive international student life/i),
     ).toBeInTheDocument()
   })
 
   it('renders the Burnout Student ending when health collapses despite high intelligence', () => {
-    renderAt({
+    const { container } = renderAt({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 92, health: 20, wealth: 60 } },
     })
     expect(screen.getByText('Burnout Student')).toBeInTheDocument()
+    const cursor = container.querySelector('.animate-pulse')
+    if (cursor?.parentElement) fireEvent.click(cursor.parentElement)
     expect(screen.getByText(/pushed yourself too hard/i)).toBeInTheDocument()
   })
 
@@ -166,15 +158,6 @@ describe('EndingResultScreen', () => {
     })
     // No category buttons should exist
     expect(screen.queryByRole('button', { name: /achievements/i })).not.toBeInTheDocument()
-  })
-
-  it('shows a single Study category button when only Study achievements are earned', async () => {
-    const { store } = renderWithStore({
-      pathname: '/ending-result',
-      state: { snapshot: { intelligence: 80, health: 80, wealth: 80 } },
-    })
-    store.dispatch(earnAchievement('study-master'))
-    // Re-render is not automatic — we re-render with a new store
   })
 
   it('shows correct category buttons for earned achievements', async () => {
@@ -449,11 +432,8 @@ describe('EndingResultScreen', () => {
 
     expect(screen.getByText('Achievement Details')).toBeInTheDocument()
 
-    fireEvent.keyDown(document, { key: 'Escape' })
-    // Note: the modal doesn't have onKeyDown for Escape — the screen's ranking dialog does.
-    // The AchievementCategoryModal only closes via onClose (backdrop click) or Close button.
-    // Verify that Close button still works
-    fireEvent.click(screen.getAllByRole('button', { name: /close/i })[0])
+    const dialog = screen.getByRole('dialog')
+    fireEvent.keyDown(dialog, { key: 'Escape' })
     expect(screen.queryByText('Achievement Details')).not.toBeInTheDocument()
   })
 

@@ -33,8 +33,12 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="achievement-modal-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4 py-6 backdrop-blur-sm"
       onClick={onClose}
+      onKeyDown={(e) => { if (e.key === 'Escape') onClose() }}
     >
       <motion.section
         className="max-h-[85vh] w-full max-w-[780px] overflow-y-auto rounded-[28px] border-[3px] border-[#b98755] bg-[#fff0cf] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.38)]"
@@ -48,7 +52,7 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
             <p className="text-[12px] font-bold uppercase tracking-[0.25em] text-[#9a6840]">
               Achievement Details
             </p>
-            <h2 className="mt-1 text-[30px] font-bold leading-none text-[#5c3318]">
+            <h2 id="achievement-modal-title" className="mt-1 text-[30px] font-bold leading-none text-[#5c3318]">
               {CATEGORY_LABELS[category] ?? category}
             </h2>
             <p className="mt-2 text-[15px] text-[#7a5030]">
