@@ -6,6 +6,8 @@ type ProgressPanelProps = {
   unlockedCount: number
   totalCount: number
   lockedCount: number
+  achievementCount: number
+  achievementTotal: number
   progressPercent: number
   onViewAchievements: () => void
 }
@@ -15,6 +17,8 @@ export function ProgressPanel({
   unlockedCount,
   totalCount,
   lockedCount,
+  achievementCount,
+  achievementTotal,
   progressPercent,
   onViewAchievements,
 }: ProgressPanelProps) {
@@ -74,11 +78,11 @@ export function ProgressPanel({
 
       <motion.div variants={itemVariants}>
         <p className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#7a4c29]">
-          Ending Discovered
+          Achievements Collected
         </p>
 
         <p className="mt-1 text-[17px] font-bold">
-          🪶 {unlockedCount} / {totalCount}
+          🪶 {achievementCount} / {achievementTotal}
         </p>
       </motion.div>
 
