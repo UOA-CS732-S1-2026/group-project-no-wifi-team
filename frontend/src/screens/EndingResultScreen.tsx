@@ -211,23 +211,23 @@ export function EndingResultScreen() {
         >
           {/* Title row + divider + description — individual entry animations */}
           <div className="grid grid-cols-[min-content] self-start shrink-0">
-            <div className="flex flex-col items-start gap-[1.2vh]">
+            <div className="flex flex-col items-start gap-[1.8vh]">
               {/* Wave 1: main title */}
               <motion.span
-                className="pl-[0.2vw] text-[4.4vw] font-black uppercase text-[#3d2b1f] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.6)]"
+                className="pl-[0.2vw] text-[4vw] font-black uppercase text-[#3d2b1f] leading-none whitespace-nowrap tracking-wide"
                 style={{ fontFamily: "Georgia, Cambria, serif" }}
-                initial={{ opacity: 0, x: -2 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: -8, scaleY: 1.2 }}
+                animate={{ opacity: 1, x: 0, scaleY: 1.2 }}
                 transition={{ duration: 0.5, delay: 0.1, ...spring }}
               >
                 ENDING
               </motion.span>
               {/* Wave 2: subtitle */}
               <motion.span
-                className="text-[3vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.3)]"
+                className="pl-[0.3vw] text-[3vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide"
                 style={{ fontFamily: '"Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif' }}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: -4, scaleY: 1.1 }}
+                animate={{ opacity: 1, x: 0, scaleY: 1.1 }}
                 transition={{ duration: 0.5, delay: 0.4, ...spring }}
               >
                 {ending.title}
@@ -235,7 +235,7 @@ export function EndingResultScreen() {
             </div>
             {/* Wave 3: divider */}
             <motion.hr
-              className="w-[calc(100%+2vw)] h-px bg-[#ae7437] border-0 mt-[2.5vh] mb-[2vh]"
+              className="w-[calc(100%+6vw)] h-px bg-[#ae7437] border-0 mt-[2.5vh] mb-[2vh]"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               style={{ transformOrigin: 'left' }}
@@ -243,7 +243,7 @@ export function EndingResultScreen() {
             />
             {/* Wave 3: streaming description */}
             <motion.p
-              className="pl-[0.6vw] text-[1.4vw] font-normal text-[#2D3A3A] leading-[1.5] m-0 w-[calc(100%+2vw)] select-none"
+              className="pl-[0.6vw] text-[1.4vw] font-normal text-[#2D3A3A] leading-[1.5] m-0 w-[calc(100%+6vw)] select-none"
               style={{
                 fontFamily: 'Georgia, Cambria, "Times New Roman", serif',
                 cursor: descFullyRevealed ? 'default' : 'pointer',
@@ -296,7 +296,7 @@ export function EndingResultScreen() {
           className="absolute top-[4.5vh] right-[9vw] p-0 cursor-pointer"
           onClick={() => setShowRankingsNotice(true)}
           aria-label="Ranking List"
-          initial={{ opacity: 0, y: -12 }}
+          initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           {...BTN_ANIM}
           transition={{ duration: 0.5, delay: 0.8, ...spring }}
@@ -309,7 +309,7 @@ export function EndingResultScreen() {
       {/* ── Wave 1: Navigation Buttons ─────────────────────────────────────── */}
       {/* Back to Home — top-left */}
       <motion.button
-        className="absolute top-[1.5vh] left-[2vw] z-30 p-0 cursor-pointer"
+        className="absolute top-[3.1vh] left-[2vw] z-30 p-0 cursor-pointer"
         onClick={() => navigate('/')}
         aria-label="Back to Home"
         initial={{ opacity: 0, x: -16 }}
@@ -351,7 +351,7 @@ export function EndingResultScreen() {
 
       {/* Wave 1: Settings — bottom-right */}
       <motion.button
-        className="absolute bottom-[2vh] right-[2vw] z-30 p-0 cursor-pointer"
+        className="absolute bottom-[5.5vh] right-[2vw] z-30 p-0 cursor-pointer"
         onClick={() => setShowSettingsModal(true)}
         aria-label="Settings"
         initial={{ opacity: 0, scale: 0.8 }}
