@@ -13,7 +13,6 @@ import { addRecord, LAST_RESULT_KEY } from '../store/gameHistorySlice'
 import { generateId, type GameResult } from '../utils/gameResultTypes'
 import { post } from '../utils/request'
 import { fetchAchievements, getEarnedCategories } from '../api/achievements'
-import { earnAchievement } from '../slices/gameSlice'
 import { AchievementCategoryModal } from '../components/EndingResultScreen/AchievementCategoryModal'
 
 // ── Assets ────────────────────────────────────────────────────────────────────
@@ -82,17 +81,6 @@ export function EndingResultScreen() {
   const characterId = selectedCharacter?.id ?? null
 
   const [resultId] = useState(() => generateId())
-
-  // Dev-mode: auto-populate test achievements so the ending-result page can be
-  // viewed without going through the full game flow.
-  useEffect(() => {
-    if (import.meta.env.DEV && earnedAchievements.length === 0) {
-      dispatch(earnAchievement('i-love-8-am-classes'))
-      dispatch(earnAchievement('lone-wolf'))
-      dispatch(earnAchievement('benefits-first'))
-      dispatch(earnAchievement('hexagon-international-student'))
-    }
-  }, [])
 
   // Resolve earned categories from achievement keys
   useEffect(() => {
