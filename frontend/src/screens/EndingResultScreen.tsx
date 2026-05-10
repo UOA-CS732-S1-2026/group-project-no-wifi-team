@@ -58,20 +58,9 @@ function numOr(v: unknown, fallback: number): number {
 }
 
 // ── Unified button animations ─────────────────────────────────────────────────
-const baseBtnFilter = 'drop-shadow(0 4px 12px rgba(40,20,5,0.5)) brightness(1)'
-
-const BTN_ANIM = {
-  whileHover: {
-    scale: 1.05,
-    filter: 'drop-shadow(0 8px 22px rgba(40,20,5,0.7)) brightness(1.12)',
-    transition: { duration: 0.1 },
-  },
-  whileTap: {
-    scale: 0.95,
-    filter: 'drop-shadow(0 2px 6px rgba(40,20,5,0.8)) brightness(0.9)',
-    transition: { duration: 0.05 },
-  },
-}
+const baseBtnFilter = 'drop-shadow(0 4px 12px rgba(40,20,5,0.4)) brightness(1)'
+const hoverBtnFilter = 'drop-shadow(0 6px 18px rgba(40,20,5,0.6)) brightness(1.1)'
+const tapBtnFilter = 'drop-shadow(0 2px 6px rgba(40,20,5,0.4)) brightness(0.9)'
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function EndingResultScreen() {
@@ -201,13 +190,26 @@ export function EndingResultScreen() {
   }, [showRankingsNotice])
 
   // Shared spring ease
-  const spring = { ease: [0.22, 1, 0.36, 1] as const }
+  const spring = { type: 'spring' as const, stiffness: 300, damping: 20 }
 
   return (
-    <div
-      className="relative w-screen h-dvh overflow-hidden font-serif"
-      style={{ backgroundImage: `url(${commonBg})`, backgroundSize: '100% 100%' }}
-    >
+    <>
+      <style>{`
+        .btn-filter {
+          filter: ${baseBtnFilter};
+          transition: filter 0.1s ease, transform 0.1s ease, rotate 0.2s ease;
+        }
+        .btn-filter:hover {
+          filter: ${hoverBtnFilter};
+        }
+        .btn-filter:active {
+          filter: ${tapBtnFilter};
+        }
+      `}</style>
+      <div
+        className="relative w-screen h-dvh overflow-hidden font-serif"
+        style={{ backgroundImage: `url(${commonBg})`, backgroundSize: '100% 100%' }}
+      >
       {/* ── Card ────────────────────────────────────────────────────────────── */}
       <div className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 z-10">
         <motion.div
@@ -283,11 +285,10 @@ export function EndingResultScreen() {
                   scale: 1,
                   y: 0,
                   transition: {
-                    duration: 0.5, // Parent container's own animation duration
-                    delay: 2.8, // Delay before parent container starts its animation
-                    ease: spring.ease,
-                    staggerChildren: 0.15, // Delay between each child's animation start
-                    delayChildren: 0.1, // Delay before the first child starts after parent animation begins
+                    duration: 0.5,
+                    delay: 2.8,
+                    staggerChildren: 0.15,
+                    delayChildren: 0.1,
                   },
                 },
               }}
@@ -295,11 +296,9 @@ export function EndingResultScreen() {
               {visibleCategories.map((cat) => (
                 <motion.button
                   key={cat}
-                  className="p-0 cursor-pointer"
+                  className="p-0 cursor-pointer btn-filter hover:scale-105 active:scale-95"
                   onClick={() => setSelectedCategory(cat)}
                   aria-label={`${cat} Achievements`}
-                  {...BTN_ANIM}
-                  style={{ filter: baseBtnFilter }}
                   variants={{
                     hidden: { opacity: 0, scale: 0 },
                     visible: {
@@ -327,14 +326,12 @@ export function EndingResultScreen() {
 
         {/* Wave 4: Ranking List banner — anchored to card top-right corner */}
         <motion.button
-          className="absolute top-[4.5vh] right-[9vw] p-0 cursor-pointer"
+          className="absolute top-[4.5vh] right-[9vw] p-0 cursor-pointer btn-filter hover:scale-105 active:scale-95"
           onClick={() => setShowRankingsNotice(true)}
           aria-label="Ranking List"
           initial={{ opacity: 0, scale: 2, y: -16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          {...BTN_ANIM}
-          transition={{ duration: 0.5, delay: 1.8, ...spring }}
-          style={{ filter: baseBtnFilter }}
+          transition={{ duration: 0.5, delay: 1.4, ...spring }}
         >
           <img src={rankingListBanner} alt="Ranking List" className="h-[min(26vw,34vh)] block" />
         </motion.button>
@@ -343,28 +340,24 @@ export function EndingResultScreen() {
       {/* ── Wave 1: Navigation Buttons ─────────────────────────────────────── */}
       {/* Back to Home — top-left */}
       <motion.button
-        className="absolute top-[3vh] left-[2vw] z-30 p-0 cursor-pointer"
+        className="absolute top-[3vh] left-[2vw] z-30 p-0 cursor-pointer btn-filter hover:scale-105 active:scale-95"
         onClick={() => navigate('/')}
         aria-label="Back to Home"
         initial={{ opacity: 0, x: -16 }}
         animate={{ opacity: 1, x: 0 }}
-        {...BTN_ANIM}
         transition={{ duration: 0.5, delay: 0.1, ...spring }}
-        style={{ filter: baseBtnFilter }}
       >
         <img src={backHomeBtnImg} alt="Back to Home" className="h-[min(10vh,8vw)] w-auto block" />
       </motion.button>
 
       {/* Ending Collection — top-right */}
       <motion.button
-        className="absolute top-[1.5vh] right-[2vw] z-30 p-0 cursor-pointer"
+        className="absolute top-[1.5vh] right-[2vw] z-30 p-0 cursor-pointer btn-filter hover:scale-105 active:scale-95"
         onClick={() => navigate('/endings')}
         aria-label="Ending Collection"
         initial={{ opacity: 0, x: 16 }}
         animate={{ opacity: 1, x: 0 }}
-        {...BTN_ANIM}
-        transition={{ duration: 0.5, delay: 0.8, ...spring }}
-        style={{ filter: baseBtnFilter }}
+        transition={{ duration: 0.5, delay: 1.2, ...spring }}
       >
         <img
           src={endingCollectBtnImg}
@@ -375,28 +368,24 @@ export function EndingResultScreen() {
 
       {/* Wave 4: Replay — bottom-center */}
       <motion.button
-        className="absolute bottom-[4vh] left-1/2 -translate-x-1/2 z-30 p-0 cursor-pointer"
+        className="absolute bottom-[4vh] left-1/2 -translate-x-1/2 z-30 p-0 cursor-pointer btn-filter hover:scale-105 active:scale-95"
         onClick={() => navigate('/')}
         aria-label="Replay"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        {...BTN_ANIM}
-        transition={{ duration: 0.5, delay: 0.8, ...spring }}
-        style={{ filter: baseBtnFilter }}
+        transition={{ duration: 0.5, delay: 1.2, ...spring }}
       >
         <img src={endingReplayButton} alt="Replay" className="h-[min(12vh,10vw)] w-auto block" />
       </motion.button>
 
       {/* Wave 1: Settings — bottom-right */}
       <motion.button
-        className="absolute bottom-[5.5vh] right-[2vw] z-30 p-0 cursor-pointer"
+        className="absolute bottom-[5.5vh] right-[2vw] z-30 p-0 cursor-pointer btn-filter transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95"
         onClick={() => setShowSettingsModal(true)}
         aria-label="Settings"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        {...BTN_ANIM}
         transition={{ duration: 0.5, delay: 0.1, ...spring }}
-        style={{ filter: baseBtnFilter }}
       >
         <img src={settingImg} alt="Settings" className="h-[min(10vh,8vw)] w-auto block" />
       </motion.button>
@@ -428,9 +417,7 @@ export function EndingResultScreen() {
               type="button"
               ref={closeButtonRef}
               onClick={() => setShowRankingsNotice(false)}
-              className="mx-auto mt-5 block cursor-pointer rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md"
-              {...BTN_ANIM}
-              style={{ filter: baseBtnFilter }}
+              className="mx-auto mt-5 block cursor-pointer rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-8 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#fff3d2] shadow-md btn-filter hover:scale-105 active:scale-95"
             >
               Close
             </motion.button>
@@ -458,5 +445,6 @@ export function EndingResultScreen() {
         />
       )}
     </div>
+    </>
   )
 }
