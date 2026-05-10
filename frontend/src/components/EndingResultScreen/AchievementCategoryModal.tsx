@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { motion } from 'motion/react'
+import { motion, type Variants } from 'motion/react'
 import { fetchAchievements, type BackendAchievement } from '../../api/achievements'
 
 interface Props {
@@ -23,6 +23,32 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
       .then(setAllAchievements)
       .catch(() => setAllAchievements([]))
   }, [])
+
+  // Parent variants for the grid container (manages staggering)
+  const gridContainerVariants: Variants = {
+    hidden: {}, // No specific animation for the container itself, just a state for children
+    visible: {
+      transition: {
+        staggerChildren: 0.08, // Delay between each child's animation start
+        delayChildren: 0.1,    // Delay before the first child starts after parent animation begins
+      },
+    },
+  };
+
+  // Child variants for each achievement article
+  const achievementCardVariants: Variants = {
+    hidden: { opacity: 0, y: 20, scale: 0.8 }, // Start slightly below, smaller, and invisible
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: 'spring',
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+  };
 
   const earnedSet = useMemo(() => new Set(earnedKeys), [earnedKeys])
 
@@ -60,22 +86,31 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
               Earned: {earnedCount} / {categoryAchievements.length}
             </p>
           </div>
-          <button
+          <motion.button
             type="button"
             onClick={onClose}
-            className="rounded-full border-2 border-[#8a5a32] bg-[#d9b16f] px-4 py-2 text-[14px] font-bold text-[#5c3318] transition hover:scale-105 active:scale-95"
+            className="rounded-full border-2 border-[#8a5a32] bg-[#d9b16f] px-4 py-2 text-[14px] font-bold text-[#5c3318] cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             Close
-          </button>
+          </motion.button>
         </header>
 
-        <div className="grid grid-cols-3 gap-4">
+        <motion.div 
+          className="grid grid-cols-3 gap-4"
+          variants={gridContainerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {categoryAchievements.map((achievement) => {
             const isUnlocked = earnedSet.has(achievement.achievementKey)
 
             return (
-              <article
+              <motion.article
                 key={achievement.achievementKey}
+                variants={achievementCardVariants}
+                whileHover={{ scale: 1.02 }}
                 className={`rounded-[18px] border-[2px] p-4 shadow-sm ${
                   isUnlocked
                     ? 'border-[#cfa472] bg-[#fff8e8]'
@@ -98,10 +133,10 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
                     {achievement.conditionText}
                   </p>
                 )}
-              </article>
+              </motion.article>
             )
           })}
-        </div>
+        </motion.div>
 
         {categoryAchievements.length === 0 && (
           <p className="py-12 text-center text-[15px] text-[#9a6840]">

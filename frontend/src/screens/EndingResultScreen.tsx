@@ -4,11 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'motion/react'
 import type { AppDispatch, RootState } from '../store'
 
-import {
-  type AttributeSnapshot,
-  resolveEnding,
-  calculateScore,
-} from '../utils/endingResult'
+import { type AttributeSnapshot, resolveEnding, calculateScore } from '../utils/endingResult'
 import { addRecord, LAST_RESULT_KEY } from '../store/gameHistorySlice'
 import { generateId, type GameResult } from '../utils/gameResultTypes'
 import { post } from '../utils/request'
@@ -18,30 +14,30 @@ import { SettingsModal } from '../components/TitleScreen/SettingsModal'
 import { useMusicContext } from '../contexts/MusicContext'
 
 // ── Assets ────────────────────────────────────────────────────────────────────
-import commonBg          from '../assets/CommonImage/common-background.png'
-import backHomeBtnImg    from '../assets/CommonImage/back-home-btn.png'
+import commonBg from '../assets/CommonImage/common-background.png'
+import backHomeBtnImg from '../assets/CommonImage/back-home-btn.png'
 import endingCollectBtnImg from '../assets/endingPage-image/button-endingcollect.png'
-import settingImg        from '../assets/CommonImage/setting.png'
-import endingMiddleBg    from '../assets/endingPage-image/ending-middle-bg.png'
+import settingImg from '../assets/CommonImage/setting.png'
+import endingMiddleBg from '../assets/endingPage-image/ending-middle-bg.png'
 import rankingListBanner from '../assets/endingPage-image/ranking-list-banner.png'
-import achStudyImg   from '../assets/endingPage-image/achievement-study.png'
-import achHealthImg  from '../assets/endingPage-image/achievement-health.png'
-import achWealthImg  from '../assets/endingPage-image/achievement-wealth.png'
-import achCrownImg   from '../assets/endingPage-image/achievement-crown.png'
+import achStudyImg from '../assets/endingPage-image/achievement-study.png'
+import achHealthImg from '../assets/endingPage-image/achievement-health.png'
+import achWealthImg from '../assets/endingPage-image/achievement-wealth.png'
+import achCrownImg from '../assets/endingPage-image/achievement-crown.png'
 import { endingReplayButton } from '../assets/EndingCollection'
 
 // ── Category definitions ──────────────────────────────────────────────────────
 const CATEGORY_BUTTONS: Record<string, { label: string; src: string }> = {
-  Study:  { label: 'Study',  src: achStudyImg },
+  Study: { label: 'Study', src: achStudyImg },
   Health: { label: 'Health', src: achHealthImg },
   Wealth: { label: 'Wealth', src: achWealthImg },
-  Crown:  { label: 'Crown',  src: achCrownImg },
+  Crown: { label: 'Crown', src: achCrownImg },
 }
 const CATEGORY_ORDER = ['Study', 'Health', 'Wealth', 'Crown']
 
 // ── Location state ────────────────────────────────────────────────────────────
 interface EndingLocationState {
-  snapshot?:   Partial<AttributeSnapshot>
+  snapshot?: Partial<AttributeSnapshot>
   playerName?: string
 }
 
@@ -52,8 +48,8 @@ function readSnapshot(state: unknown): AttributeSnapshot {
   if (!incoming) return FALLBACK_SNAPSHOT
   return {
     intelligence: numOr(incoming.intelligence, FALLBACK_SNAPSHOT.intelligence),
-    health:       numOr(incoming.health,        FALLBACK_SNAPSHOT.health),
-    wealth:       numOr(incoming.wealth,        FALLBACK_SNAPSHOT.wealth),
+    health: numOr(incoming.health, FALLBACK_SNAPSHOT.health),
+    wealth: numOr(incoming.wealth, FALLBACK_SNAPSHOT.wealth),
   }
 }
 
@@ -79,9 +75,9 @@ const BTN_ANIM = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function EndingResultScreen() {
-  const navigate           = useNavigate()
-  const location          = useLocation()
-  const dispatch          = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const dispatch = useDispatch<AppDispatch>()
   const selectedCharacter = useSelector((s: RootState) => s.game.selectedCharacter)
   const earnedAchievements = useSelector((s: RootState) => s.game.earnedAchievements)
   const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
@@ -95,13 +91,14 @@ export function EndingResultScreen() {
   const [revealedLen, setRevealedLen] = useState(0)
   const [descFullyRevealed, setDescFullyRevealed] = useState(false)
 
-  const snapshot   = useMemo(() => readSnapshot(location.state),  [location.state])
-  const ending     = useMemo(() => resolveEnding(snapshot),       [snapshot])
-  const score      = useMemo(() => calculateScore(snapshot),      [snapshot])
+  const snapshot = useMemo(() => readSnapshot(location.state), [location.state])
+  const ending = useMemo(() => resolveEnding(snapshot), [snapshot])
+  const score = useMemo(() => calculateScore(snapshot), [snapshot])
 
-  const playerName = selectedCharacter?.title
-    ?? (location.state as EndingLocationState | null)?.playerName
-    ?? 'Player'
+  const playerName =
+    selectedCharacter?.title ??
+    (location.state as EndingLocationState | null)?.playerName ??
+    'Player'
   const characterId = selectedCharacter?.id ?? null
 
   const [resultId] = useState(() => generateId())
@@ -152,20 +149,24 @@ export function EndingResultScreen() {
     const now = Date.now()
 
     const record: GameResult = {
-      id:          resultId,
+      id: resultId,
       characterId,
       playerName,
       score,
-      endingId:    ending.id,
+      endingId: ending.id,
       endingTitle: ending.title,
-      endingRank:  ending.rank,
+      endingRank: ending.rank,
       endingTheme: ending.theme,
       snapshot,
       achievements: earnedAchievements,
-      timestamp:   now,
+      timestamp: now,
     }
     dispatch(addRecord(record))
-    try { localStorage.setItem(LAST_RESULT_KEY, resultId) } catch { /* quota */ }
+    try {
+      localStorage.setItem(LAST_RESULT_KEY, resultId)
+    } catch {
+      /* quota */
+    }
 
     // Logged-in players persist to backend; guests keep their results in local game history only.
     const userId = localStorage.getItem('guestId') || localStorage.getItem('guest_id') || null
@@ -175,14 +176,16 @@ export function EndingResultScreen() {
         characterId,
         playerName,
         score,
-        endingId:    ending.id,
+        endingId: ending.id,
         endingTitle: ending.title,
-        endingRank:  ending.rank,
+        endingRank: ending.rank,
         endingTheme: ending.theme,
         snapshot,
         achievements: earnedAchievements,
-        timestamp:   now,
-      }).catch(() => { /* offline or server unavailable — localStorage copy remains */ })
+        timestamp: now,
+      }).catch(() => {
+        /* offline or server unavailable — localStorage copy remains */
+      })
     }
   }, [dispatch, resultId, ending, score, snapshot, playerName, characterId, earnedAchievements])
 
@@ -199,7 +202,6 @@ export function EndingResultScreen() {
       className="relative w-screen h-dvh overflow-hidden font-serif"
       style={{ backgroundImage: `url(${commonBg})`, backgroundSize: '100% 100%' }}
     >
-
       {/* ── Card ────────────────────────────────────────────────────────────── */}
       <div className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 z-10">
         <motion.div
@@ -215,7 +217,7 @@ export function EndingResultScreen() {
               {/* Wave 1: main title */}
               <motion.span
                 className="pl-[0.2vw] text-[4.4vw] font-black uppercase text-[#3d2b1f] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.6)]"
-                style={{ fontFamily: "Georgia, Cambria, serif" }}
+                style={{ fontFamily: 'Georgia, Cambria, serif' }}
                 initial={{ opacity: 0, x: -2 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.1, ...spring }}
@@ -225,7 +227,9 @@ export function EndingResultScreen() {
               {/* Wave 2: subtitle */}
               <motion.span
                 className="text-[3vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.3)]"
-                style={{ fontFamily: '"Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif' }}
+                style={{
+                  fontFamily: '"Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif',
+                }}
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.4, ...spring }}
@@ -251,11 +255,11 @@ export function EndingResultScreen() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              onClick={() => { if (!descFullyRevealed) setDescFullyRevealed(true) }}
+              onClick={() => {
+                if (!descFullyRevealed) setDescFullyRevealed(true)
+              }}
             >
-              {descFullyRevealed
-                ? descText
-                : descText.slice(0, revealedLen)}
+              {descFullyRevealed ? descText : descText.slice(0, revealedLen)}
               {!descFullyRevealed && revealedLen < descText.length && (
                 <span className="animate-pulse text-[#ae7437]">|</span>
               )}
@@ -266,9 +270,23 @@ export function EndingResultScreen() {
           {visibleCategories.length > 0 && (
             <motion.div
               className="absolute bottom-[18vh] left-0 right-0 flex flex-col md:flex-row justify-center items-center md:items-end gap-[1.5vh] md:gap-[1.5vw] px-[4vw]"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.8, ...spring }}
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0, scale: 2, y: 16 },
+                visible: {
+                  opacity: 1,
+                  scale: 1,
+                  y: 0,
+                  transition: {
+                    duration: 0.5, // Parent container's own animation duration
+                    delay: 2.8, // Delay before parent container starts its animation
+                    ease: spring.ease,
+                    staggerChildren: 0.15, // Delay between each child's animation start
+                    delayChildren: 0.1, // Delay before the first child starts after parent animation begins
+                  },
+                },
+              }}
             >
               {visibleCategories.map((cat) => (
                 <motion.button
@@ -278,6 +296,19 @@ export function EndingResultScreen() {
                   aria-label={`${cat} Achievements`}
                   {...BTN_ANIM}
                   style={{ filter: baseBtnFilter }}
+                  variants={{
+                    hidden: { opacity: 0, scale: 0 },
+                    visible: {
+                      opacity: 1,
+                      scale: 1,
+                      transition: {
+                        type: 'spring',
+                        stiffness: 300,
+                        damping: 20,
+                        duration: 0.3, // Individual button's scale animation duration
+                      },
+                    },
+                  }}
                 >
                   <img
                     src={CATEGORY_BUTTONS[cat].src}
@@ -288,7 +319,6 @@ export function EndingResultScreen() {
               ))}
             </motion.div>
           )}
-
         </motion.div>
 
         {/* Wave 4: Ranking List banner — anchored to card top-right corner */}
@@ -296,10 +326,10 @@ export function EndingResultScreen() {
           className="absolute top-[4.5vh] right-[9vw] p-0 cursor-pointer"
           onClick={() => setShowRankingsNotice(true)}
           aria-label="Ranking List"
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 2, y: -12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
           {...BTN_ANIM}
-          transition={{ duration: 0.5, delay: 0.8, ...spring }}
+          transition={{ duration: 0.5, delay: 1.8, ...spring }}
           style={{ filter: baseBtnFilter }}
         >
           <img src={rankingListBanner} alt="Ranking List" className="h-[min(26vw,34vh)] block" />
@@ -332,7 +362,11 @@ export function EndingResultScreen() {
         transition={{ duration: 0.5, delay: 0.8, ...spring }}
         style={{ filter: baseBtnFilter }}
       >
-        <img src={endingCollectBtnImg} alt="Ending Collection" className="h-[min(12vh,10vw)] w-auto block" />
+        <img
+          src={endingCollectBtnImg}
+          alt="Ending Collection"
+          className="h-[min(12vh,10vw)] w-auto block"
+        />
       </motion.button>
 
       {/* Wave 4: Replay — bottom-center */}
@@ -370,12 +404,18 @@ export function EndingResultScreen() {
           aria-modal="true"
           aria-labelledby="rankings-dialog-title"
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4 backdrop-blur-sm"
-          onKeyDown={(e) => { if (e.key === 'Escape') setShowRankingsNotice(false) }}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setShowRankingsNotice(false)
+          }}
         >
           <div className="relative w-full max-w-sm rounded-[2rem] border-4 border-[#7a4b2b] bg-[#f7e8c6] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)] text-center">
             <div className="rounded-[1.5rem] border-2 border-[#c49a61] bg-[#fff7df]/80 px-5 py-5 shadow-inner">
-              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#9a6a3e]">Ranking List</p>
-              <h2 id="rankings-dialog-title" className="mt-2 text-2xl font-bold text-[#7a4b2b]">Coming Soon</h2>
+              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#9a6a3e]">
+                Ranking List
+              </p>
+              <h2 id="rankings-dialog-title" className="mt-2 text-2xl font-bold text-[#7a4b2b]">
+                Coming Soon
+              </h2>
               <p className="mx-auto mt-3 text-sm leading-relaxed text-[#8a6446]">
                 This feature is not available yet. Check back later!
               </p>
