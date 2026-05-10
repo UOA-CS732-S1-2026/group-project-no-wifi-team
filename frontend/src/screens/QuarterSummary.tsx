@@ -13,6 +13,7 @@ import {
   statusBrain,
   statusHealth,
   statusWealth,
+  viewEnding,
 } from '../assets/QuarterPage'
 
 // Explicit design dimensions requested
@@ -309,7 +310,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                 onClick={() => navigate('/next-quarter')}
                 className="w-[540px] h-[115px] cursor-pointer"
               >
-                <img src={nextBtn} alt="Next Quarter" className="w-full" />
+                <img src={quartersRemaining > 0 ? nextBtn : viewEnding} alt="Next Quarter" className="w-full" />
               </motion.button>
             </motion.div>
           </motion.div>

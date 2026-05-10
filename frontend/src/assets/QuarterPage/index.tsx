@@ -9,6 +9,7 @@ import nextBtn from './Quarter-button.png'
 import statusBrain from './status-brain.png'
 import statusHealth from './status-health.png'
 import statusWealth from './status-wealth.png'
+import viewEnding from './View-Ending.png'
 
 export {
   commonBg,
@@ -21,4 +22,5 @@ export {
   statusBrain,
   statusHealth,
   statusWealth,
+  viewEnding,
 }
