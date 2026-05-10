@@ -35,7 +35,6 @@ export const ENDINGS: readonly Ending[] = [
   {
     id: 'speedrun-early-retirement',
     title: 'Speedrun to Early Retirement',
-    chineseName: '提前退休速通',
     type: 'Game Over',
     theme: 'bad',
     rank: 'C',
@@ -49,7 +48,6 @@ export const ENDINGS: readonly Ending[] = [
   {
     id: 'gpa-4-hairline-04',
     title: 'GPA: 4.0, Hairline: 0.4',
-    chineseName: '绩点满分，发际线告急',
     type: 'Warning Ending',
     theme: 'bad',
     rank: 'A',
@@ -62,7 +60,6 @@ export const ENDINGS: readonly Ending[] = [
   {
     id: 'smart-head-empty-pocket',
     title: 'Smart Head, Empty Pocket',
-    chineseName: '脑袋很满，钱包很空',
     type: 'Study Ending',
     theme: 'bad',
     rank: 'B',
@@ -75,7 +72,6 @@ export const ENDINGS: readonly Ending[] = [
   {
     id: 'model-minority-real-version',
     title: 'The Model Minority Myth: Real Version',
-    chineseName: '模范少数族裔：现实版',
     type: 'Balance Ending',
     theme: 'happy',
     rank: 'S',
@@ -89,7 +85,6 @@ export const ENDINGS: readonly Ending[] = [
   {
     id: 'library-resident-landlord',
     title: 'Library’s Resident Landlord',
-    chineseName: '图书馆常驻房东',
     type: 'Study Ending',
     theme: 'happy',
     rank: 'A',
@@ -103,7 +98,6 @@ export const ENDINGS: readonly Ending[] = [
   {
     id: 'part-time-tycoon',
     title: 'Part-time Tycoon',
-    chineseName: '兼职大亨',
     type: 'Wealth Ending',
     theme: 'happy',
     rank: 'B',
@@ -117,7 +111,6 @@ export const ENDINGS: readonly Ending[] = [
   {
     id: 'main-character-party',
     title: 'The Main Character of Every Party',
-    chineseName: '派对主角',
     type: 'Health Ending',
     theme: 'happy',
     rank: 'B',
@@ -131,7 +124,6 @@ export const ENDINGS: readonly Ending[] = [
   {
     id: 'showed-up-survived',
     title: 'I Showed Up, I Survived',
-    chineseName: '我来了，我活下来了',
     type: 'Normal Ending',
     theme: 'happy',
     rank: 'B',
