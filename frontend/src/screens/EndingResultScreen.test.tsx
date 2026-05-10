@@ -97,21 +97,26 @@ describe('EndingResultScreen', () => {
   })
 
   it('renders the ending description', () => {
-    renderAt({
+    const { container } = renderAt({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 95, health: 95, wealth: 95 } },
     })
+    // Click the description to skip the typewriter and reveal full text
+    const cursor = container.querySelector('.animate-pulse')
+    if (cursor?.parentElement) fireEvent.click(cursor.parentElement)
     expect(
       screen.getByText(/you did not just survive international student life/i),
     ).toBeInTheDocument()
   })
 
   it('renders the Burnout Student ending when health collapses despite high intelligence', () => {
-    renderAt({
+    const { container } = renderAt({
       pathname: '/ending-result',
       state: { snapshot: { intelligence: 92, health: 20, wealth: 60 } },
     })
     expect(screen.getByText('Burnout Student')).toBeInTheDocument()
+    const cursor = container.querySelector('.animate-pulse')
+    if (cursor?.parentElement) fireEvent.click(cursor.parentElement)
     expect(screen.getByText(/pushed yourself too hard/i)).toBeInTheDocument()
   })
 
