@@ -9,6 +9,8 @@ import { earnAchievement, updateStats } from '../slices/gameSlice'
 import { post } from '../utils/request'
 import { coinSfx } from '../contexts/MusicContext'
 import { useMusicContext } from '../contexts/MusicContext'
+import { SettingsModal } from '../components/TitleScreen/SettingsModal'
+import settingImg from '../assets/CommonImage/setting.png'
 import {
   AchievementToast,
   TaskArtworkPanel,
@@ -99,7 +101,8 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     [currentStats],
   )
 
-  const { sfxEnabled } = useMusicContext()
+  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   const [taskIndex, setTaskIndex] = useState(0)
 
@@ -312,6 +315,25 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
       </div>
 
       <AchievementToast achievementKey={toastKey} onDismiss={dismissToast} />
+
+      <button
+        type="button"
+        onClick={() => setShowSettingsModal(true)}
+        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px]"
+        aria-label="Settings"
+      >
+        <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
+      </button>
+
+      {showSettingsModal && (
+        <SettingsModal
+          musicEnabled={musicEnabled}
+          sfxEnabled={sfxEnabled}
+          onMusicToggle={setMusicEnabled}
+          onSfxToggle={setSfxEnabled}
+          onClose={() => setShowSettingsModal(false)}
+        />
+      )}
     </div>
   )
 }

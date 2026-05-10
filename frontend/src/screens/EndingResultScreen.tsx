@@ -11,7 +11,7 @@ import { post } from '../utils/request'
 import { fetchAchievements, getEarnedCategories } from '../api/achievements'
 import { AchievementCategoryModal } from '../components/EndingResultScreen/AchievementCategoryModal'
 import { SettingsModal } from '../components/TitleScreen/SettingsModal'
-import { useMusicContext } from '../contexts/MusicContext'
+import { endingBgm, useMusicContext } from '../contexts/MusicContext'
 
 // ── Assets ────────────────────────────────────────────────────────────────────
 import commonBg from '../assets/CommonImage/common-background.png'
@@ -80,7 +80,13 @@ export function EndingResultScreen() {
   const dispatch = useDispatch<AppDispatch>()
   const selectedCharacter = useSelector((s: RootState) => s.game.selectedCharacter)
   const earnedAchievements = useSelector((s: RootState) => s.game.earnedAchievements)
-  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
+  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled, setCustomBgm } = useMusicContext()
+
+  useEffect(() => {
+    setCustomBgm(endingBgm)
+    return () => setCustomBgm(null)
+  }, [setCustomBgm])
+
   const [showSettingsModal, setShowSettingsModal] = useState(false)
   const [showRankingsNotice, setShowRankingsNotice] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)

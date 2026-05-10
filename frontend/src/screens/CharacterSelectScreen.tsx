@@ -8,8 +8,11 @@ import { characters, DESIGN_HEIGHT, DESIGN_WIDTH, Character } from '../component
 import { DesktopCharacterCard } from '../components/CharacterSelectScreen/DesktopCharacterCard'
 import { useIsMobile, useResponsiveStageScale } from '../components/CharacterSelectScreen/hooks'
 import { MobileCharacterCard } from '../components/CharacterSelectScreen/MobileCharacterCard'
+import { SettingsModal } from '../components/TitleScreen/SettingsModal'
+import { useMusicContext } from '../contexts/MusicContext'
 import { selectCharacter } from '../slices/gameSlice'
 import type { AppDispatch } from '../store'
+import settingImg from '../assets/CommonImage/setting.png'
 
 export function CharacterSelectScreen() {
   const navigate = useNavigate()
@@ -18,6 +21,8 @@ export function CharacterSelectScreen() {
   const stageScale = useResponsiveStageScale()
   const isMobile = useIsMobile()
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   function scrollLeftHandler() {
     scrollRef.current?.scrollBy({
@@ -75,6 +80,14 @@ export function CharacterSelectScreen() {
         >
           <img src={backHomeBtn} alt="Back to Home" className="w-full" />
         </motion.button>
+        <button
+          type="button"
+          onClick={() => setShowSettingsModal(true)}
+          className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95"
+          aria-label="Settings"
+        >
+          <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
+        </button>
 
         <motion.section
           initial={{ y: 100, opacity: 0 }}
@@ -150,6 +163,16 @@ export function CharacterSelectScreen() {
             ))}
           </motion.div>
         </section>
+
+        {showSettingsModal && (
+          <SettingsModal
+            musicEnabled={musicEnabled}
+            sfxEnabled={sfxEnabled}
+            onMusicToggle={setMusicEnabled}
+            onSfxToggle={setSfxEnabled}
+            onClose={() => setShowSettingsModal(false)}
+          />
+        )}
       </main>
     )
   }
@@ -311,6 +334,25 @@ export function CharacterSelectScreen() {
           </section>
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={() => setShowSettingsModal(true)}
+        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px]"
+        aria-label="Settings"
+      >
+        <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
+      </button>
+
+      {showSettingsModal && (
+        <SettingsModal
+          musicEnabled={musicEnabled}
+          sfxEnabled={sfxEnabled}
+          onMusicToggle={setMusicEnabled}
+          onSfxToggle={setSfxEnabled}
+          onClose={() => setShowSettingsModal(false)}
+        />
+      )}
     </main>
   )
 }

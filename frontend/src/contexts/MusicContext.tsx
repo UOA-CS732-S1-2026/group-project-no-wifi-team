@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import bgm from '../assets/sound/bgm.mp3'
+import endingBgm from '../assets/sound/ending-bgm.mp3'
 import clickSfx from '../assets/sound/click.wav'
 import taskSelectedSfx from '../assets/sound/task_seleted.wav'
 import makeChoiceSfx from '../assets/sound/make_choice.wav'
@@ -11,13 +12,14 @@ const SFX_MAP: Record<string, string> = {
   'coin': coinSfx,
 }
 
-export { coinSfx }
+export { coinSfx, endingBgm }
 
 interface MusicContextValue {
   musicEnabled: boolean
   setMusicEnabled: (enabled: boolean) => void
   sfxEnabled: boolean
   setSfxEnabled: (enabled: boolean) => void
+  setCustomBgm: (src: string | null) => void
 }
 
 const MusicContext = createContext<MusicContextValue>({
@@ -25,11 +27,13 @@ const MusicContext = createContext<MusicContextValue>({
   setMusicEnabled: () => {},
   sfxEnabled: true,
   setSfxEnabled: () => {},
+  setCustomBgm: () => {},
 })
 
 export function MusicProvider({ children }: { children: React.ReactNode }) {
   const [musicEnabled, setMusicEnabled] = useState(true)
   const [sfxEnabled, setSfxEnabled] = useState(true)
+  const [bgmSrc, setBgmSrc] = useState<string>(bgm)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const hasInteracted = useRef(false)
   const musicEnabledRef = useRef(musicEnabled)
@@ -82,6 +86,23 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     }
   }, [musicEnabled])
 
+  // Switch BGM track when bgmSrc changes
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+    const wasPlaying = !audio.paused
+    audio.pause()
+    audio.src = bgmSrc
+    audio.load()
+    if (wasPlaying && musicEnabledRef.current) {
+      audio.play().catch(() => {})
+    }
+  }, [bgmSrc])
+
+  const setCustomBgm = useCallback((src: string | null) => {
+    setBgmSrc(src ?? bgm)
+  }, [])
+
   // Global click SFX — event delegation on document captures all buttons
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -101,7 +122,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <MusicContext.Provider value={{ musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled }}>
+    <MusicContext.Provider value={{ musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled, setCustomBgm }}>
       {children}
     </MusicContext.Provider>
   )

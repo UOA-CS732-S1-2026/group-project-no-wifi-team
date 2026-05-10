@@ -21,8 +21,11 @@ import {
   type EndingsApiResponse,
   type LatestGameResultResponse,
 } from '../components/EndingCollectionScreen'
+import { SettingsModal } from '../components/TitleScreen/SettingsModal'
+import { endingBgm, useMusicContext } from '../contexts/MusicContext'
 import { get } from '../utils/request'
 import type { RootState } from '../store'
+import settingImg from '../assets/CommonImage/setting.png'
 
 type UserAchievementsResponse = {
   achievements: string[]
@@ -34,8 +37,15 @@ export function EndingCollectionScreen() {
   const reduxEarnedAchievements = useSelector((s: RootState) => s.game.earnedAchievements)
   const localResults = useSelector((s: RootState) => s.gameHistory.records)
   const latestLocalResult = localResults[localResults.length - 1] ?? null
+  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled, setCustomBgm } = useMusicContext()
+
+  useEffect(() => {
+    setCustomBgm(endingBgm)
+    return () => setCustomBgm(null)
+  }, [setCustomBgm])
 
   const [showAchievements, setShowAchievements] = useState(false)
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
   const [endings, setEndings] = useState<BackendEndingItem[]>([])
   const [latestEndingId, setLatestEndingId] = useState<string | null>(null)
   const [latestAchievements, setLatestAchievements] = useState<string[]>([])
@@ -331,6 +341,25 @@ export function EndingCollectionScreen() {
         <AchievementModal
           earnedKeys={earnedAchievementKeys}
           onClose={() => setShowAchievements(false)}
+        />
+      )}
+
+      <button
+        type="button"
+        onClick={() => setShowSettingsModal(true)}
+        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px]"
+        aria-label="Settings"
+      >
+        <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
+      </button>
+
+      {showSettingsModal && (
+        <SettingsModal
+          musicEnabled={musicEnabled}
+          sfxEnabled={sfxEnabled}
+          onMusicToggle={setMusicEnabled}
+          onSfxToggle={setSfxEnabled}
+          onClose={() => setShowSettingsModal(false)}
         />
       )}
     </main>
