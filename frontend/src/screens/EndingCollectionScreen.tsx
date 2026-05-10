@@ -23,6 +23,7 @@ import {
 } from '../components/EndingCollectionScreen'
 import { SettingsModal } from '../components/TitleScreen/SettingsModal'
 import { endingBgm, useMusicContext } from '../contexts/MusicContext'
+import { fetchAchievements } from '../api/achievements'
 import { get } from '../utils/request'
 import type { RootState } from '../store'
 import settingImg from '../assets/CommonImage/setting.png'
@@ -30,6 +31,8 @@ import settingImg from '../assets/CommonImage/setting.png'
 type UserAchievementsResponse = {
   achievements: string[]
 }
+
+const FALLBACK_ACHIEVEMENT_TOTAL = 32
 
 export function EndingCollectionScreen() {
   const navigate = useNavigate()
@@ -50,6 +53,8 @@ export function EndingCollectionScreen() {
   const [latestEndingId, setLatestEndingId] = useState<string | null>(null)
   const [latestAchievements, setLatestAchievements] = useState<string[]>([])
   const [storedAchievements, setStoredAchievements] = useState<string[]>([])
+  const [achievementTotal, setAchievementTotal] = useState(FALLBACK_ACHIEVEMENT_TOTAL)
+  const [validAchievementKeys, setValidAchievementKeys] = useState<Set<string> | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -67,6 +72,15 @@ export function EndingCollectionScreen() {
         )
 
         const result = await get<EndingsApiResponse>('/endings', userHeaders)
+        fetchAchievements()
+          .then((achievements) => {
+            setAchievementTotal(achievements.length)
+            setValidAchievementKeys(new Set(achievements.map((achievement) => achievement.achievementKey)))
+          })
+          .catch(() => {
+            setAchievementTotal(FALLBACK_ACHIEVEMENT_TOTAL)
+            setValidAchievementKeys(null)
+          })
 
         if (!result.success) {
           throw new Error(result.message || 'Failed to load endings')
@@ -138,14 +152,17 @@ export function EndingCollectionScreen() {
         ? []
         : localResults.flatMap((record) => record.achievements)
 
-      return Array.from(new Set([
+      const mergedKeys = Array.from(new Set([
         ...reduxEarnedAchievements,
         ...latestAchievements,
         ...storedAchievements,
         ...guestAchievements,
       ]))
+
+      if (!validAchievementKeys) return mergedKeys
+      return mergedKeys.filter((key) => validAchievementKeys.has(key))
     },
-    [reduxEarnedAchievements, latestAchievements, storedAchievements, localResults],
+    [reduxEarnedAchievements, latestAchievements, storedAchievements, localResults, validAchievementKeys],
   )
   const handleBackToResult = () => {
     navigate('/ending-result', {
@@ -271,6 +288,8 @@ export function EndingCollectionScreen() {
               unlockedCount={unlockedCount}
               totalCount={endings.length}
               lockedCount={lockedCount}
+              achievementCount={earnedAchievementKeys.length}
+              achievementTotal={achievementTotal}
               progressPercent={progressPercent}
               onViewAchievements={() => setShowAchievements(true)}
             />

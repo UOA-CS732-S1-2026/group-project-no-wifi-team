@@ -6,6 +6,8 @@ type ProgressPanelProps = {
   unlockedCount: number
   totalCount: number
   lockedCount: number
+  achievementCount: number
+  achievementTotal: number
   progressPercent: number
   onViewAchievements: () => void
 }
@@ -15,6 +17,8 @@ export function ProgressPanel({
   unlockedCount,
   totalCount,
   lockedCount,
+  achievementCount,
+  achievementTotal,
   progressPercent,
   onViewAchievements,
 }: ProgressPanelProps) {
@@ -43,7 +47,7 @@ export function ProgressPanel({
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="absolute left-1/2 top-[270px] z-20 grid h-[86px] w-[1120px] -translate-x-1/2 grid-cols-[1fr_1.1fr_1fr_1fr_190px] items-center rounded-[14px] border-[2px] border-[#cfa472] bg-[#fff2d4]/80 px-[24px] shadow-[0_5px_10px_rgba(70,35,12,0.10)]"
+      className="absolute left-1/2 top-[270px] z-20 grid h-[86px] w-[1090px] -translate-x-1/2 grid-cols-[120px_245px_255px_165px_190px] items-center gap-x-[20px] rounded-[14px] border-[2px] border-[#cfa472] bg-[#fff2d4]/80 px-[24px] shadow-[0_5px_10px_rgba(70,35,12,0.10)]"
     >
       <motion.div variants={itemVariants}>
         <p className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#7a4c29]">Player</p>
@@ -73,17 +77,17 @@ export function ProgressPanel({
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <p className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#7a4c29]">
-          Ending Discovered
+        <p className="whitespace-nowrap text-[15px] font-bold uppercase tracking-[0.05em] text-[#7a4c29]">
+          Achievements Collected
         </p>
 
         <p className="mt-1 text-[17px] font-bold">
-          🪶 {unlockedCount} / {totalCount}
+          🪶 {achievementCount} / {achievementTotal}
         </p>
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <p className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#7a4c29]">
+        <p className="whitespace-nowrap text-[15px] font-bold uppercase tracking-[0.05em] text-[#7a4c29]">
           Locked Endings
         </p>
 
@@ -96,7 +100,7 @@ export function ProgressPanel({
         onClick={onViewAchievements}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="mx-auto w-[205px] cursor-pointer outline-none"
+        className="mx-auto w-[205px] -translate-x-[0px] cursor-pointer outline-none"
         aria-label="View Achievements"
       >
         <img src={endingViewAchievements} alt="View Achievements" className="w-full" />
