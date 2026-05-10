@@ -167,21 +167,23 @@ export function EndingResultScreen() {
     dispatch(addRecord(record))
     try { localStorage.setItem(LAST_RESULT_KEY, resultId) } catch { /* quota */ }
 
-    // Persist result to backend and auto-unlock the collection ending (fire-and-forget)
+    // Logged-in players persist to backend; guests keep their results in local game history only.
     const userId = localStorage.getItem('guestId') || localStorage.getItem('guest_id') || null
-    post('/game/result', {
-      userId,
-      characterId,
-      playerName,
-      score,
-      endingId:    ending.id,
-      endingTitle: ending.title,
-      endingRank:  ending.rank,
-      endingTheme: ending.theme,
-      snapshot,
-      achievements: earnedAchievements,
-      timestamp:   now,
-    }).catch(() => { /* offline or server unavailable — localStorage copy remains */ })
+    if (userId) {
+      post('/game/result', {
+        userId,
+        characterId,
+        playerName,
+        score,
+        endingId:    ending.id,
+        endingTitle: ending.title,
+        endingRank:  ending.rank,
+        endingTheme: ending.theme,
+        snapshot,
+        achievements: earnedAchievements,
+        timestamp:   now,
+      }).catch(() => { /* offline or server unavailable — localStorage copy remains */ })
+    }
   }, [dispatch, resultId, ending, score, snapshot, playerName, characterId, earnedAchievements])
 
   // Move focus into the dialog when it opens for keyboard/screen-reader accessibility.

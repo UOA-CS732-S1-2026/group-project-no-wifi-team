@@ -18,7 +18,12 @@ router.post('/login', async (req, res) => {
     user.userId = randomUUID();
     await user.save();
   }
-  res.json({ username: user.username, userId: user.userId, achievements: user.achievements ?? [] });
+  res.json({
+    username: user.username,
+    userId: user.userId,
+    achievements: user.achievements ?? [],
+    endings: user.endings ?? [],
+  });
 });
 
 // Add an achievement to a user (idempotent)
@@ -41,6 +46,13 @@ router.get('/achievements/:username', async (req, res) => {
   const user = await User.findOne({ username: req.params.username });
   if (!user) return res.status(404).json({ error: 'user not found' });
   res.json({ achievements: user.achievements });
+});
+
+// Get all unlocked endings for a user
+router.get('/endings/:username', async (req, res) => {
+  const user = await User.findOne({ username: req.params.username });
+  if (!user) return res.status(404).json({ error: 'user not found' });
+  res.json({ endings: user.endings ?? [] });
 });
 
 export default router;

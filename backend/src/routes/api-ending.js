@@ -1,5 +1,6 @@
 import express from 'express'
 import Ending from '../db/ending.js'
+import { User } from '../db/user.js'
 import { endingData } from '../data/endingData.js'
 
 const router = express.Router()
@@ -33,11 +34,19 @@ router.get('/', async (req, res) => {
     try {
         await seedOrUpdateDefaultEndings()
 
+        const userId = req.headers['x-user-id']
+        const user = userId ? await User.findOne({ userId }).lean() : null
+        const unlockedEndingKeys = new Set(user?.endings ?? [])
+
         const endings = await Ending.find({ isDeleted: { $ne: true } }).lean()
 
         const sortedEndings = endingData
             .map((def) => endings.find((e) => e.endingId === def.endingId))
             .filter(Boolean)
+            .map((ending) => ({
+                ...ending,
+                status: unlockedEndingKeys.has(ending.endingId) ? 'Unlocked' : 'Locked',
+            }))
 
         const unlocked = sortedEndings.filter(
             (ending) => ending.status === 'Unlocked',
@@ -69,6 +78,8 @@ router.get('/', async (req, res) => {
 router.get('/:endingId', async (req, res) => {
     try {
         const { endingId } = req.params
+        const userId = req.headers['x-user-id']
+        const user = userId ? await User.findOne({ userId }).lean() : null
 
         const ending = await Ending.findOne({
             endingId,
@@ -84,7 +95,10 @@ router.get('/:endingId', async (req, res) => {
 
         return res.json({
             success: true,
-            data: ending,
+            data: {
+                ...ending,
+                status: user?.endings?.includes(ending.endingId) ? 'Unlocked' : 'Locked',
+            },
         })
     } catch (error) {
         console.error('Failed to get ending detail:')
@@ -101,6 +115,40 @@ router.get('/:endingId', async (req, res) => {
 router.patch('/:endingId/unlock', async (req, res) => {
     try {
         const { endingId } = req.params
+        const userId = req.headers['x-user-id']
+
+        if (userId) {
+            const user = await User.findOneAndUpdate(
+                { userId },
+                { $addToSet: { endings: endingId } },
+                { new: true },
+            ).lean()
+
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found',
+                })
+            }
+
+            const ending = await Ending.findOne({
+                endingId,
+                isDeleted: { $ne: true },
+            }).lean()
+
+            if (!ending) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Ending not found',
+                })
+            }
+
+            return res.json({
+                success: true,
+                message: 'Ending unlocked successfully',
+                data: { ...ending, status: 'Unlocked' },
+            })
+        }
 
         const ending = await Ending.findOneAndUpdate(
             {
