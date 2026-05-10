@@ -53,10 +53,9 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
   const earnedSet = useMemo(() => new Set(earnedKeys), [earnedKeys])
 
   const categoryAchievements = useMemo(
-    () => allAchievements.filter((a) => a.category === category),
-    [allAchievements, category],
+    () => allAchievements.filter((a) => a.category === category && earnedSet.has(a.achievementKey)),
+    [allAchievements, category, earnedSet],
   )
-  const earnedCount = categoryAchievements.filter((a) => earnedSet.has(a.achievementKey)).length
 
   return (
     <div
@@ -83,7 +82,7 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
               {CATEGORY_LABELS[category] ?? category}
             </h2>
             <p className="mt-2 text-[15px] text-[#7a5030]">
-              Earned: {earnedCount} / {categoryAchievements.length}
+              Earned: {categoryAchievements.length}
             </p>
           </div>
           <motion.button
@@ -104,29 +103,21 @@ export function AchievementCategoryModal({ category, earnedKeys, onClose }: Prop
           animate="visible"
         >
           {categoryAchievements.map((achievement) => {
-            const isUnlocked = earnedSet.has(achievement.achievementKey)
-
             return (
               <motion.article
                 key={achievement.achievementKey}
                 variants={achievementCardVariants}
                 whileHover={{ scale: 1.02 }}
-                className={`rounded-[18px] border-[2px] p-4 shadow-sm ${
-                  isUnlocked
-                    ? 'border-[#cfa472] bg-[#fff8e8]'
-                    : 'border-[#b9a28b] bg-[#e9dfd0]'
-                }`}
+                className="rounded-[18px] border-[2px] border-[#cfa472] bg-[#fff8e8] p-4 shadow-sm"
               >
                 <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[#9a6840]">
-                  {isUnlocked ? 'Unlocked' : 'Locked'}
+                  Unlocked
                 </p>
                 <h3 className="text-[16px] font-bold leading-tight text-[#5c3318]">
                   {achievement.title}
                 </h3>
                 <p className="mt-2 min-h-[60px] rounded-[10px] bg-[#f4e4c8]/80 px-3 py-2 text-[13px] leading-[1.45] text-[#714729]">
-                  {isUnlocked
-                    ? achievement.description
-                    : 'This achievement is still locked. Continue playing to unlock it.'}
+                  {achievement.description}
                 </p>
                 {achievement.conditionText && (
                   <p className="mt-3 rounded-[10px] bg-[#e9d0a8] px-3 py-2 text-[11px] leading-[1.4] text-[#6b4427]">
