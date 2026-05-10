@@ -69,7 +69,7 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={handleLogin}
             disabled={loading}
-            className="mt-7 transition active:scale-95 disabled:opacity-60"
+            className="mt-7 transition hover:scale-95 disabled:opacity-60 cursor-pointer"
           >
             <img src={loginButton} alt="Login" className="w-36 select-none" draggable={false} />
           </button>
