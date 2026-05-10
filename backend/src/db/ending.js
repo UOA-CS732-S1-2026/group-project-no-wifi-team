@@ -9,11 +9,9 @@ const endingSchema = new mongoose.Schema(
             trim: true,
         },
 
-        // 兼容旧数据库里的 unique index: endingKey_1
         endingKey: {
             type: String,
             required: true,
-            unique: true,
             trim: true,
         },
 

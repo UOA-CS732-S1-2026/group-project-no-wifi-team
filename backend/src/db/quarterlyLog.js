@@ -17,4 +17,6 @@ const QuarterlyLogSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+QuarterlyLogSchema.index({ userId: 1, quarterIndex: 1 }, { unique: true });
+
 export const QuarterlyLog = mongoose.model('QuarterlyLog', QuarterlyLogSchema);

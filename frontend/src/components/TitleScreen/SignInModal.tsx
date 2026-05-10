@@ -22,8 +22,9 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
     setLoading(true)
     setError('')
     try {
-      const data = await post<{ username: string; achievements: string[] }>('/user/login', { username: name })
+      const data = await post<{ username: string; userId: string; achievements: string[] }>('/user/login', { username: name })
       localStorage.setItem('username', data.username)
+      localStorage.setItem('guestId', data.userId)
       dispatch(setInitialAchievements(data.achievements ?? []))
       onClose()
       navigate('/characters')
