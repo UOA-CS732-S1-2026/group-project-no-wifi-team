@@ -84,12 +84,8 @@ export function EndingResultScreen() {
 
   // Resolve earned categories from achievement keys
   useEffect(() => {
-    fetchAchievements().then(() => {
+    fetchAchievements().finally(() => {
       setEarnedCategories(getEarnedCategories(earnedAchievements))
-    }).catch(() => {
-      // Offline fallback — getEarnedCategories uses the local fallback map
-      const cats = getEarnedCategories(earnedAchievements)
-      if (cats.length > 0) setEarnedCategories(cats)
     })
   }, [earnedAchievements])
 

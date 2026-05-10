@@ -22,7 +22,13 @@ export function AchievementToast({ achievementKey, onDismiss }: Props) {
   const [icon, setIcon] = useState<string>(popCrown)
 
   useEffect(() => {
-    if (!achievementKey) return
+    if (!achievementKey) {
+      setTitle(null)
+      return
+    }
+
+    setTitle(null)
+    setIcon(popCrown)
 
     fetchAchievements()
       .then(() => {
@@ -32,12 +38,10 @@ export function AchievementToast({ achievementKey, onDismiss }: Props) {
           setIcon(CATEGORY_ICONS[ach.category] ?? popCrown)
         } else {
           setTitle(achievementKey)
-          setIcon(popCrown)
         }
       })
       .catch(() => {
         setTitle(achievementKey)
-        setIcon(popCrown)
       })
   }, [achievementKey])
 

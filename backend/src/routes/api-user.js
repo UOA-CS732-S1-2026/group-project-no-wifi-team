@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { randomUUID } from 'crypto';
 import { User } from '../db/user.js';
 
 const router = Router();
@@ -13,6 +14,9 @@ router.post('/login', async (req, res) => {
   let user = await User.findOne({ username: name });
   if (!user) {
     user = await User.create({ username: name });
+  } else if (!user.userId) {
+    user.userId = randomUUID();
+    await user.save();
   }
   res.json({ username: user.username, userId: user.userId, achievements: user.achievements ?? [] });
 });
