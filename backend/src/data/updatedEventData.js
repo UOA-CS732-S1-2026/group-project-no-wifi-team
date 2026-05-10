@@ -605,13 +605,13 @@ export const eventData = [
   {
     eventKey: "q1-random-lost-bank-card",
     title: "Lost Bank Card",
-    description: "You lose your bank card and have to cancel it.",
+    description: "You lose your bank card and have to cancel it. The replacement process costs money, time, and a measurable amount of inner peace.",
     category: "random",
     quarter: 1,
     options: [
       {
         label: "Accept the situation",
-        story: "The replacement process costs money, time, and a measurable amount of inner peace.",
+        story: "",
         effects: { intelligence: 0, health: -1, wealth: -2 },
         achievementKey: null,
       },
@@ -620,13 +620,13 @@ export const eventData = [
   {
     eventKey: "q1-random-locked-classroom",
     title: "Locked in a Classroom",
-    description: "You are discussing an assignment with teammates and fail to notice the classroom locks automatically after hours.",
+    description: "You are discussing an assignment with teammates and fail to notice the classroom locks automatically after hours. After the tutor leaves, you hear the lock click. Security eventually lets you out, but your trust in doors is permanently damaged.",
     category: "random",
     quarter: 1,
     options: [
       {
         label: "Wait for security",
-        story: "After the tutor leaves, you hear the lock click. Security eventually lets you out, but your trust in doors is permanently damaged.",
+        story: " ",
         effects: { intelligence: -1, health: -1, wealth: 0 },
         achievementKey: 'sleeping-over-at-school',
       },
@@ -635,13 +635,13 @@ export const eventData = [
   {
     eventKey: "q1-random-fire-alarm",
     title: "The Fire Alarm Summoning Ritual",
-    description: "The smell of chilli oil hits the pan like a chemical event. Your homesickness becomes airborne.",
+    description: "The smell of chilli oil hits the pan like a chemical event. Your homesickness becomes airborne. Suddenly, the ceiling screams. You freeze, spatula in one hand and lid in the other, watching spicy smoke drift into the hallway. The tears are not guilt. They are capsaicin.",
     category: "random",
     quarter: 1,
     options: [
       {
         label: "Deal with it",
-        story: "Suddenly, the ceiling screams. You freeze, spatula in one hand and lid in the other, watching spicy smoke drift into the hallway. The tears are not guilt. They are capsaicin.",
+        story: " ",
         effects: { intelligence: 1, health: -1, wealth: 0 },
         achievementKey: 'just-a-bit-of-smoke',
       },
@@ -650,13 +650,13 @@ export const eventData = [
   {
     eventKey: "q1-random-jet-lag",
     title: "Jet Lag Still Has You",
-    description: "Your body still has not accepted the new time zone.",
+    description: "Your body still has not accepted the new time zone. Lectures become a heroic battle between education and sleep.",
     category: "random",
     quarter: 1,
     options: [
       {
         label: "Push through",
-        story: "Lectures become a heroic battle between education and sleep.",
+        story: "",
         effects: { intelligence: -1, health: -1, wealth: 0 },
         achievementKey: null,
       },
@@ -1236,13 +1236,13 @@ export const eventData = [
   {
     eventKey: "q2-random-food-poisoning",
     title: "Food Poisoning",
-    description: "You gamble on bread that expired a week ago.",
+    description: "You gamble on bread that expired a week ago. A few hours later, your stomach sends a formal rejection letter. You spend days in bed, miss class, and pay for medicine.",
     category: "random",
     quarter: 2,
     options: [
       {
         label: "Suffer through it",
-        story: "A few hours later, your stomach sends a formal rejection letter. You spend days in bed, miss class, and pay for medicine.",
+        story: "",
         effects: { intelligence: 0, health: -2, wealth: -1 },
         achievementKey: 'if-its-not-mouldy-its-edible',
       },
@@ -1251,13 +1251,13 @@ export const eventData = [
   {
     eventKey: "q2-random-winter-cold",
     title: "Winter Cold",
-    description: "You catch a nasty cold during exam week.",
+    description: "You catch a nasty cold during exam week. Medical costs and lost study time make the timing feel personally targeted.",
     category: "random",
     quarter: 2,
     options: [
       {
         label: "Rest and recover",
-        story: "Medical costs and lost study time make the timing feel personally targeted.",
+        story: "",
         effects: { intelligence: 0, health: -2, wealth: -1 },
         achievementKey: null,
       },
@@ -1266,13 +1266,13 @@ export const eventData = [
   {
     eventKey: "q2-random-auto-renewal",
     title: "Auto-Renewal Trap",
-    description: "You find a useful app with a seven-day free trial.",
+    description: "You find a useful app with a seven-day free trial. Naturally, you forget the trial exists until the payment notification appears like a villain entrance.",
     category: "random",
     quarter: 2,
     options: [
       {
         label: "Accept the charge",
-        story: "Naturally, you forget the trial exists until the payment notification appears like a villain entrance.",
+        story: "",
         effects: { intelligence: 2, health: -1, wealth: -2 },
         achievementKey: 'its-fine-i-still-have-money',
       },
@@ -1852,13 +1852,13 @@ export const eventData = [
   {
     eventKey: "q3-random-backpack-stolen",
     title: "Backpack Stolen",
-    description: "Someone takes your backpack from a gym locker.",
+    description: "Someone takes your backpack from a gym locker. Replacing books and supplies costs money and throws your schedule into chaos.",
     category: "random",
     quarter: 3,
     options: [
       {
         label: "Replace everything",
-        story: "Replacing books and supplies costs money and throws your schedule into chaos.",
+        story: " ",
         effects: { intelligence: -1, health: 0, wealth: -2 },
         achievementKey: null,
       },
@@ -1867,13 +1867,13 @@ export const eventData = [
   {
     eventKey: "q3-random-surprise-interview",
     title: "Surprise Interview",
-    description: "You randomly apply for a bunch of jobs, then a company calls for an interview.",
+    description: "You randomly apply for a bunch of jobs, then a company calls for an interview. You are completely unprepared, and worse, you cannot remember which company it is.",
     category: "random",
     quarter: 3,
     options: [
       {
         label: "Wing the interview",
-        story: "You are completely unprepared, and worse, you cannot remember which company it is.",
+        story: " ",
         effects: { intelligence: 0, health: -2, wealth: 1 },
         achievementKey: 'surprise-came-fast-gone-fast',
       },
@@ -1882,13 +1882,13 @@ export const eventData = [
   {
     eventKey: "q3-random-water-gun-teenagers",
     title: "Encounter With Teenagers",
-    description: "Walking home one evening, you run into teenagers spraying passers-by with water guns.",
+    description: "Walking home one evening, you run into teenagers spraying passers-by with water guns. The cold wind hits your wet clothes, but rage keeps you warm. Emotionally, you have become a damp ghost.",
     category: "random",
     quarter: 3,
     options: [
       {
         label: "Endure it",
-        story: "The cold wind hits your wet clothes, but rage keeps you warm. Emotionally, you have become a damp ghost.",
+        story: " ",
         effects: { intelligence: 0, health: -2, wealth: 0 },
         achievementKey: null,
       },
@@ -2435,13 +2435,13 @@ export const eventData = [
   {
     eventKey: "q4-random-lab-incident",
     title: "Small Lab Incident",
-    description: "A sneeze breaks the silence in the lab.",
+    description: "A sneeze breaks the silence in the lab. You try to say \"excuse me,\" but your tongue malfunctions and you somehow bless yourself. Your lab partner looks at you with the quiet judgment of someone witnessing a system failure.",
     category: "random",
     quarter: 4,
     options: [
       {
         label: "Move on",
-        story: "You try to say \"excuse me,\" but your tongue malfunctions and you somehow bless yourself. Your lab partner looks at you with the quiet judgment of someone witnessing a system failure.",
+        story: " ",
         effects: { intelligence: 1, health: -1, wealth: 0 },
         achievementKey: null,
       },
@@ -2450,13 +2450,13 @@ export const eventData = [
   {
     eventKey: "q4-random-graduation-name",
     title: "Graduation Name Disaster",
-    description: "At the most solemn moment of graduation, the announcer reaches your name.",
+    description: "At the most solemn moment of graduation, the announcer reaches your name. To them, your name looks like an ancient spell. They take a breath and produce something that sounds like a mix of Thai, German, and Martian. One second later, you realise that was you and deliver the stiffest professional smile of your life.",
     category: "random",
     quarter: 4,
     options: [
       {
         label: "Smile through it",
-        story: "To them, your pinyin looks like an ancient spell. They take a breath and produce something that sounds like a mix of Thai, German, and Martian. One second later, you realise that was you and deliver the stiffest professional smile of your life.",
+        story: " ",
         effects: { intelligence: -1, health: 2, wealth: 0 },
         achievementKey: 'avada-kedavra',
       },
@@ -2465,13 +2465,13 @@ export const eventData = [
   {
     eventKey: "q4-random-heartbreak",
     title: "Heartbreak",
-    description: "A long-distance relationship back home suddenly ends.",
+    description: "A long-distance relationship back home suddenly ends. After several sleepless nights, you cope through karaoke, emotional snacking, and financially questionable decisions. Your heart, body, and wallet all take damage.",
     category: "random",
     quarter: 4,
     options: [
       {
         label: "Process the pain",
-        story: "After several sleepless nights, you cope through karaoke, emotional snacking, and financially questionable decisions. Your heart, body, and wallet all take damage.",
+        story: " ",
         effects: { intelligence: -2, health: -2, wealth: -2 },
         achievementKey: 'plenty-of-fish-in-the-sea',
       },
