@@ -14,7 +14,7 @@ router.post('/login', async (req, res) => {
   if (!user) {
     user = await User.create({ username: name });
   }
-  res.json({ username: user.username, achievements: user.achievements ?? [] });
+  res.json({ username: user.username, userId: user.userId, achievements: user.achievements ?? [] });
 });
 
 // Add an achievement to a user (idempotent)

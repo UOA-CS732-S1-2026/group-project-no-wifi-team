@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
+import { randomUUID } from 'crypto';
 
 const userSchema = new mongoose.Schema({
+  userId: { type: String, required: true, unique: true, default: () => randomUUID() },
   username: { type: String, required: true, unique: true },
   achievements: { type: [String], default: [] },
   createdAt: { type: Date, default: Date.now }

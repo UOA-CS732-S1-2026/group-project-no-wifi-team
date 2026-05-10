@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'motion/react'
 import type { AppDispatch, RootState } from '../store'
@@ -12,24 +12,27 @@ import {
 import { addRecord, LAST_RESULT_KEY } from '../store/gameHistorySlice'
 import { generateId, type GameResult } from '../utils/gameResultTypes'
 import { post } from '../utils/request'
+import { fetchAchievements, getEarnedCategories } from '../api/achievements'
+import { earnAchievement } from '../slices/gameSlice'
+import { AchievementCategoryModal } from '../components/EndingResultScreen/AchievementCategoryModal'
 
 // ── Assets ────────────────────────────────────────────────────────────────────
-import commonBg            from '../assets/CommonImage/common-background.png'
-import endingMiddleBg      from '../assets/endingPage-image/ending-middle-bg.png'
-import rankingListBanner   from '../assets/endingPage-image/ranking-list-banner.png'
-import achGraduate         from '../assets/endingPage-image/achievement-card-graduate.png'
-import achCulturalExplorer from '../assets/endingPage-image/achievement-card-cultural-explorer.png'
-import achGlobalAdventurer from '../assets/endingPage-image/achievement-card-global-adventurer.png'
-import btnAchCollection    from '../assets/endingPage-image/button-achievement-collection.png'
+import commonBg          from '../assets/CommonImage/common-background.png'
+import endingMiddleBg    from '../assets/endingPage-image/ending-middle-bg.png'
+import rankingListBanner from '../assets/endingPage-image/ranking-list-banner.png'
+import achStudyImg   from '../assets/endingPage-image/achievement-study.png'
+import achHealthImg  from '../assets/endingPage-image/achievement-health.png'
+import achWealthImg  from '../assets/endingPage-image/achievement-wealth.png'
+import achCrownImg   from '../assets/endingPage-image/achievement-crown.png'
 
-// ── Achievement pool — order matches unlock priority ──────────────────────────
-const ALL_ACHIEVEMENTS = [
-  { src: achGraduate,         rowClass: '[@media(orientation:landscape)]:w-[26vw] [@media(orientation:landscape)]:mb-[1vh]' },
-  { src: achCulturalExplorer, rowClass: '[@media(orientation:landscape)]:w-[27vw] [@media(orientation:landscape)]:mb-[1.5vh]' },
-  { src: achGlobalAdventurer, rowClass: '[@media(orientation:landscape)]:w-[26vw] [@media(orientation:landscape)]:mb-[1vh]' },
-]
-const ACHIEVEMENT_IDS = ['graduate', 'cultural-explorer', 'global-adventurer']
-const ACH_COUNT_BY_RANK: Record<string, number> = { S: 3, A: 2, B: 1, C: 0 }
+// ── Category definitions ──────────────────────────────────────────────────────
+const CATEGORY_BUTTONS: Record<string, { label: string; src: string }> = {
+  Study:  { label: 'Study',  src: achStudyImg },
+  Health: { label: 'Health', src: achHealthImg },
+  Wealth: { label: 'Wealth', src: achWealthImg },
+  Crown:  { label: 'Crown',  src: achCrownImg },
+}
+const CATEGORY_ORDER = ['Study', 'Health', 'Wealth', 'Crown']
 
 // ── Location state ────────────────────────────────────────────────────────────
 interface EndingLocationState {
@@ -60,12 +63,13 @@ const BTN_ANIM = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export function EndingResultScreen() {
-  const navigate          = useNavigate()
   const location          = useLocation()
   const dispatch          = useDispatch<AppDispatch>()
   const selectedCharacter = useSelector((s: RootState) => s.game.selectedCharacter)
+  const earnedAchievements = useSelector((s: RootState) => s.game.earnedAchievements)
   const [showRankingsNotice, setShowRankingsNotice] = useState(false)
-  const hasFired       = useRef(false)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [earnedCategories, setEarnedCategories] = useState<string[]>([])
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   const snapshot   = useMemo(() => readSnapshot(location.state),  [location.state])
@@ -79,14 +83,39 @@ export function EndingResultScreen() {
 
   const [resultId] = useState(() => generateId())
 
-  // Guard prevents the double-invocation React 18 StrictMode causes in dev.
+  // Dev-mode: auto-populate test achievements so the ending-result page can be
+  // viewed without going through the full game flow.
   useEffect(() => {
-    if (hasFired.current) return
-    hasFired.current = true
+    if (import.meta.env.DEV && earnedAchievements.length === 0) {
+      dispatch(earnAchievement('i-love-8-am-classes'))
+      dispatch(earnAchievement('lone-wolf'))
+      dispatch(earnAchievement('benefits-first'))
+      dispatch(earnAchievement('hexagon-international-student'))
+    }
+  }, [])
+
+  // Resolve earned categories from achievement keys
+  useEffect(() => {
+    fetchAchievements().then(() => {
+      setEarnedCategories(getEarnedCategories(earnedAchievements))
+    }).catch(() => {
+      // Offline fallback — getEarnedCategories uses the local fallback map
+      const cats = getEarnedCategories(earnedAchievements)
+      if (cats.length > 0) setEarnedCategories(cats)
+    })
+  }, [earnedAchievements])
+
+  // Sorted categories for display
+  const visibleCategories = useMemo(
+    () => CATEGORY_ORDER.filter((c) => earnedCategories.includes(c)),
+    [earnedCategories],
+  )
+
+  // Deduplicate by resultId so re-mounts (e.g. StrictMode) don't double-submit.
+  useEffect(() => {
+    if (localStorage.getItem(LAST_RESULT_KEY) === resultId) return
 
     const now = Date.now()
-    const achCount = ACH_COUNT_BY_RANK[ending.rank] ?? 0
-    const achievements = ACHIEVEMENT_IDS.slice(0, achCount)
 
     const record: GameResult = {
       id:          resultId,
@@ -98,7 +127,7 @@ export function EndingResultScreen() {
       endingRank:  ending.rank,
       endingTheme: ending.theme,
       snapshot,
-      achievements,
+      achievements: earnedAchievements,
       timestamp:   now,
     }
     dispatch(addRecord(record))
@@ -116,16 +145,15 @@ export function EndingResultScreen() {
       endingRank:  ending.rank,
       endingTheme: ending.theme,
       snapshot,
-      achievements,
+      achievements: earnedAchievements,
       timestamp:   now,
     }).catch(() => { /* offline or server unavailable — localStorage copy remains */ })
-  }, [dispatch, resultId, ending, score, snapshot, playerName, characterId])
+  }, [dispatch, resultId, ending, score, snapshot, playerName, characterId, earnedAchievements])
 
   // Move focus into the dialog when it opens for keyboard/screen-reader accessibility.
   useEffect(() => {
     if (showRankingsNotice) closeButtonRef.current?.focus()
   }, [showRankingsNotice])
-
 
   // Shared spring ease
   const spring = { ease: [0.22, 1, 0.36, 1] as const }
@@ -145,7 +173,7 @@ export function EndingResultScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ...spring }}
         >
-          {/* Title row + divider — wrapped so divider right-aligns with subtitle */}
+          {/* Title row + divider */}
           <motion.div
             className="grid grid-cols-[min-content] self-start shrink-0"
             initial={{ opacity: 0, x: -16 }}
@@ -164,7 +192,7 @@ export function EndingResultScreen() {
               transition={{ duration: 0.5, delay: 0.28 }}
             />
 
-            {/* Description — inside wrapper so right edge aligns with subtitle */}
+            {/* Description */}
             <motion.p
               className="text-[1.4vw] font-normal text-[#2D3A3A] leading-[1.4] m-0"
               style={{ fontFamily: 'Georgia, Cambria, "Times New Roman", serif' }}
@@ -176,22 +204,32 @@ export function EndingResultScreen() {
             </motion.p>
           </motion.div>
 
-          {/* Achievement cards row */}
-          <motion.div
-            className="absolute bottom-[10vh] left-0 right-0 flex flex-col items-center [@media(orientation:landscape)]:flex-row [@media(orientation:landscape)]:justify-center [@media(orientation:landscape)]:items-end"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.48, ...spring }}
-          >
-            {ALL_ACHIEVEMENTS.map(({ src, rowClass }, i) => (
-              <img
-                key={i}
-                src={src}
-                alt={`Achievement ${i + 1}`}
-                className={`h-[16vh] w-auto [@media(orientation:landscape)]:h-auto ${rowClass} block transition-transform duration-[180ms] ease-out hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.96]`}
-              />
-            ))}
-          </motion.div>
+          {/* Achievement category buttons */}
+          {visibleCategories.length > 0 && (
+            <motion.div
+              className="absolute bottom-[18vh] left-0 right-0 flex flex-col md:flex-row justify-center items-center md:items-end gap-[1.5vh] md:gap-[1.5vw] px-[4vw]"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.48, ...spring }}
+            >
+              {visibleCategories.map((cat) => (
+                <motion.button
+                  key={cat}
+                  className="p-0 cursor-pointer"
+                  onClick={() => setSelectedCategory(cat)}
+                  aria-label={`${cat} Achievements`}
+                  {...BTN_ANIM}
+                  style={{ filter: 'drop-shadow(0 4px 12px rgba(40,20,5,0.5))' }}
+                >
+                  <img
+                    src={CATEGORY_BUTTONS[cat].src}
+                    alt={CATEGORY_BUTTONS[cat].label}
+                    className="h-[min(16vh,22vw)] md:h-[min(18vh,14vw)] w-auto block transition-transform duration-[180ms] ease-out hover:-translate-y-[3px] hover:scale-[1.04] active:scale-[0.96]"
+                  />
+                </motion.button>
+              ))}
+            </motion.div>
+          )}
 
         </motion.div>
 
@@ -208,18 +246,6 @@ export function EndingResultScreen() {
           <img src={rankingListBanner} alt="Ranking List" className="h-[min(26vw,32vh)] block" />
         </motion.button>
       </div>
-
-      {/* ── Achievement Collection button ────────────────────────────────────── */}
-      <motion.button
-        className="absolute right-[9.8vw] bottom-[9.6vh] z-11 p-0 cursor-pointer"
-        onClick={() => navigate('/endings')}
-        aria-label="Achievement Collection"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, transition: { duration: 0.4, delay: 0.6 } }}
-        {...BTN_ANIM}
-      >
-        <img src={btnAchCollection} alt="Achievement Collection" aria-hidden="true" className="w-[24vw] block" />
-      </motion.button>
 
       {/* ── Rankings "not available" notice ──────────────────────────────────── */}
       {showRankingsNotice && (
@@ -249,6 +275,15 @@ export function EndingResultScreen() {
             </motion.button>
           </div>
         </div>
+      )}
+
+      {/* ── Achievement category detail modal ──────────────────────────────── */}
+      {selectedCategory && (
+        <AchievementCategoryModal
+          category={selectedCategory}
+          earnedKeys={earnedAchievements}
+          onClose={() => setSelectedCategory(null)}
+        />
       )}
     </div>
   )
