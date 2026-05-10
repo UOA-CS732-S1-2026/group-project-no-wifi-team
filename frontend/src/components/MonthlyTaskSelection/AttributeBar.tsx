@@ -18,7 +18,12 @@ export function AttributeBar({ intelligence, health, wealth }: Props) {
   ]
 
   return (
-    <div className="relative w-full shrink-0" style={{ height: 74, margin: '26px' }}>
+    <motion.div
+      animate={{ scale: [1, 1.005, 1.005, 1] }}
+      transition={{ duration: 2, repeat: Infinity }}
+      className="relative w-full shrink-0"
+      style={{ height: 74, margin: '26px' }}
+    >
       <img
         src={statusBar}
         alt=""
@@ -39,14 +44,15 @@ export function AttributeBar({ intelligence, health, wealth }: Props) {
           >
             <span>
               {label}:{' '}
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="popLayout">
                 <motion.span
-                  key={getLevel(value)}
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 4 }}
-                  transition={{ duration: 0.2 }}
-                  className="font-bold"
+                  key={value}
+                  initial={{ opacity: 0, y: -12, scale: 2.5, filter: 'brightness(2)' }}
+                  animate={{ opacity: 1, y: 0, scale: 1, filter: 'brightness(1)' }}
+                  exit={{ opacity: 0, y: 12, scale: 0.5 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                  className="font-bold inline-block"
+                  style={{ display: 'inline-block', originX: 0.5 }}
                 >
                   {getLevel(value)}
                 </motion.span>
@@ -55,6 +61,6 @@ export function AttributeBar({ intelligence, health, wealth }: Props) {
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }
