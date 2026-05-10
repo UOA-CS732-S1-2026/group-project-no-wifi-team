@@ -10,7 +10,6 @@ import {
   quarterArrowUp,
   quarterTitle,
   nextBtn,
-  viewEndingBtn,
   statusBrain,
   statusHealth,
   statusWealth,
