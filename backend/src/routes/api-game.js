@@ -134,6 +134,11 @@ router.post("/result", authOptional, async (req, res) => {
       return res.status(400).json({ success: false, message: "timestamp must be a numeric value" });
     }
 
+    // Token was provided but invalid — tell client to re-authenticate
+    if (req.authInvalid) {
+      return res.status(401).json({ success: false, message: 'Session expired' });
+    }
+
     // Guest: skip DB entirely
     if (!req.userId) {
       return res.status(200).json({ success: true, saved: false });

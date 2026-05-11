@@ -1,5 +1,8 @@
 import axios from 'axios'
 import type { AxiosRequestConfig } from 'axios'
+import { store } from '../store'
+import { logout } from '../slices/authSlice'
+import { showToast } from '../components/common/Toast'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? '/api',
@@ -11,10 +14,12 @@ const instance = axios.create({
 
 // Request interceptor — attach auth token if present
 instance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
+  try {
+    const token = localStorage.getItem('auth_token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+  } catch { /* localStorage unavailable */ }
   return config
 })
 
@@ -22,7 +27,12 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // TODO: handle 401/403 globally (e.g. redirect to login)
+    if (error?.response?.status === 401) {
+      try { localStorage.removeItem('auth_token') } catch { /* ignore */ }
+      store.dispatch(logout())
+      const message = error.response.data?.message || error.response.data?.error || 'Session expired'
+      showToast(message + '. You are now as a guest. Please login again.')
+    }
     return Promise.reject(error)
   },
 )
