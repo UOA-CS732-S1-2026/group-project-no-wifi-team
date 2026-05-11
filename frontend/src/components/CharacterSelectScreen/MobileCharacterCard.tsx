@@ -1,4 +1,3 @@
-import { motion } from 'motion/react'
 import { AttributeInfoTip } from './AttributeInfoTip'
 import { AttributeRow } from './AttributeRow'
 import { Character } from './constants'
@@ -40,27 +39,14 @@ export function MobileCharacterCard({
           <AttributeRow label="WEALTH" value={character.stats.wealth} mobile />
         </div>
 
-        <motion.button
+        <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            onSelect(character)
-          }}
-          variants={{
-            pulse: {
-              scale: [1, 1.05, 1],
-              transition: { duration: 1.6, repeat: Infinity, ease: 'easeInOut' },
-            },
-            hover: { scale: 1.1 },
-          }}
-          animate="pulse"
-          whileHover="hover"
-          whileTap={{ scale: 0.95 }}
-          className="mt-5 block w-[250px] max-w-full cursor-pointer"
+          onClick={() => onSelect(character)}
+          className="mt-5 block w-[250px] max-w-full transition duration-200 active:scale-95"
           aria-label={`Select ${character.title}`}
         >
           <img src={character.selectButton} alt="Select" className="w-full object-contain" />
-        </motion.button>
+        </button>
       </div>
     </article>
   )

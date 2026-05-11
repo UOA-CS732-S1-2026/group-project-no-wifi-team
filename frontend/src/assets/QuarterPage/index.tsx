@@ -6,10 +6,10 @@ import quarterArrowDown from './Quarter-downgrading.png'
 import quarterArrowUp from './Quarter-upgrade.png'
 import quarterTitle from './Quarter-title.png'
 import nextBtn from './Quarter-button.png'
+import viewEndingBtn from './View Ending.png'
 import statusBrain from './status-brain.png'
 import statusHealth from './status-health.png'
 import statusWealth from './status-wealth.png'
-import viewEnding from './View-Ending.png'
 
 export {
   commonBg,
@@ -19,8 +19,8 @@ export {
   quarterArrowUp,
   quarterTitle,
   nextBtn,
+  viewEndingBtn,
   statusBrain,
   statusHealth,
   statusWealth,
-  viewEnding,
 }

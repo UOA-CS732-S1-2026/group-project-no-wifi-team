@@ -12,11 +12,11 @@ export function MainButtons({
   isLoggedIn?: boolean
 }) {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="absolute left-1/2 top-[49%] z-30 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center sm:top-[55%]">
       <button
         type="button"
         onClick={onStart}
-        className="w-[240px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[340px] lg:w-[390px] cursor-pointer"
+        className="w-[240px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[340px] lg:w-[390px]"
         aria-label="Start Game"
       >
         <img
@@ -26,11 +26,11 @@ export function MainButtons({
         />
       </button>
 
-      <div className="mt-4 flex items-center justify-center gap-10 sm:mt-5">
+      <div className="mt-4 flex items-center justify-center gap-5 sm:mt-5">
         <button
           type="button"
           onClick={onAbout}
-          className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px] cursor-pointer"
+          className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px]"
           aria-label="About Us"
         >
           <img src={aboutUsImg} alt="About Us" className="w-full scale-125 drop-shadow-md sm:scale-140" />
@@ -40,7 +40,7 @@ export function MainButtons({
           <button
             type="button"
             onClick={onSignIn}
-            className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px] cursor-pointer"
+            className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px]"
             aria-label="Sign In"
           >
             <img src={signInImg} alt="Sign In" className="w-full scale-125 drop-shadow-md sm:scale-140" />

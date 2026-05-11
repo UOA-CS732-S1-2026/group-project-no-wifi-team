@@ -114,7 +114,7 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
           <button
             type="button"
             onClick={() => switchTab('login')}
-            className={`px-5 py-1 text-[12px] font-bold rounded-full transition cursor-pointer ${
+            className={`px-5 py-1 text-[12px] font-bold rounded-full transition ${
               isLogin
                 ? 'bg-[#7a4b2b] text-[#fff3d2] shadow-md'
                 : 'bg-[#e8d5a8]/70 text-[#9a6a3e] hover:bg-[#e8d5a8]'
@@ -125,7 +125,7 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
           <button
             type="button"
             onClick={() => switchTab('register')}
-            className={`px-5 py-1 text-[12px] font-bold rounded-full transition cursor-pointer ${
+            className={`px-5 py-1 text-[12px] font-bold rounded-full transition ${
               !isLogin
                 ? 'bg-[#7a4b2b] text-[#fff3d2] shadow-md'
                 : 'bg-[#e8d5a8]/70 text-[#9a6a3e] hover:bg-[#e8d5a8]'
@@ -199,12 +199,12 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
 
           {error && <p className="text-xs font-bold text-red-600 px-4 text-center pointer-events-auto">{error}</p>}
 
-          {/* Submit button — text button that changes based on tab */}
+          {/* Submit button */}
           <button
             type="button"
             onClick={isLogin ? handleLogin : handleRegister}
             disabled={loading}
-            className="pointer-events-auto mt-1 cursor-pointer rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-5 py-2 text-xs font-bold uppercase tracking-[0.15em] text-[#fff3d2] shadow-md hover:scale-105 active:scale-95 disabled:opacity-60 transition"
+            className="pointer-events-auto mt-1 rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-5 py-2 text-xs font-bold uppercase tracking-[0.15em] text-[#fff3d2] shadow-md transition hover:scale-105 active:scale-95 disabled:opacity-60"
           >
             {isLogin ? 'Login' : 'Create Account'}
           </button>
