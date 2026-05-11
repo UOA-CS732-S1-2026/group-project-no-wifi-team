@@ -239,7 +239,7 @@ export function EndingResultScreen() {
             </div>
             {/* Wave 3: divider */}
             <motion.hr
-              className="w-[52vw] h-px bg-[#ae7437] border-0 mt-[2vh] mb-[2vh]"
+              className="w-[52vw] h-px bg-[#ae7437] border-0 mt-[1.5vh] mb-[1.5vh]"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               style={{ transformOrigin: 'left' }}
