@@ -11,7 +11,7 @@ const instance = axios.create({
 
 // Request interceptor — attach auth token if present
 instance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('auth_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }

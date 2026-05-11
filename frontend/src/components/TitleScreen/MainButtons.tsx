@@ -4,10 +4,12 @@ export function MainButtons({
   onStart,
   onAbout,
   onSignIn,
+  isLoggedIn,
 }: {
   onStart: () => void
   onAbout: () => void
   onSignIn: () => void
+  isLoggedIn?: boolean
 }) {
   return (
     <div className="flex flex-col items-center justify-center">
@@ -34,14 +36,16 @@ export function MainButtons({
           <img src={aboutUsImg} alt="About Us" className="w-full scale-125 drop-shadow-md sm:scale-140" />
         </button>
 
-        <button
-          type="button"
-          onClick={onSignIn}
-          className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px] cursor-pointer"
-          aria-label="Sign In"
-        >
-          <img src={signInImg} alt="Sign In" className="w-full scale-125 drop-shadow-md sm:scale-140" />
-        </button>
+        {!isLoggedIn && (
+          <button
+            type="button"
+            onClick={onSignIn}
+            className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px] cursor-pointer"
+            aria-label="Sign In"
+          >
+            <img src={signInImg} alt="Sign In" className="w-full scale-125 drop-shadow-md sm:scale-140" />
+          </button>
+        )}
       </div>
     </div>
   )

@@ -1,7 +1,9 @@
 import express from 'express'
 import Ending from '../db/ending.js'
 import { User } from '../db/user.js'
+import { UserStats } from '../db/userStats.js'
 import { endingData } from '../data/endingData.js'
+import { authOptional } from '../middleware/auth.js'
 
 const router = express.Router()
 
@@ -30,13 +32,12 @@ async function seedOrUpdateDefaultEndings() {
     }
 }
 
-router.get('/', async (req, res) => {
+router.get('/', authOptional, async (req, res) => {
     try {
         await seedOrUpdateDefaultEndings()
 
-        const userId = req.headers['x-user-id']
-        const user = userId ? await User.findOne({ userId }).lean() : null
-        const unlockedEndingKeys = new Set(user?.endings ?? [])
+        const stats = req.userId ? await UserStats.findOne({ userId: req.userId }).lean() : null
+        const unlockedEndingKeys = new Set(stats?.endings ?? [])
 
         const endings = await Ending.find({ isDeleted: { $ne: true } }).lean()
 
@@ -75,11 +76,10 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.get('/:endingId', async (req, res) => {
+router.get('/:endingId', authOptional, async (req, res) => {
     try {
         const { endingId } = req.params
-        const userId = req.headers['x-user-id']
-        const user = userId ? await User.findOne({ userId }).lean() : null
+        const stats = req.userId ? await UserStats.findOne({ userId: req.userId }).lean() : null
 
         const ending = await Ending.findOne({
             endingId,
@@ -97,7 +97,7 @@ router.get('/:endingId', async (req, res) => {
             success: true,
             data: {
                 ...ending,
-                status: user?.endings?.includes(ending.endingId) ? 'Unlocked' : 'Locked',
+                status: stats?.endings?.includes(ending.endingId) ? 'Unlocked' : 'Locked',
             },
         })
     } catch (error) {
@@ -112,24 +112,23 @@ router.get('/:endingId', async (req, res) => {
     }
 })
 
-router.patch('/:endingId/unlock', async (req, res) => {
+router.patch('/:endingId/unlock', authOptional, async (req, res) => {
     try {
         const { endingId } = req.params
-        const userId = req.headers['x-user-id']
 
-        if (userId) {
-            const user = await User.findOneAndUpdate(
-                { userId },
-                { $addToSet: { endings: endingId } },
-                { new: true },
-            ).lean()
-
+        if (req.userId) {
+            const user = await User.findOne({ userId: req.userId }).lean();
             if (!user) {
                 return res.status(404).json({
                     success: false,
                     message: 'User not found',
                 })
             }
+            await UserStats.updateOne(
+                { userId: req.userId },
+                { $addToSet: { endings: endingId } },
+                { upsert: true },
+            );
 
             const ending = await Ending.findOne({
                 endingId,

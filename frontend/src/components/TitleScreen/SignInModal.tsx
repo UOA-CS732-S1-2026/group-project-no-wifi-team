@@ -2,42 +2,100 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { post } from '../../utils/request'
-import { loginButton, popupLogin, loginEnter } from '../../assets/gamebegin'
-import { setInitialAchievements } from '../../slices/gameSlice'
+import { popupLogin, loginEnter } from '../../assets/gamebegin'
+import { loginSuccess } from '../../slices/authSlice'
 import type { AppDispatch } from '../../store'
+
+interface AuthResponse {
+  token: string
+  userId: string
+  username: string
+  email: string
+  achievements?: string[]
+  endings?: string[]
+  totalPlays?: number
+}
 
 export function SignInModal({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
+
+  const [tab, setTab] = useState<'login' | 'register'>('login')
   const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleLogin() {
-    const name = username.trim()
-    if (!name) {
-      setError('Please enter a username')
-      return
-    }
-    setLoading(true)
+  function resetForm() {
+    setUsername('')
+    setEmail('')
+    setPassword('')
+    setConfirmPassword('')
     setError('')
+  }
+
+  function switchTab(t: 'login' | 'register') {
+    setTab(t)
+    resetForm()
+  }
+
+  async function handleLogin() {
+    setError('')
+    if (!email.trim()) { setError('Please enter your email'); return }
+    if (!password) { setError('Please enter your password'); return }
+
+    setLoading(true)
     try {
-      const data = await post<{ username: string; userId: string; achievements: string[] }>('/user/login', { username: name })
-      localStorage.setItem('username', data.username)
-      localStorage.setItem('guestId', data.userId)
-      dispatch(setInitialAchievements(data.achievements ?? []))
+      const data = await post<AuthResponse>('/user/login', {
+        email: email.trim(),
+        password,
+      })
+      dispatch(loginSuccess(data))
       onClose()
       navigate('/characters')
-    } catch {
-      setError('Login failed, please try again')
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error
+      setError(msg ?? 'Login failed, please try again')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleRegister() {
+    setError('')
+    if (!username.trim()) { setError('Please enter a username'); return }
+    if (!email.trim()) { setError('Please enter your email'); return }
+    if (!password) { setError('Please enter a password'); return }
+    if (password.length < 6) { setError('Password must be at least 6 characters'); return }
+    if (password !== confirmPassword) { setError('Passwords do not match'); return }
+
+    setLoading(true)
+    try {
+      const data = await post<AuthResponse>('/user/register', {
+        username: username.trim(),
+        email: email.trim(),
+        password,
+      })
+      dispatch(loginSuccess(data))
+      onClose()
+      navigate('/characters')
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error
+      setError(msg ?? 'Registration failed, please try again')
     } finally {
       setLoading(false)
     }
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') handleLogin()
+    if (e.key === 'Enter') {
+      tab === 'login' ? handleLogin() : handleRegister()
+    }
   }
+
+  const isLogin = tab === 'login'
 
   return (
     <div
@@ -48,30 +106,107 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
         className="relative flex flex-col items-center"
         onClick={(e) => e.stopPropagation()}
       >
-        <img src={popupLogin} alt="login popup" className="w-[420px] select-none" draggable={false} />
+        {/* Background popup image */}
+        <img src={popupLogin} alt="" className="w-[420px] select-none pointer-events-none" draggable={false} />
 
-        {/* Input overlaid in the centre of the popup image */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pb-5">
-          <div className="relative flex items-center justify-center">
+        {/* Tab toggle — z-30 above the form overlay */}
+        <div className="absolute top-[16%] z-30 flex gap-1">
+          <button
+            type="button"
+            onClick={() => switchTab('login')}
+            className={`px-5 py-1 text-[12px] font-bold rounded-full transition cursor-pointer ${
+              isLogin
+                ? 'bg-[#7a4b2b] text-[#fff3d2] shadow-md'
+                : 'bg-[#e8d5a8]/70 text-[#9a6a3e] hover:bg-[#e8d5a8]'
+            }`}
+          >
+            Login
+          </button>
+          <button
+            type="button"
+            onClick={() => switchTab('register')}
+            className={`px-5 py-1 text-[12px] font-bold rounded-full transition cursor-pointer ${
+              !isLogin
+                ? 'bg-[#7a4b2b] text-[#fff3d2] shadow-md'
+                : 'bg-[#e8d5a8]/70 text-[#9a6a3e] hover:bg-[#e8d5a8]'
+            }`}
+          >
+            Register
+          </button>
+        </div>
+
+        {/* Form overlay — pointer-events-none so clicks pass through to tabs */}
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-[24%] gap-[0.2vh] pointer-events-none">
+          {/* Username field (register only) */}
+          {!isLogin && (
+            <div className="relative flex items-center justify-center pointer-events-auto">
+              <img src={loginEnter} alt="" className="w-64 select-none" draggable={false} />
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Username"
+                maxLength={30}
+                className="absolute inset-0 w-full bg-transparent px-4 text-center text-sm font-semibold text-[#5a3010] placeholder-[#c4a068] outline-none"
+              />
+            </div>
+          )}
+
+          {/* Email field */}
+          <div className="relative flex items-center justify-center pointer-events-auto">
             <img src={loginEnter} alt="" className="w-64 select-none" draggable={false} />
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Enter username"
-              maxLength={30}
+              placeholder="Email"
+              maxLength={60}
               className="absolute inset-0 w-full bg-transparent px-4 text-center text-sm font-semibold text-[#5a3010] placeholder-[#c4a068] outline-none"
             />
           </div>
-          {error && <p className="text-xs font-bold text-red-600">{error}</p>}
+
+          {/* Password field */}
+          <div className="relative flex items-center justify-center pointer-events-auto">
+            <img src={loginEnter} alt="" className="w-64 select-none" draggable={false} />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Password"
+              maxLength={60}
+              className="absolute inset-0 w-full bg-transparent px-4 text-center text-sm font-semibold text-[#5a3010] placeholder-[#c4a068] outline-none"
+            />
+          </div>
+
+          {/* Confirm password (register only) */}
+          {!isLogin && (
+            <div className="relative flex items-center justify-center pointer-events-auto">
+              <img src={loginEnter} alt="" className="w-64 select-none" draggable={false} />
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Confirm Password"
+                maxLength={60}
+                className="absolute inset-0 w-full bg-transparent px-4 text-center text-sm font-semibold text-[#5a3010] placeholder-[#c4a068] outline-none"
+              />
+            </div>
+          )}
+
+          {error && <p className="text-xs font-bold text-red-600 px-4 text-center pointer-events-auto">{error}</p>}
+
+          {/* Submit button — text button that changes based on tab */}
           <button
             type="button"
-            onClick={handleLogin}
+            onClick={isLogin ? handleLogin : handleRegister}
             disabled={loading}
-            className="mt-7 transition hover:scale-95 disabled:opacity-60 cursor-pointer"
+            className="pointer-events-auto mt-1 cursor-pointer rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-5 py-2 text-xs font-bold uppercase tracking-[0.15em] text-[#fff3d2] shadow-md hover:scale-105 active:scale-95 disabled:opacity-60 transition"
           >
-            <img src={loginButton} alt="Login" className="w-36 select-none" draggable={false} />
+            {isLogin ? 'Login' : 'Create Account'}
           </button>
         </div>
       </div>

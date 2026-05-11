@@ -39,6 +39,7 @@ export function EndingCollectionScreen() {
   const { scale: stageScale, isMobile } = useResponsiveStageScale()
   const reduxEarnedAchievements = useSelector((s: RootState) => s.game.earnedAchievements)
   const localResults = useSelector((s: RootState) => s.gameHistory.records)
+  const auth = useSelector((s: RootState) => s.auth)
   const latestLocalResult = localResults[localResults.length - 1] ?? null
   const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled, setCustomBgm } = useMusicContext()
 
@@ -64,14 +65,11 @@ export function EndingCollectionScreen() {
         setLoading(true)
         setError('')
 
-        const userId = localStorage.getItem('guestId') || localStorage.getItem('guest_id')
-        const username = localStorage.getItem('username')
-        const userHeaders = userId ? { headers: { 'x-user-id': userId } } : undefined
         const guestUnlockedEndingIds = new Set(
-          userId ? [] : localResults.map((record) => record.endingId),
+          auth.token ? [] : localResults.map((record) => record.endingId),
         )
 
-        const result = await get<EndingsApiResponse>('/endings', userHeaders)
+        const result = await get<EndingsApiResponse>('/endings')
         fetchAchievements()
           .then((achievements) => {
             setAchievementTotal(achievements.length)
@@ -89,12 +87,9 @@ export function EndingCollectionScreen() {
         let currentEndingId: string | null = latestLocalResult?.endingId ?? null
         let currentAchievements: string[] = latestLocalResult?.achievements ?? []
 
-        if (!currentEndingId && userHeaders) {
+        if (!currentEndingId && auth.token) {
           try {
-            const latest = await get<LatestGameResultResponse>(
-              '/game/result/latest',
-              userHeaders,
-            )
+            const latest = await get<LatestGameResultResponse>('/game/result/latest')
             currentEndingId = latest.data.endingId
             currentAchievements = latest.data.achievements ?? []
           } catch {
@@ -105,12 +100,10 @@ export function EndingCollectionScreen() {
         setLatestEndingId(currentEndingId)
         setLatestAchievements(currentAchievements)
 
-        if (username) {
+        if (auth.token) {
           try {
-            const userAchievements = await get<UserAchievementsResponse>(
-              `/user/achievements/${encodeURIComponent(username)}`,
-            )
-            setStoredAchievements(userAchievements.achievements ?? [])
+            const me = await get<UserAchievementsResponse>('/user/me')
+            setStoredAchievements(me.achievements ?? [])
           } catch {
             setStoredAchievements([])
           }
@@ -144,10 +137,10 @@ export function EndingCollectionScreen() {
 
   const progressPercent =
     endings.length === 0 ? 0 : Math.round((unlockedCount / endings.length) * 100)
-  const playerName = localStorage.getItem('username') || 'Guest'
+  const playerName = auth.username || 'Guest'
   const earnedAchievementKeys = useMemo(
     () => {
-      const hasLoggedInUser = Boolean(localStorage.getItem('guestId') || localStorage.getItem('guest_id'))
+      const hasLoggedInUser = Boolean(auth.token)
       const guestAchievements = hasLoggedInUser
         ? []
         : localResults.flatMap((record) => record.achievements)
