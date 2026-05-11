@@ -110,11 +110,11 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
         <img src={popupLogin} alt="" className="w-[420px] select-none pointer-events-none" draggable={false} />
 
         {/* Tab toggle — z-30 above the form overlay */}
-        <div className="absolute top-[12%] z-30 flex gap-1">
+        <div className="absolute top-[16%] z-30 flex gap-1">
           <button
             type="button"
             onClick={() => switchTab('login')}
-            className={`px-5 py-1.5 text-xs font-bold rounded-full transition cursor-pointer ${
+            className={`px-5 py-1 text-[12px] font-bold rounded-full transition cursor-pointer ${
               isLogin
                 ? 'bg-[#7a4b2b] text-[#fff3d2] shadow-md'
                 : 'bg-[#e8d5a8]/70 text-[#9a6a3e] hover:bg-[#e8d5a8]'
@@ -125,7 +125,7 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
           <button
             type="button"
             onClick={() => switchTab('register')}
-            className={`px-5 py-1.5 text-xs font-bold rounded-full transition cursor-pointer ${
+            className={`px-5 py-1 text-[12px] font-bold rounded-full transition cursor-pointer ${
               !isLogin
                 ? 'bg-[#7a4b2b] text-[#fff3d2] shadow-md'
                 : 'bg-[#e8d5a8]/70 text-[#9a6a3e] hover:bg-[#e8d5a8]'
@@ -136,7 +136,7 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Form overlay — pointer-events-none so clicks pass through to tabs */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-[1.2vh] pb-4 pointer-events-none">
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-[24%] gap-[0.2vh] pointer-events-none">
           {/* Username field (register only) */}
           {!isLogin && (
             <div className="relative flex items-center justify-center pointer-events-auto">
@@ -204,7 +204,7 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={isLogin ? handleLogin : handleRegister}
             disabled={loading}
-            className="pointer-events-auto mt-2 cursor-pointer rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-10 py-2.5 text-sm font-bold uppercase tracking-[0.15em] text-[#fff3d2] shadow-md hover:scale-105 active:scale-95 disabled:opacity-60 transition"
+            className="pointer-events-auto mt-1 cursor-pointer rounded-full border-2 border-[#6b3f25] bg-[#9a5f2d] px-5 py-2 text-xs font-bold uppercase tracking-[0.15em] text-[#fff3d2] shadow-md hover:scale-105 active:scale-95 disabled:opacity-60 transition"
           >
             {isLogin ? 'Login' : 'Create Account'}
           </button>
