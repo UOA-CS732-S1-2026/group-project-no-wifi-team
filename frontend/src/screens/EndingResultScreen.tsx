@@ -183,24 +183,23 @@ export function EndingResultScreen() {
     }
   }, [dispatch, resultId, ending, score, snapshot, playerName, characterId, earnedAchievements, auth.token])
 
+  // Inject button-filter styles once instead of re-creating on every render
+  useEffect(() => {
+    const el = document.createElement('style')
+    el.textContent = `
+      .btn-filter { filter: ${baseBtnFilter}; transition: filter 0.1s ease, transform 0.1s ease, rotate 0.2s ease; }
+      .btn-filter:hover { filter: ${hoverBtnFilter}; }
+      .btn-filter:active { filter: ${tapBtnFilter}; }
+    `
+    document.head.appendChild(el)
+    return () => { el.remove() }
+  }, [])
+
   // Shared spring ease
   const spring = { type: 'spring' as const, stiffness: 300, damping: 20 }
 
   return (
-    <>
-      <style>{`
-        .btn-filter {
-          filter: ${baseBtnFilter};
-          transition: filter 0.1s ease, transform 0.1s ease, rotate 0.2s ease;
-        }
-        .btn-filter:hover {
-          filter: ${hoverBtnFilter};
-        }
-        .btn-filter:active {
-          filter: ${tapBtnFilter};
-        }
-      `}</style>
-      <div
+    <div
         className="relative w-screen h-dvh overflow-hidden font-serif"
         style={{ backgroundImage: `url(${commonBg})`, backgroundSize: '100% 100%' }}
       >
@@ -407,6 +406,5 @@ export function EndingResultScreen() {
         />
       )}
     </div>
-    </>
   )
 }

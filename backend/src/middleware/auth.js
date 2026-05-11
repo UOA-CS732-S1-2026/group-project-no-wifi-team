@@ -27,7 +27,7 @@ export function authOptional(req, res, next) {
     req.userId = payload.userId;
     req.username = payload.username;
   } catch {
-    // token invalid — treat as guest
+    req.authInvalid = true;
   }
   next();
 }

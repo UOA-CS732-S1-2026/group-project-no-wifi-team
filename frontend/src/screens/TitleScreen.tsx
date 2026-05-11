@@ -78,7 +78,7 @@ export function TitleScreen() {
           />
           {auth.token && (
             <div className="mt-5 flex flex-col items-center gap-2">
-              <p className="text-sm font-bold text-[#5a3010]">Welcome, {auth.username}</p>
+              <p className="text-sm font-bold text-[#5a3010]">Welcome, {auth.username || 'Player'}</p>
               <button
                 type="button"
                 onClick={handleLogout}

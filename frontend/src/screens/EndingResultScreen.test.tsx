@@ -659,11 +659,12 @@ describe('EndingResultScreen', () => {
       state: { snapshot: { intelligence: 80, health: 80, wealth: 80 } },
     })
     // Wait for effects to settle — post should NOT be called for guests
-    await new Promise((r) => setTimeout(r, 100))
-    const postCalls = mockPost.mock.calls.filter(
-      (call: unknown[]) => call[0] === '/game/result',
-    )
-    expect(postCalls.length).toBe(0)
+    await waitFor(() => {
+      const postCalls = mockPost.mock.calls.filter(
+        (call: unknown[]) => call[0] === '/game/result',
+      )
+      expect(postCalls.length).toBe(0)
+    })
   })
 
   it('POSTs to backend without userId when logged in (auth token present)', async () => {
