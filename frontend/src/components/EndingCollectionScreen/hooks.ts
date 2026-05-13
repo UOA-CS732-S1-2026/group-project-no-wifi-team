@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { MOBILE_BREAKPOINT, STAGE_WIDTH } from './constants'
+import { MOBILE_BREAKPOINT, STAGE_HEIGHT, STAGE_WIDTH } from './constants'
 
 export function useResponsiveStageScale() {
   const [layout, setLayout] = useState({
@@ -11,22 +11,22 @@ export function useResponsiveStageScale() {
   useEffect(() => {
     function updateLayout() {
       const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
       const isMobile = viewportWidth < MOBILE_BREAKPOINT
+      const widthScale = viewportWidth / STAGE_WIDTH
+      const heightScale = viewportHeight / STAGE_HEIGHT
+      const scale = Math.max(widthScale, heightScale)
+      const roundedScale = Math.round(scale * 1000) / 1000
 
-      if (!isMobile) {
-        setLayout({
-          scale: 1,
-          isMobile: false,
-        })
-        return
-      }
+      setLayout((previous) => {
+        if (previous.scale === roundedScale && previous.isMobile === isMobile) {
+          return previous
+        }
 
-      const safePadding = 8
-      const scale = Math.min((viewportWidth - safePadding) / STAGE_WIDTH, 1)
-
-      setLayout({
-        scale,
-        isMobile: true,
+        return {
+          scale: roundedScale,
+          isMobile,
+        }
       })
     }
 
