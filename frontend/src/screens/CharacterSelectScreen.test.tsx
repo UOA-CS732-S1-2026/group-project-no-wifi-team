@@ -110,7 +110,7 @@ describe('CharacterSelectScreen', () => {
   it('saves selected character to localStorage', () => {
     renderScreen()
     fireEvent.click(screen.getByRole('button', { name: /Select Rich Kid/i }))
-    const stored = JSON.parse(localStorage.getItem('selectedCharacter') ?? '{}')
+    const stored = JSON.parse(localStorage.getItem('selected_character') ?? '{}')
     expect(stored.title).toBe('Rich Kid')
   })
 
