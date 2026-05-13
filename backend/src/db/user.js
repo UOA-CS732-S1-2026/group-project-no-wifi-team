@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   userId: { type: String, required: true, unique: true, default: () => randomUUID() },
   username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  passwordHash: { type: String, required: true },
+  passwordHash: { type: String, required: false },
 }, {
   timestamps: true,
 });
