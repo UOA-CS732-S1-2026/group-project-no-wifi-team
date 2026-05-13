@@ -4,7 +4,7 @@ import { useGoogleLogin } from '@react-oauth/google'
 import { post } from '../../utils/request'
 import { loginSuccess } from '../../slices/authSlice'
 import type { AppDispatch } from '../../store'
-import { aboutUs as aboutUsImg, signIn as signInImg, startGame as startGameImg } from '../../assets/gamebegin'
+import { aboutUs as aboutUsImg, signIn as signInImg, signout as signoutImg, startGame as startGameImg } from '../../assets/gamebegin'
 
 interface AuthResponse {
   token: string
@@ -19,10 +19,12 @@ interface AuthResponse {
 export function MainButtons({
   onStart,
   onAbout,
+  onLogout,
   isLoggedIn,
 }: {
   onStart: () => void
   onAbout: () => void
+  onLogout: () => void
   isLoggedIn?: boolean
 }) {
   const navigate = useNavigate()
@@ -68,14 +70,23 @@ export function MainButtons({
           <img src={aboutUsImg} alt="About Us" className="w-full scale-125 drop-shadow-md sm:scale-140" />
         </button>
 
-        {!isLoggedIn && (
+        {!isLoggedIn ? (
           <button
             type="button"
             onClick={() => googleLogin()}
-            className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px] cursor-pointer"
+            className="w-[90px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[100px] cursor-pointer"
             aria-label="Sign In"
           >
             <img src={signInImg} alt="Sign In" className="w-full scale-125 drop-shadow-md sm:scale-140" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onLogout}
+            className="w-[90px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[100px] cursor-pointer"
+            aria-label="Sign Out"
+          >
+            <img src={signoutImg} alt="Sign Out" className="w-full scale-125 drop-shadow-md sm:scale-140" />
           </button>
         )}
       </div>
