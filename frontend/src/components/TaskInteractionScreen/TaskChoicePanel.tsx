@@ -27,7 +27,7 @@ export function TaskChoicePanel({
 
   return (
     <section
-      className="relative flex h-[min(680px,_calc(100dvh_-_10rem))] flex-col px-10 pb-9 pt-14"
+      className="relative flex h-[680px] flex-col px-10 pb-9 pt-14"
       style={{
         backgroundImage: `url(${taskChoiceBg})`,
         backgroundSize: '100% 100%',
