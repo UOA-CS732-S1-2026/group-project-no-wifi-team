@@ -16,17 +16,9 @@ interface AuthResponse {
   totalPlays?: number
 }
 
-export function MainButtons({
-  onStart,
-  onAbout,
-  onLogout,
-  isLoggedIn,
-}: {
-  onStart: () => void
-  onAbout: () => void
-  onLogout: () => void
-  isLoggedIn?: boolean
-}) {
+const googleClientId = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string)?.trim() || ''
+
+function GoogleSignInButton() {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
 
@@ -46,6 +38,29 @@ export function MainButtons({
   })
 
   return (
+    <button
+      type="button"
+      onClick={() => googleLogin()}
+      className="w-[90px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[100px] cursor-pointer"
+      aria-label="Sign In"
+    >
+      <img src={signInImg} alt="Sign In" className="w-full scale-125 drop-shadow-md sm:scale-140" />
+    </button>
+  )
+}
+
+export function MainButtons({
+  onStart,
+  onAbout,
+  onLogout,
+  isLoggedIn,
+}: {
+  onStart: () => void
+  onAbout: () => void
+  onLogout: () => void
+  isLoggedIn?: boolean
+}) {
+  return (
     <div className="flex flex-col items-center justify-center">
       <button
         type="button"
@@ -60,25 +75,18 @@ export function MainButtons({
         />
       </button>
 
-      <div className="mt-4 flex items-center justify-center gap-10 sm:mt-5">
+      <div className="mt-4 flex items-center justify-center gap-20 sm:mt-5">
         <button
           type="button"
           onClick={onAbout}
-          className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px] cursor-pointer"
+          className="w-[90px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[100px] cursor-pointer"
           aria-label="About Us"
         >
-          <img src={aboutUsImg} alt="About Us" className="w-full scale-125 drop-shadow-md sm:scale-140" />
+          <img src={aboutUsImg} alt="About Us" className="w-full scale-110 drop-shadow-md sm:scale-125" />
         </button>
 
         {!isLoggedIn ? (
-          <button
-            type="button"
-            onClick={() => googleLogin()}
-            className="w-[90px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[100px] cursor-pointer"
-            aria-label="Sign In"
-          >
-            <img src={signInImg} alt="Sign In" className="w-full scale-125 drop-shadow-md sm:scale-140" />
-          </button>
+          googleClientId ? <GoogleSignInButton /> : null
         ) : (
           <button
             type="button"

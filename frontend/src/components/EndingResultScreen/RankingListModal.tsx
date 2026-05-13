@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { motion } from 'motion/react'
 import type { RootState } from '../../store'
 import { get } from '../../utils/request'
-import type { GameResult } from '../../utils/gameResultTypes'
 
 interface LeaderboardEntry {
   rank: number
@@ -16,42 +15,6 @@ interface LeaderboardEntry {
 interface LeaderboardResponse {
   leaderboard: LeaderboardEntry[]
   currentUser: LeaderboardEntry | null
-}
-
-function buildGuestLeaderboard(): LeaderboardEntry[] {
-  try {
-    const raw = localStorage.getItem('game_history')
-    if (!raw) return []
-    const records = JSON.parse(raw) as GameResult[]
-    if (!Array.isArray(records)) return []
-
-    // Aggregate best completion per "playerName"
-    const map = new Map<string, { achievements: Set<string>; endings: Set<string> }>()
-    for (const r of records) {
-      const entry = map.get(r.playerName) ?? { achievements: new Set<string>(), endings: new Set<string>() }
-      r.achievements.forEach((a) => entry.achievements.add(a))
-      entry.endings.add(r.endingId)
-      map.set(r.playerName, entry)
-    }
-
-    const entries = Array.from(map.entries())
-      .map(([name, data]) => ({
-        username: name,
-        achievementCount: data.achievements.size,
-        endingCount: data.endings.size,
-      }))
-      .sort((a, b) => b.achievementCount - a.achievementCount || b.endingCount - a.endingCount)
-
-    return entries.slice(0, 10).map((e, i) => ({
-      rank: i + 1,
-      userId: '',
-      username: e.username,
-      achievementCount: e.achievementCount,
-      endingCount: e.endingCount,
-    }))
-  } catch {
-    return []
-  }
 }
 
 export function RankingListModal({ onClose }: { onClose: () => void }) {
@@ -67,23 +30,16 @@ export function RankingListModal({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     setLoading(true)
-    if (auth.token) {
-      get<LeaderboardResponse>('/leaderboard')
-        .then((data) => {
-          setLeaderboard(data.leaderboard)
-          setCurrentUser(data.currentUser)
-        })
-        .catch(() => {
-          // fallback to guest leaderboard on error
-          setLeaderboard(buildGuestLeaderboard())
-          setCurrentUser(null)
-        })
-        .finally(() => setLoading(false))
-    } else {
-      setLeaderboard(buildGuestLeaderboard())
-      setCurrentUser(null)
-      setLoading(false)
-    }
+    get<LeaderboardResponse>('/leaderboard')
+      .then((data) => {
+        setLeaderboard(data.leaderboard)
+        setCurrentUser(data.currentUser)
+      })
+      .catch(() => {
+        setLeaderboard([])
+        setCurrentUser(null)
+      })
+      .finally(() => setLoading(false))
   }, [auth.token])
 
   const currentInTop10 = currentUser && leaderboard.some((e) => e.userId === currentUser.userId)
@@ -130,7 +86,7 @@ export function RankingListModal({ onClose }: { onClose: () => void }) {
                 </thead>
                 <tbody>
                   {leaderboard.map((entry) => {
-                    const isMe = auth.userId && entry.userId === auth.userId
+                    const isMe = entry.userId === auth.userId
                     return (
                       <tr
                         key={entry.rank}

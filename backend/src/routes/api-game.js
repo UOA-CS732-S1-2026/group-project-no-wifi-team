@@ -45,7 +45,7 @@ router.get("/quarterly-summary", async (req, res) => {
     const userId = req.headers["x-user-id"];
     if (!userId) return res.status(401).json({ error: "Missing userId" });
 
-    let user = await User.findOne({ userId });
+    let user = await User.findOne({ userId, isDeleted: { $ne: true } });
     if (!user) {
       return res.status(404).json({ error: "No user found with this id" });
     }

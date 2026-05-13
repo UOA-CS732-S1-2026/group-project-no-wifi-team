@@ -23,7 +23,7 @@ router.get('/', authOptional, async (req, res) => {
 
     // Resolve usernames
     const userIds = allStats.map((s) => s.userId);
-    const users = await User.find({ userId: { $in: userIds } }).lean();
+    const users = await User.find({ userId: { $in: userIds }, isDeleted: { $ne: true } }).lean();
     const userMap = new Map(users.map((u) => [u.userId, u.username]));
 
     const leaderboard = allStats.slice(0, limit).map((s, i) => ({

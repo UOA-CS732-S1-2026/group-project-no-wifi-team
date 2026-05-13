@@ -4,6 +4,7 @@ export interface GameResult {
   id: string
   characterId: string | null
   playerName: string
+  userId: string
   score: number
   endingId: string
   endingTitle: string

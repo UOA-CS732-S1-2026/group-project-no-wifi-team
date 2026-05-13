@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Character, CharacterStats } from '../components/CharacterSelectScreen/constants'
 import type { Task } from '../components/MonthlyTaskSelection/types'
+import { loginSuccess, logout } from './authSlice'
 
 interface QuarterTasks {
   selectedTasks: Task[]   // 3 player-chosen tasks
@@ -8,6 +9,8 @@ interface QuarterTasks {
 }
 
 const DEFAULT_STATS: CharacterStats = { intelligence: 5, health: 5, wealth: 5 }
+const ACHIEVEMENTS_KEY = 'earned_achievements'
+const CHARACTER_KEY = 'selected_character'
 
 interface GameState {
   selectedCharacter: Character | null
@@ -19,22 +22,34 @@ interface GameState {
 
 function readStoredCharacter(): Character | null {
   if (typeof localStorage === 'undefined') return null
-
   try {
-    return JSON.parse(localStorage.getItem('selectedCharacter') ?? 'null') as Character | null
+    return JSON.parse(localStorage.getItem(CHARACTER_KEY) ?? 'null') as Character | null
   } catch {
     return null
   }
 }
 
-const storedCharacter = readStoredCharacter()
+function readStoredAchievements(): string[] {
+  try {
+    const raw = localStorage.getItem(ACHIEVEMENTS_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed)) return parsed as string[]
+    }
+  } catch { /* corrupted */ }
+  return []
+}
+
+function persistAchievements(keys: string[]) {
+  try { localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(keys)) } catch { /* quota */ }
+}
 
 const initialState: GameState = {
-  selectedCharacter: storedCharacter,
-  currentStats: storedCharacter?.stats ?? DEFAULT_STATS,
+  selectedCharacter: readStoredCharacter(),
+  currentStats: readStoredCharacter()?.stats ?? DEFAULT_STATS,
   currentQuarter: 1,
   quarters: {},
-  earnedAchievements: [],
+  earnedAchievements: readStoredAchievements(),
 }
 
 const gameSlice = createSlice({
@@ -44,6 +59,7 @@ const gameSlice = createSlice({
     selectCharacter(state, action: PayloadAction<Character>) {
       state.selectedCharacter = action.payload
       state.currentStats = action.payload.stats
+      try { localStorage.setItem(CHARACTER_KEY, JSON.stringify(action.payload)) } catch { /* quota */ }
     },
     confirmQuarterTasks(
       state,
@@ -64,10 +80,12 @@ const gameSlice = createSlice({
     earnAchievement(state, action: PayloadAction<string>) {
       if (!state.earnedAchievements.includes(action.payload)) {
         state.earnedAchievements.push(action.payload)
+        persistAchievements(state.earnedAchievements)
       }
     },
     setInitialAchievements(state, action: PayloadAction<string[]>) {
       state.earnedAchievements = action.payload
+      persistAchievements(state.earnedAchievements)
     },
     resetGame(state) {
       state.selectedCharacter = null
@@ -75,7 +93,20 @@ const gameSlice = createSlice({
       state.currentQuarter = 1
       state.quarters = {}
       state.earnedAchievements = []
+      persistAchievements([])
+      try { localStorage.removeItem(CHARACTER_KEY) } catch { /* quota */ }
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginSuccess, (state, action) => {
+        state.earnedAchievements = action.payload.achievements ?? []
+        persistAchievements(state.earnedAchievements)
+      })
+      .addCase(logout, (state) => {
+        state.earnedAchievements = []
+        persistAchievements([])
+      })
   },
 })
 

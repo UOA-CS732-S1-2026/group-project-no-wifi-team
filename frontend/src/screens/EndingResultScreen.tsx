@@ -133,8 +133,8 @@ export function EndingResultScreen() {
           }
           return prev + 1
         })
-      }, 30)
-    }, 700)
+      }, 10)
+    }, 600)
     return () => {
       clearTimeout(timeoutId)
       clearInterval(intervalId)
@@ -151,6 +151,7 @@ export function EndingResultScreen() {
       id:          resultId,
       characterId,
       playerName,
+      userId:      auth.userId,
       score,
       endingId:    ending.id,
       endingTitle: ending.title,
@@ -209,37 +210,41 @@ export function EndingResultScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ...spring }}
         >
-          {/* Title row + divider + description */}
-          <div className="flex flex-col items-start self-start shrink-0">
-            <div className="flex flex-col items-start gap-[1.8vh]">
+          {/* Title row + divider + description — individual entry animations */}
+          <div className="grid grid-cols-[min-content] self-start shrink-0">
+            <div className="flex flex-col items-start gap-[2.2vh]">
+              {/* Wave 1: main title */}
               <motion.span
-                className="text-[4.4vw] font-black uppercase text-[#3d2b1f] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.6)]"
+                className="pl-[0.2vw] text-[4vw] font-black uppercase text-[#3d2b1f] leading-none whitespace-nowrap tracking-wide"
                 style={{ fontFamily: "Georgia, Cambria, serif" }}
-                initial={{ opacity: 0, x: -2 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: -8, scaleY: 1.2 }}
+                animate={{ opacity: 1, x: 0, scaleY: 1.2 }}
                 transition={{ duration: 0.5, delay: 0.1, ...spring }}
               >
                 ENDING
               </motion.span>
+              {/* Wave 2: subtitle */}
               <motion.span
-                className="text-[3vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.3)]"
+                className="pl-[0.3vw] text-[2.8vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide"
                 style={{ fontFamily: '"Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif' }}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: -4, scaleY: 1.1 }}
+                animate={{ opacity: 1, x: 0, scaleY: 1.1 }}
                 transition={{ duration: 0.5, delay: 0.4, ...spring }}
               >
                 {ending.title}
               </motion.span>
             </div>
+            {/* Wave 3: divider */}
             <motion.hr
-              className="w-[52vw] h-px bg-[#ae7437] border-0 mt-[1.5vh] mb-[1.5vh]"
+              className="w-[calc(100%+4vw)] h-px bg-[#ae7437] border-0 mt-[1.8vh] mb-[1.8vh]"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               style={{ transformOrigin: 'left' }}
               transition={{ duration: 0.5, delay: 0.5 }}
             />
+            {/* Wave 3: streaming description */}
             <motion.p
-              className="pl-[0.6vw] text-[1.4vw] font-normal text-[#2D3A3A] leading-[1.4] m-0 w-[52vw] select-none"
+              className="pl-[0.6vw] text-[1.4vw] font-normal text-[#2D3A3A] leading-[1.5] m-0 w-[calc(100%+4vw)] select-none"
               style={{
                 fontFamily: 'Georgia, Cambria, "Times New Roman", serif',
                 cursor: descFullyRevealed ? 'default' : 'pointer',
@@ -247,11 +252,11 @@ export function EndingResultScreen() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              onClick={() => { if (!descFullyRevealed) setDescFullyRevealed(true) }}
+              onClick={() => {
+                if (!descFullyRevealed) setDescFullyRevealed(true)
+              }}
             >
-              {descFullyRevealed
-                ? descText
-                : descText.slice(0, revealedLen)}
+              {descFullyRevealed ? descText : descText.slice(0, revealedLen)}
               {!descFullyRevealed && revealedLen < descText.length && (
                 <span className="animate-pulse text-[#ae7437]">|</span>
               )}
@@ -261,10 +266,10 @@ export function EndingResultScreen() {
           {/* Achievement category buttons */}
           {visibleCategories.length > 0 && (
             <motion.div
-              className="absolute bottom-[18vh] left-0 right-0 flex flex-col md:flex-row justify-center items-center md:items-end gap-[1.5vh] md:gap-[1.5vw] px-[4vw]"
+              className="absolute bottom-[15vh] left-0 right-0 flex flex-col md:flex-row justify-center items-center md:items-end gap-[2vh] md:gap-[2vw] px-[4vw]"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.8, ...spring }}
+              transition={{ duration: 0.5, delay: 1, ...spring }}
             >
               {visibleCategories.map((cat) => (
                 <button
@@ -277,7 +282,7 @@ export function EndingResultScreen() {
                   <img
                     src={CATEGORY_BUTTONS[cat].src}
                     alt={CATEGORY_BUTTONS[cat].label}
-                    className="h-[min(16vh,22vw)] md:h-[min(18vh,14vw)] w-auto block"
+                    className="h-[min(18vh,22vw)] md:h-[min(20vh,16vw)] w-auto block"
                   />
                 </button>
               ))}
