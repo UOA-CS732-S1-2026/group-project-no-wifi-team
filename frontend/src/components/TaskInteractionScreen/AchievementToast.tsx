@@ -71,8 +71,8 @@ export function AchievementToast({ achievementKey, onDismiss }: Props) {
               className="w-full drop-shadow-xl"
               draggable={false}
             />
-            <div className="absolute inset-0 flex items-center">
-              <div className="ml-[49%] mb-2 translate-y-3 flex flex-col justify-center gap-0.5 pr-4">
+            <div className="absolute inset-0">
+              <div className="absolute left-[49%] right-0 top-1/2 flex flex-col gap-0.5 pr-4">
                 <p className="font-serif text-[13px] font-bold leading-tight text-[#5a3010]">
                   {label}
                 </p>

@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import commonBackground from '../assets/CommonImage/common-background.png'
+import { popupBg, popupButton } from '../assets/EndingCollection'
 import { AttributeBar } from '../components/MonthlyTaskSelection'
 import type { AppDispatch, RootState } from '../store'
 import { earnAchievement, updateStats } from '../slices/gameSlice'
@@ -116,6 +117,7 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
   const [stats, setStats] = useState<Record<AttributeKey, number>>(initialStats)
   const [selectedOption, setSelectedOption] = useState<ChoiceOption | null>(null)
   const [toastKey, setToastKey] = useState<string | null>(null)
+  const [pendingSnapshot, setPendingSnapshot] = useState<{ intelligence: number; health: number; wealth: number } | null>(null)
 
   const currentTask = tasks[taskIndex] ?? defaultContent
   const isLastTask = taskIndex >= tasks.length - 1
@@ -203,6 +205,12 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     if (fx || autoOption) setStats(nextStats)
     if (autoOption?.achievementKey) tryEarnAchievement(autoOption.achievementKey)
 
+    if (nextStats.intelligence === 0 || nextStats.health === 0 || nextStats.money === 0) {
+      dispatch(updateStats({ intelligence: nextStats.intelligence, health: nextStats.health, wealth: nextStats.money }))
+      setPendingSnapshot({ intelligence: nextStats.intelligence, health: nextStats.health, wealth: nextStats.money })
+      return
+    }
+
     if (isLastTask) {
       dispatch(updateStats({ intelligence: nextStats.intelligence, health: nextStats.health, wealth: nextStats.money }))
       if (nextStats.intelligence >= 10) tryEarnAchievement('wait-am-i-actually-a-genius', false)
@@ -238,7 +246,7 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     >
       <AttributeBar intelligence={stats.intelligence} health={stats.health} wealth={stats.money} />
 
-      <main className="flex flex-1 items-center justify-center px-8 pb-10 pt-4">
+      <main className="flex flex-1 items-center justify-center px-8 py-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={taskIndex}
@@ -300,6 +308,27 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
           onSfxToggle={setSfxEnabled}
           onClose={() => setShowSettingsModal(false)}
         />
+      )}
+
+      {pendingSnapshot && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div
+            className="relative flex w-[min(541px,90vw)] flex-col items-center justify-center gap-6 px-12 py-10"
+            style={{ backgroundImage: `url(${popupBg})`, backgroundSize: '100% 100%', aspectRatio: '541/451' }}
+          >
+            <p className="-translate-y-[30%] text-center font-serif text-[1.05rem] leading-relaxed text-[#3d2b1f]">
+              Unfortunately, you&apos;ve failed to meet the &apos;all-around development&apos; standards required of a top-tier international student.
+            </p>
+            <button
+              type="button"
+              aria-label="Close"
+              className="translate-y-[150%]"
+              onClick={() => navigate('/ending-result', { replace: true, state: { snapshot: pendingSnapshot } })}
+            >
+              <img src={popupButton} alt="Close" className="h-[53px] w-[196px]" />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )
