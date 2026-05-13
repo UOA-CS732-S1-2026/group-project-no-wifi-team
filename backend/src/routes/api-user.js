@@ -29,7 +29,7 @@ router.post('/register', async (req, res) => {
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const existing = await User.findOne({ email: normalizedEmail });
+    const existing = await User.findOne({ email: normalizedEmail, isDeleted: { $ne: true } });
     if (existing) {
       return res.status(409).json({ error: 'Email already registered' });
     }
@@ -68,7 +68,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'email and password are required' });
     }
 
-    const user = await User.findOne({ email: email.trim().toLowerCase() });
+    const user = await User.findOne({ email: email.trim().toLowerCase(), isDeleted: { $ne: true } });
     if (!user || !user.passwordHash) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
@@ -98,7 +98,7 @@ router.post('/login', async (req, res) => {
 // GET /user/me
 router.get('/me', authRequired, async (req, res) => {
   try {
-    const user = await User.findOne({ userId: req.userId });
+    const user = await User.findOne({ userId: req.userId, isDeleted: { $ne: true } });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -128,7 +128,7 @@ router.put('/password', authRequired, async (req, res) => {
       return res.status(400).json({ error: 'new password must be at least 6 characters' });
     }
 
-    const user = await User.findOne({ userId: req.userId });
+    const user = await User.findOne({ userId: req.userId, isDeleted: { $ne: true } });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -194,7 +194,7 @@ router.post('/google', async (req, res) => {
     }
 
     const email = tokenInfo.email.toLowerCase();
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email, isDeleted: { $ne: true } });
 
     if (!user) {
       user = await User.create({

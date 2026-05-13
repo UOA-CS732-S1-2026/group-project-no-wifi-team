@@ -42,7 +42,6 @@ export function CharacterSelectScreen() {
   }
 
   function chooseCharacter(character: Character) {
-    localStorage.setItem('selectedCharacter', JSON.stringify(character))
     dispatch(selectCharacter(character))
     navigate('/monthly-task-selection')
   }

@@ -117,7 +117,7 @@ router.patch('/:endingId/unlock', authOptional, async (req, res) => {
         const { endingId } = req.params
 
         if (req.userId) {
-            const user = await User.findOne({ userId: req.userId }).lean();
+            const user = await User.findOne({ userId: req.userId, isDeleted: { $ne: true } }).lean();
             if (!user) {
                 return res.status(404).json({
                     success: false,

@@ -90,7 +90,13 @@ const authSlice = createSlice({
       state.achievements = []
       state.endings = []
       state.totalPlays = 0
-      try { localStorage.removeItem(AUTH_TOKEN_KEY); localStorage.removeItem(AUTH_PROFILE_KEY) } catch { /* storage disabled */ }
+      try {
+        localStorage.removeItem(AUTH_TOKEN_KEY)
+        localStorage.removeItem(AUTH_PROFILE_KEY)
+        localStorage.removeItem('earned_achievements')
+        localStorage.removeItem('selected_character')
+        localStorage.removeItem('game_history')
+      } catch { /* storage disabled */ }
     },
     setStats(state, action: PayloadAction<{ achievements?: string[]; endings?: string[]; totalPlays?: number }>) {
       if (action.payload.achievements) state.achievements = action.payload.achievements

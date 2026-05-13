@@ -9,7 +9,7 @@ interface QuarterTasks {
 
 const DEFAULT_STATS: CharacterStats = { intelligence: 5, health: 5, wealth: 5 }
 const ACHIEVEMENTS_KEY = 'earned_achievements'
-const CHARACTER_KEY = 'selectedCharacter'
+const CHARACTER_KEY = 'selected_character'
 
 interface GameState {
   selectedCharacter: Character | null
