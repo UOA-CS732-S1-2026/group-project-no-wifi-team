@@ -3,17 +3,15 @@ import { type Category, type Task } from './types'
 import { TaskCard } from './TaskCard'
 import { availableTasksBg } from './images'
 
-// Panel: 530×340px. Each task card: 520×80px.
-// available-tasks-bg.png: 1086×1448 (portrait) — CSS background stretched to fill panel.
-
 interface Props {
   activeCategory: Category
   tasks: Task[]
   selectedIds: string[]
   onToggle: (id: string) => void
+  loading?: boolean
 }
 
-export function TaskList({ activeCategory, tasks, selectedIds, onToggle }: Props) {
+export function TaskList({ activeCategory, tasks, selectedIds, onToggle, loading }: Props) {
   return (
     <div
       className="flex shrink-0 flex-col"
@@ -41,27 +39,33 @@ export function TaskList({ activeCategory, tasks, selectedIds, onToggle }: Props
           overflowX: 'visible',
         }}
       >
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15 }}
-            className="flex flex-col gap-2"
-          >
-            <AnimatePresence mode="popLayout">
-              {tasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  selected={selectedIds.includes(task.id)}
-                  onToggle={() => onToggle(task.id)}
-                />
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        </AnimatePresence>
+        {loading ? (
+          <div className="flex h-full items-center justify-center">
+            <p className="font-serif text-sm text-desk-mid animate-pulse">Loading tasks…</p>
+          </div>
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeCategory}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.15 }}
+              className="flex flex-col gap-2"
+            >
+              <AnimatePresence mode="popLayout">
+                {tasks.map((task) => (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    selected={selectedIds.includes(task.id)}
+                    onToggle={() => onToggle(task.id)}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          </AnimatePresence>
+        )}
       </div>
     </div>
   )

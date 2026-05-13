@@ -15,7 +15,6 @@ import {
   MonthlyPlanBoard,
   TaskList,
   MAX_PLAYER_SELECTIONS,
-  TASKS,
   mapEventToTask,
   type Category,
   type Task,
@@ -32,14 +31,17 @@ export function MonthlyTaskSelection() {
   const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
   const [activeCategory, setActiveCategory] = useState<Category>('Study')
   const [selectedIds, setSelectedIds] = useState<string[]>([])
-  const [tasks, setTasks] = useState<Task[]>(TASKS)
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [loading, setLoading] = useState(true)
   const [showFullToast, setShowFullToast] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   useEffect(() => {
+    setLoading(true)
     fetchEventsByQuarter(quarter)
       .then(({ events }) => setTasks(events.map(mapEventToTask)))
       .catch(() => {})
+      .finally(() => setLoading(false))
   }, [quarter])
 
   const visibleTasks = tasks.filter(
@@ -123,6 +125,7 @@ export function MonthlyTaskSelection() {
                   tasks={visibleTasks}
                   selectedIds={selectedIds}
                   onToggle={toggleTask}
+                  loading={loading}
                 />
               </motion.div>
             </AnimatePresence>
