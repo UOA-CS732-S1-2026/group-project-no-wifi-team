@@ -25,7 +25,6 @@ import achStudyImg from '../assets/endingPage-image/achievement-study.png'
 import achHealthImg from '../assets/endingPage-image/achievement-health.png'
 import achWealthImg from '../assets/endingPage-image/achievement-wealth.png'
 import achCrownImg from '../assets/endingPage-image/achievement-crown.png'
-import { endingReplayButton } from '../assets/EndingCollection'
 
 // ── Category definitions ──────────────────────────────────────────────────────
 const CATEGORY_BUTTONS: Record<string, { label: string; src: string }> = {
@@ -343,13 +342,13 @@ export function EndingResultScreen() {
         <img src={backHomeBtnImg} alt="Back to Home" className="h-[min(10vh,8vw)] w-auto block" />
       </motion.button>
 
-      {/* Ending Collection — top-right */}
+      {/* Wave 4: Ending Collection — bottom-center */}
       <motion.button
-        className="absolute top-[1.5vh] right-[2vw] z-30 p-0 cursor-pointer btn-filter hover:scale-105 active:scale-95"
+        className="absolute bottom-[4vh] left-1/2 -translate-x-1/2 z-30 p-0 cursor-pointer btn-filter hover:scale-105 active:scale-95"
         onClick={() => navigate('/endings')}
         aria-label="Ending Collection"
-        initial={{ opacity: 0, x: 16 }}
-        animate={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 1.2, ...spring }}
       >
         <img
@@ -357,18 +356,6 @@ export function EndingResultScreen() {
           alt="Ending Collection"
           className="h-[min(12vh,10vw)] w-auto block"
         />
-      </motion.button>
-
-      {/* Wave 4: Replay — bottom-center */}
-      <motion.button
-        className="absolute bottom-[4vh] left-1/2 -translate-x-1/2 z-30 p-0 cursor-pointer btn-filter hover:scale-105 active:scale-95"
-        onClick={() => navigate('/')}
-        aria-label="Replay"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 1.2, ...spring }}
-      >
-        <img src={endingReplayButton} alt="Replay" className="h-[min(12vh,10vw)] w-auto block" />
       </motion.button>
 
       {/* Settings — bottom-right */}

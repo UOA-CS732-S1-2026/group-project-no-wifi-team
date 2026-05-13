@@ -336,8 +336,8 @@ export function EndingCollectionScreen() {
           {/* Replay Journey */}
           <motion.button
             type="button"
-            onClick={() => navigate('/characters')}
-            className="absolute bottom-[30px] right-[80px] z-30 w-[180px] cursor-pointer"
+            onClick={() => navigate('/')}
+            className="absolute bottom-[20px] right-[230px] z-30 w-[200px] cursor-pointer"
             aria-label="Replay Journey"
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1, transition: { delay: 3.8, duration: 0.4 } }}
