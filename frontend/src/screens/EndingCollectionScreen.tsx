@@ -35,7 +35,7 @@ const FALLBACK_ACHIEVEMENT_TOTAL = 32
 
 export function EndingCollectionScreen() {
   const navigate = useNavigate()
-  const { scale: stageScale, isMobile } = useResponsiveStageScale()
+  const { scale: stageScale } = useResponsiveStageScale()
   const reduxEarnedAchievements = useSelector((s: RootState) => s.game.earnedAchievements)
   const localResults = useSelector((s: RootState) => s.gameHistory.records)
   const auth = useSelector((s: RootState) => s.auth)
@@ -203,30 +203,36 @@ export function EndingCollectionScreen() {
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-auto bg-[#4b2f1e] font-serif text-[#5a3218]">
+    <main className="h-svh w-full touch-pan-y overflow-y-auto overflow-x-hidden overscroll-y-none bg-[#4b2f1e] font-serif text-[#5a3218] [scrollbar-gutter:stable] [-webkit-overflow-scrolling:auto]">
       {/*
-        Mobile optimization:
-        - Outer size = scaled stage size
-        - Inner stage = original 1365 x 1040
-        - Background and components scale together
+        Single-background stage:
+        - The stage background scales like cover and fills the viewport
+        - The overlay controls scale with that same stage
+        - The page scrolls when the covered stage is taller than the viewport
       */}
       <div
-        className="relative mx-auto"
+        className="relative"
         style={{
-          width: isMobile ? `${STAGE_WIDTH * stageScale}px` : `${STAGE_WIDTH}px`,
-          height: isMobile ? `${STAGE_HEIGHT * stageScale}px` : `${STAGE_HEIGHT}px`,
-          minWidth: isMobile ? `${STAGE_WIDTH * stageScale}px` : `${STAGE_WIDTH}px`,
-          minHeight: isMobile ? `${STAGE_HEIGHT * stageScale}px` : `${STAGE_HEIGHT}px`,
+          width: `${STAGE_WIDTH * stageScale}px`,
+          height: `${STAGE_HEIGHT * stageScale}px`,
+          minHeight: '100svh',
+          marginLeft: '50%',
+          transform: 'translateX(-50%)',
+          backgroundImage: `url(${endingBg})`,
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       >
         <div
-          className="relative origin-top bg-cover bg-center bg-no-repeat"
+          className="absolute left-0 top-0"
           style={{
             width: `${STAGE_WIDTH}px`,
             height: `${STAGE_HEIGHT}px`,
-            backgroundImage: `url(${endingBg})`,
-            transform: isMobile ? `scale(${stageScale})` : 'scale(1)',
-            transformOrigin: 'top center',
+            transform: `translateZ(0) scale(${stageScale})`,
+            transformOrigin: 'top left',
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
           }}
         >
           {/* Back */}
