@@ -165,14 +165,39 @@ Tests cover utility functions (ending resolution, attribute level calculation, s
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/user/register` | Register a new user |
-| `POST` | `/api/user/login` | Login and receive JWT |
-| `POST` | `/api/game/result` | Save a game result |
-| `GET` | `/api/endings` | Get all possible endings |
-| `GET` | `/api/achievements` | Get achievement definitions |
-| `GET` | `/api/leaderboard` | Get global ranking list |
+### Auth & User (`/api/user`)
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/user/register` | — | Register a new user |
+| `POST` | `/api/user/login` | — | Login, receive JWT |
+| `POST` | `/api/user/google` | — | Google OAuth login |
+| `GET` | `/api/user/me` | JWT | Get current user profile |
+| `PUT` | `/api/user/password` | JWT | Change password |
+| `POST` | `/api/user/logout` | JWT | Logout |
+| `GET` | `/api/user/achievements/:userId` | — | Get user's earned achievements |
+| `GET` | `/api/user/endings/:userId` | — | Get user's unlocked endings |
+
+### Game (`/api/game`)
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/game/events?quarter=1` | — | Get selectable tasks for a quarter |
+| `GET` | `/api/game/events/random?quarter=1` | — | Get a random event for a quarter |
+| `POST` | `/api/game/result` | Optional JWT | Save a completed game result |
+| `GET` | `/api/game/results` | — | Get all results (leaderboard data) |
+| `GET` | `/api/game/result/latest` | Optional JWT | Get most recent result |
+| `GET` | `/api/game/quarterly-summary` | — | Get quarterly summary for a user |
+
+### Endings & Achievements (`/api/endings`, `/api/achievements`)
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/endings` | — | Get all possible endings |
+| `GET` | `/api/endings/:endingId` | — | Get a single ending by ID |
+| `GET` | `/api/achievements` | — | Get all achievement definitions |
+
+### Leaderboard (`/api/leaderboard`)
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/leaderboard` | — | Get global ranking list |
 
 ---
 

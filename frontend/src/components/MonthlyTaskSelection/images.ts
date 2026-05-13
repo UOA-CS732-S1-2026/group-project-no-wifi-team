@@ -31,6 +31,12 @@ import social3 from '../../assets/MonthlyTaskSelection/social3.png'
 import social4 from '../../assets/MonthlyTaskSelection/social4.png'
 import social5 from '../../assets/MonthlyTaskSelection/social5.png'
 
+export const MONTHLY_TASK_PRELOAD_IMAGES = [
+  availableTasks, availableTasksBg, taskChoiceBg,
+  selectedTasksBg, selectedTasksTitle, taskConfirmBottom,
+  taskStudy, taskSocial, taskEntertainment,
+]
+
 export const TASK_ICONS = {
   play:   [play1, play2, play3, play4, play5],
   study:  [study1, study2, study3, study4, study5],

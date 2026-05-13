@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootState } from '../store'
@@ -16,6 +16,9 @@ import { MainButtons } from '../components/TitleScreen/MainButtons'
 import { SettingsModal } from '../components/TitleScreen/SettingsModal'
 
 import { useMusicContext } from '../contexts/MusicContext'
+import { usePreloadImages } from '../utils/preloadImages'
+import { CHARACTER_SELECT_PRELOAD_IMAGES } from '../assets/CharacterSelect'
+import { API_BASE_URL } from '../utils/request'
 
 
 export function TitleScreen() {
@@ -26,6 +29,13 @@ export function TitleScreen() {
 
   const [showAboutModal, setShowAboutModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
+
+  usePreloadImages(CHARACTER_SELECT_PRELOAD_IMAGES)
+
+  // HEAD ping to wake Render's free-tier backend before user reaches task selection
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/game/events?quarter=1`, { method: 'HEAD' }).catch(() => {})
+  }, [])
 
   function handleLogout() {
     dispatch(logout())
