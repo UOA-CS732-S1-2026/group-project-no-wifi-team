@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import commonBackground from '../assets/CommonImage/common-background.png'
+import { popupBg, popupButton } from '../assets/EndingCollection'
 import { AttributeBar } from '../components/MonthlyTaskSelection'
 import type { AppDispatch, RootState } from '../store'
 import { earnAchievement, updateStats } from '../slices/gameSlice'
@@ -24,6 +25,9 @@ import {
   type RouteState,
   type TaskInteractionContent,
 } from '../components/TaskInteractionScreen'
+
+const DESIGN_WIDTH = 1536
+const DESIGN_HEIGHT = 1024
 
 interface TaskInteractionScreenProps {
   content?: TaskInteractionContent
@@ -103,6 +107,17 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
   const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
   const [showSettingsModal, setShowSettingsModal] = useState(false)
+  const [scale, setScale] = useState(1)
+
+  useEffect(() => {
+    const handleResize = () => {
+      const s = Math.min(window.innerWidth / DESIGN_WIDTH, window.innerHeight / DESIGN_HEIGHT)
+      setScale(s)
+    }
+    window.addEventListener('resize', handleResize)
+    handleResize()
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const [taskIndex, setTaskIndex] = useState(0)
 
@@ -116,6 +131,7 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
   const [stats, setStats] = useState<Record<AttributeKey, number>>(initialStats)
   const [selectedOption, setSelectedOption] = useState<ChoiceOption | null>(null)
   const [toastKey, setToastKey] = useState<string | null>(null)
+  const [pendingSnapshot, setPendingSnapshot] = useState<{ intelligence: number; health: number; wealth: number } | null>(null)
 
   const currentTask = tasks[taskIndex] ?? defaultContent
   const isLastTask = taskIndex >= tasks.length - 1
@@ -203,6 +219,12 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
     if (fx || autoOption) setStats(nextStats)
     if (autoOption?.achievementKey) tryEarnAchievement(autoOption.achievementKey)
 
+    if (nextStats.intelligence === 0 || nextStats.health === 0 || nextStats.money === 0) {
+      dispatch(updateStats({ intelligence: nextStats.intelligence, health: nextStats.health, wealth: nextStats.money }))
+      setPendingSnapshot({ intelligence: nextStats.intelligence, health: nextStats.health, wealth: nextStats.money })
+      return
+    }
+
     if (isLastTask) {
       dispatch(updateStats({ intelligence: nextStats.intelligence, health: nextStats.health, wealth: nextStats.money }))
       if (nextStats.intelligence >= 10) tryEarnAchievement('wait-am-i-actually-a-genius', false)
@@ -230,55 +252,62 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
   return (
     <div
-      className="flex h-dvh w-full flex-col overflow-hidden"
-      style={{
-        backgroundImage: `url(${commonBackground})`,
-        backgroundSize: '100% 100%',
-      }}
+      className="relative flex h-dvh w-full items-center justify-center overflow-hidden"
+      style={{ backgroundImage: `url(${commonBackground})`, backgroundSize: '100% 100%' }}
     >
-      <AttributeBar intelligence={stats.intelligence} health={stats.health} wealth={stats.money} />
-
-      <main className="flex flex-1 items-center justify-center px-8 pb-10 pt-4">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={taskIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="grid w-full max-w-[1120px] grid-cols-[minmax(0,430px)_1fr] items-stretch gap-10"
-          >
-            <TaskChoicePanel
-              currentTask={currentTask}
-              taskIndex={taskIndex}
-              totalTasks={tasks.length}
-              selectedOption={selectedOption}
-              isLastTask={isLastTask}
-              onChoice={handleChoice}
-              onNext={handleNext}
-            />
-            <TaskArtworkPanel image={currentTask.image} />
-          </motion.div>
-        </AnimatePresence>
-      </main>
-
-      <div className="pointer-events-none absolute left-8 top-8 flex gap-2">
-        <button
-          type="button"
-          aria-label="Reset task interaction"
-          onClick={handleReset}
-          className="pointer-events-auto h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark transition hover:scale-105"
+      <div
+        className="relative overflow-hidden"
+        style={{ width: `${DESIGN_WIDTH * scale}px`, height: `${DESIGN_HEIGHT * scale}px` }}
+      >
+        <div
+          className="relative origin-top-left flex flex-col"
+          style={{ width: `${DESIGN_WIDTH}px`, height: `${DESIGN_HEIGHT}px`, transform: `scale(${scale})` }}
         >
-          ↺
-        </button>
-        <button
-          type="button"
-          aria-label="Back to monthly task selection"
-          onClick={() => navigate('/monthly-task-selection')}
-          className="pointer-events-auto h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark transition hover:scale-105"
-        >
-          ←
-        </button>
+          <AttributeBar intelligence={stats.intelligence} health={stats.health} wealth={stats.money} />
+
+          <main className="flex flex-1 items-center justify-center px-8 py-6">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={taskIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="grid w-full max-w-[1120px] grid-cols-[minmax(0,430px)_1fr] items-stretch gap-10"
+              >
+                <TaskChoicePanel
+                  currentTask={currentTask}
+                  taskIndex={taskIndex}
+                  totalTasks={tasks.length}
+                  selectedOption={selectedOption}
+                  isLastTask={isLastTask}
+                  onChoice={handleChoice}
+                  onNext={handleNext}
+                />
+                <TaskArtworkPanel image={currentTask.image} />
+              </motion.div>
+            </AnimatePresence>
+          </main>
+
+          <div className="pointer-events-none absolute left-8 top-8 flex gap-2">
+            <button
+              type="button"
+              aria-label="Reset task interaction"
+              onClick={handleReset}
+              className="pointer-events-auto h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark transition hover:scale-105"
+            >
+              ↺
+            </button>
+            <button
+              type="button"
+              aria-label="Back to monthly task selection"
+              onClick={() => navigate('/monthly-task-selection')}
+              className="pointer-events-auto h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark transition hover:scale-105"
+            >
+              ←
+            </button>
+          </div>
+        </div>
       </div>
 
       <AchievementToast achievementKey={toastKey} onDismiss={dismissToast} />
@@ -300,6 +329,27 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
           onSfxToggle={setSfxEnabled}
           onClose={() => setShowSettingsModal(false)}
         />
+      )}
+
+      {pendingSnapshot && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div
+            className="relative flex w-[min(541px,90vw)] flex-col items-center justify-center gap-6 px-12 py-10"
+            style={{ backgroundImage: `url(${popupBg})`, backgroundSize: '100% 100%', aspectRatio: '541/451' }}
+          >
+            <p className="-translate-y-[30%] text-center font-serif text-[1.05rem] leading-relaxed text-[#3d2b1f]">
+              Unfortunately, you&apos;ve failed to meet the &apos;all-around development&apos; standards required of a top-tier international student.
+            </p>
+            <button
+              type="button"
+              aria-label="Close"
+              className="translate-y-[150%]"
+              onClick={() => navigate('/ending-result', { replace: true, state: { snapshot: pendingSnapshot } })}
+            >
+              <img src={popupButton} alt="Close" className="h-[53px] w-[196px]" />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )
