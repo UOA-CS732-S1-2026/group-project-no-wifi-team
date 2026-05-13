@@ -39,6 +39,8 @@ export function ToastContainer() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
+          role="status"
+          aria-live="polite"
           className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[9999] rounded-lg bg-desk-dark px-6 py-3 shadow-xl"
         >
           <p className="font-serif text-sm font-bold text-btn-text">

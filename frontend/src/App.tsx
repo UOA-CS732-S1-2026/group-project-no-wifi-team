@@ -78,9 +78,21 @@ const router = createBrowserRouter([
   },
 ], { basename: import.meta.env.BASE_URL })
 
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string
+const googleClientId = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string)?.trim()
+
+if (!googleClientId) {
+  console.error('VITE_GOOGLE_CLIENT_ID is missing or empty. Google login will not function.')
+}
 
 export default function App() {
+  if (!googleClientId) {
+    return (
+      <MusicProvider>
+        <RouterProvider router={router} />
+      </MusicProvider>
+    )
+  }
+
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
       <MusicProvider>

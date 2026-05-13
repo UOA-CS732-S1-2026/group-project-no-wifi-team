@@ -5,10 +5,9 @@ import { OAuth2Client } from 'google-auth-library';
 import { User } from '../db/user.js';
 import { UserStats } from '../db/userStats.js';
 import { authRequired } from '../middleware/auth.js';
+import { JWT_SECRET, GOOGLE_CLIENT_ID } from '../config.js';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET ?? 'no-wifi-team-jwt-secret-dev';
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? '';
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 function signToken(userId, username) {
