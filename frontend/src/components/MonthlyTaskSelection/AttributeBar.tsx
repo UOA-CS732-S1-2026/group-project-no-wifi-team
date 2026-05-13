@@ -18,7 +18,7 @@ export function AttributeBar({ intelligence, health, wealth }: Props) {
   ]
 
   return (
-    <div className="relative w-full shrink-0" style={{ height: 74, margin: '26px' }}>
+    <div className="relative w-full shrink-0" style={{ height: 74, margin: '18px 0 26px' }}>
       <img
         src={statusBar}
         alt=""

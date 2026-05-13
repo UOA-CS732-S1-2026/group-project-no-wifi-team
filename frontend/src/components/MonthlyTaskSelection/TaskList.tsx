@@ -14,7 +14,7 @@ interface Props {
 export function TaskList({ activeCategory, tasks, selectedIds, onToggle, loading }: Props) {
   return (
     <div
-      className="flex shrink-0 flex-col"
+      className="flex shrink-0 flex-col overflow-hidden"
       style={{
         width: '440px',
         marginRight: 80,
@@ -36,7 +36,6 @@ export function TaskList({ activeCategory, tasks, selectedIds, onToggle, loading
           height: '410px',
           padding: '8px 30px 24px',
           scrollbarWidth: 'none',
-          overflowX: 'visible',
         }}
       >
         {loading ? (
