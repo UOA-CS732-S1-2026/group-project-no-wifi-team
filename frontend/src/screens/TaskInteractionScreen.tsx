@@ -26,6 +26,9 @@ import {
   type TaskInteractionContent,
 } from '../components/TaskInteractionScreen'
 
+const DESIGN_WIDTH = 1536
+const DESIGN_HEIGHT = 1024
+
 interface TaskInteractionScreenProps {
   content?: TaskInteractionContent
 }
@@ -104,6 +107,17 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
   const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
   const [showSettingsModal, setShowSettingsModal] = useState(false)
+  const [scale, setScale] = useState(1)
+
+  useEffect(() => {
+    const handleResize = () => {
+      const s = Math.min(window.innerWidth / DESIGN_WIDTH, window.innerHeight / DESIGN_HEIGHT)
+      setScale(s)
+    }
+    window.addEventListener('resize', handleResize)
+    handleResize()
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const [taskIndex, setTaskIndex] = useState(0)
 
@@ -238,55 +252,62 @@ export function TaskInteractionScreen({ content }: TaskInteractionScreenProps) {
 
   return (
     <div
-      className="flex h-dvh w-full flex-col overflow-hidden"
-      style={{
-        backgroundImage: `url(${commonBackground})`,
-        backgroundSize: '100% 100%',
-      }}
+      className="relative flex h-dvh w-full items-center justify-center overflow-hidden"
+      style={{ backgroundImage: `url(${commonBackground})`, backgroundSize: '100% 100%' }}
     >
-      <AttributeBar intelligence={stats.intelligence} health={stats.health} wealth={stats.money} />
-
-      <main className="flex flex-1 items-center justify-center px-8 py-6">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={taskIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="grid w-full max-w-[1120px] grid-cols-[minmax(0,430px)_1fr] items-stretch gap-10"
-          >
-            <TaskChoicePanel
-              currentTask={currentTask}
-              taskIndex={taskIndex}
-              totalTasks={tasks.length}
-              selectedOption={selectedOption}
-              isLastTask={isLastTask}
-              onChoice={handleChoice}
-              onNext={handleNext}
-            />
-            <TaskArtworkPanel image={currentTask.image} />
-          </motion.div>
-        </AnimatePresence>
-      </main>
-
-      <div className="pointer-events-none absolute left-8 top-8 flex gap-2">
-        <button
-          type="button"
-          aria-label="Reset task interaction"
-          onClick={handleReset}
-          className="pointer-events-auto h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark transition hover:scale-105"
+      <div
+        className="relative overflow-hidden"
+        style={{ width: `${DESIGN_WIDTH * scale}px`, height: `${DESIGN_HEIGHT * scale}px` }}
+      >
+        <div
+          className="relative origin-top-left flex flex-col"
+          style={{ width: `${DESIGN_WIDTH}px`, height: `${DESIGN_HEIGHT}px`, transform: `scale(${scale})` }}
         >
-          ↺
-        </button>
-        <button
-          type="button"
-          aria-label="Back to monthly task selection"
-          onClick={() => navigate('/monthly-task-selection')}
-          className="pointer-events-auto h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark transition hover:scale-105"
-        >
-          ←
-        </button>
+          <AttributeBar intelligence={stats.intelligence} health={stats.health} wealth={stats.money} />
+
+          <main className="flex flex-1 items-center justify-center px-8 py-6">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={taskIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="grid w-full max-w-[1120px] grid-cols-[minmax(0,430px)_1fr] items-stretch gap-10"
+              >
+                <TaskChoicePanel
+                  currentTask={currentTask}
+                  taskIndex={taskIndex}
+                  totalTasks={tasks.length}
+                  selectedOption={selectedOption}
+                  isLastTask={isLastTask}
+                  onChoice={handleChoice}
+                  onNext={handleNext}
+                />
+                <TaskArtworkPanel image={currentTask.image} />
+              </motion.div>
+            </AnimatePresence>
+          </main>
+
+          <div className="pointer-events-none absolute left-8 top-8 flex gap-2">
+            <button
+              type="button"
+              aria-label="Reset task interaction"
+              onClick={handleReset}
+              className="pointer-events-auto h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark transition hover:scale-105"
+            >
+              ↺
+            </button>
+            <button
+              type="button"
+              aria-label="Back to monthly task selection"
+              onClick={() => navigate('/monthly-task-selection')}
+              className="pointer-events-auto h-9 w-9 rounded-full font-serif text-xl font-bold text-desk-dark transition hover:scale-105"
+            >
+              ←
+            </button>
+          </div>
+        </div>
       </div>
 
       <AchievementToast achievementKey={toastKey} onDismiss={dismissToast} />
