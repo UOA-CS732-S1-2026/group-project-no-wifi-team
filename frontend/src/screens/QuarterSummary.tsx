@@ -13,10 +13,10 @@ import {
   quarterArrowUp,
   quarterTitle,
   nextBtn,
+  viewEndingBtn,
   statusBrain,
   statusHealth,
   statusWealth,
-  viewEnding,
 } from '../assets/QuarterPage'
 
 // Explicit design dimensions requested
@@ -26,8 +26,8 @@ const DESIGN_HEIGHT = 1024
 const statusIcons = [statusBrain, statusHealth, statusWealth]
 
 interface QuarterlySummaryProps {
-  quarterName?: string // e.g. "Quarter 1" or "Orientation"
-  quarterIndex?: number
+  quarterName?: string // 例如 "Quarter 1" 或 "Orientation"
+  quarterIndex?: number // 1, 2, 3, 4
   stats?: {
     label: string
     value: number
@@ -315,7 +315,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
                 onClick={() => navigate('/next-quarter')}
                 className="w-[540px] h-[115px] cursor-pointer"
               >
-                <img src={quartersRemaining > 0 ? nextBtn : viewEnding} alt={quartersRemaining === 0 ? 'View Ending' : 'Next Quarter'} className="w-full" />
+                <img src={quartersRemaining === 0 ? viewEndingBtn : nextBtn} alt={quartersRemaining === 0 ? 'View Ending' : 'Next Quarter'} className="w-full" />
               </motion.button>
             </motion.div>
           </motion.div>
@@ -325,7 +325,7 @@ export function QuarterlySummary({ ...initialProps }: QuarterlySummaryProps) {
       <button
         type="button"
         onClick={() => setShowSettingsModal(true)}
-        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px] cursor-pointer"
+        className="fixed bottom-[2vh] right-[2vw] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:w-[74px]"
         aria-label="Settings"
       >
         <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />

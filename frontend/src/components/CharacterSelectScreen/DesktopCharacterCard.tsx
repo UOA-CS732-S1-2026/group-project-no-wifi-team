@@ -1,4 +1,3 @@
-import { motion } from 'motion/react'
 import { AttributeInfoTip } from './AttributeInfoTip'
 import { AttributeRow } from './AttributeRow'
 import { Character } from './constants'
@@ -24,16 +23,16 @@ export function DesktopCharacterCard({
           />
         </div>
 
-        <h2 className="flex h-full -translate-y-[5px] items-center justify-center text-2xl font-bold leading-[1.08] text-[#5a3218]">
+        <h2 className="flex h-full -translate-y-[5px] items-center justify-center text-[23px] font-bold leading-[1.08] text-[#5a3218]">
           {character.title}
         </h2>
 
-        <p className="flex h-full -translate-y-[20px] items-center justify-center text-sm font-bold leading-[1.25] tracking-[0.13em] text-[#9b6540]">
+        <p className="flex h-full -translate-y-[20px] items-center justify-center text-[11px] font-bold leading-[1.25] tracking-[0.13em] text-[#9b6540]">
           {character.subtitle}
         </p>
 
         <div className="flex h-full -translate-y-[20px] items-center justify-center rounded-[14px] bg-[#f4e4c8]/90 px-4 shadow-inner">
-          <p className="text-sm leading-[1.45] text-[#714729]">{character.description}</p>
+          <p className="text-[12px] leading-[1.45] text-[#714729]">{character.description}</p>
         </div>
 
         <div className="w-full -translate-y-[5px] overflow-hidden rounded-[15px] border-[2px] border-[#ddb786] bg-[#fffaf0]">
@@ -42,27 +41,14 @@ export function DesktopCharacterCard({
           <AttributeRow label="WEALTH" value={character.stats.wealth} />
         </div>
 
-        <motion.button
+        <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            onSelect(character)
-          }}
-          variants={{
-            pulse: {
-              scale: [1, 1.06, 1],
-              transition: { duration: 1.4, repeat: Infinity, ease: 'easeInOut' },
-            },
-            hover: { scale: 1.15 },
-          }}
-          animate="pulse"
-          whileHover="hover"
-          whileTap={{ scale: 0.95 }}
-          className="mx-auto block w-[240px] cursor-pointer"
+          onClick={() => onSelect(character)}
+          className="mx-auto block w-[240px] transition duration-200 hover:scale-105 active:scale-95"
           aria-label={`Select ${character.title}`}
         >
           <img src={character.selectButton} alt="Select" className="w-full object-contain" />
-        </motion.button>
+        </button>
       </div>
     </article>
   )

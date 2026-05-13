@@ -14,19 +14,16 @@ export function TaskCard({ task, selected, onToggle }: Props) {
       layout
       layoutId={task.id}
       exit={{ opacity: 0, scale: 0.9 }}
-      // Ensure moving cards are always on top
       style={{
         zIndex: selected ? 50 : 1,
         position: 'relative',
-        ...{
-          width: '380px',
-          height: '110px',
-          backgroundImage: `url(${availableTasks})`,
-          backgroundSize: '100% 100%',
-          backgroundRepeat: 'no-repeat',
-          outline: selected ? '2px solid #7a5c3a' : '2px solid transparent',
-          filter: selected ? 'brightness(0.93)' : 'none',
-        }
+        width: '380px',
+        height: '110px',
+        backgroundImage: `url(${availableTasks})`,
+        backgroundSize: '100% 100%',
+        backgroundRepeat: 'no-repeat',
+        outline: selected ? '2px solid #7a5c3a' : '2px solid transparent',
+        filter: selected ? 'brightness(0.93)' : 'none',
       }}
       onClick={onToggle}
       data-sfx="task-select"
