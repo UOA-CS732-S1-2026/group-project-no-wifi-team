@@ -23,4 +23,5 @@ export {
   statusHealth,
   statusWealth,
   viewEnding,
+  viewEnding as viewEndingBtn,
 }

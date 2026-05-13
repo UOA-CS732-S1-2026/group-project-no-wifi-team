@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'motion/react'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootState } from '../store'
 import { resetGame } from '../slices/gameSlice'
@@ -41,34 +40,21 @@ export function TitleScreen() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,245,218,0.10),rgba(80,48,22,0.08)_58%,rgba(42,24,12,0.16))]" />
 
       <section className="relative z-20 h-dvh w-full overflow-hidden px-4 py-3 sm:px-8 sm:py-4">
-        <motion.div
-          className="mx-auto flex w-full justify-center"
-          initial={{ y: '25vh', scale: 1.4, opacity: 0 }}
-          animate={{ y: 0, scale: 1, opacity: 1 }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-        >
+        <div className="mx-auto flex w-full justify-center">
           <img
             src={titleBannerImg}
             alt="International Student Simulator"
             className="w-[96vw] max-w-[1050px] object-contain drop-shadow-[0_8px_16px_rgba(60,35,15,0.18)] sm:w-[88vw] lg:w-[78vw]"
           />
-        </motion.div>
+        </div>
 
-        <motion.img
+        <img
           src={studentImg}
           alt="Student studying at a desk"
-          initial={{ x: '15vw', y: '-15vh', opacity: 0, scale: 1.2 }}
-          animate={{ x: 0, y: 0, opacity: 1, scale: 1 }}
-          transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}
           className="absolute bottom-0 left-[57%] z-20 w-[136px] -translate-x-1/2 drop-shadow-[0_18px_18px_rgba(40,24,12,0.32)] sm:bottom-0 sm:left-[8%] sm:w-[182px] sm:translate-x-0 lg:w-[324px] xl:w-[363px]"
         />
 
-        <motion.div
-          initial={{ opacity: 0, y: 200 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.8, duration: 0.6 }}
-          className="absolute left-1/2 top-[60%] z-30 -translate-x-1/2 -translate-y-1/2 sm:top-[60%]"
-        >
+        <div className="absolute left-1/2 top-[60%] z-30 -translate-x-1/2 -translate-y-1/2 sm:top-[60%]">
           <MainButtons
             onStart={() => { dispatch(resetGame()); navigate('/characters') }}
             onAbout={() => setShowAboutModal(true)}
@@ -86,19 +72,16 @@ export function TitleScreen() {
               </button>
             </div>
           )}
-        </motion.div>
+        </div>
 
-        <motion.button
+        <button
           type="button"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2.2, duration: 0.4 }}
           onClick={() => setShowSettingsModal(true)}
           className="absolute bottom-[8%] right-[12%] z-30 w-[54px] transition duration-200 hover:rotate-45 hover:scale-110 active:scale-95 sm:right-[8%] sm:w-[74px] cursor-pointer"
           aria-label="Settings"
         >
           <img src={settingImg} alt="Settings" className="w-full drop-shadow-lg" />
-        </motion.button>
+        </button>
       </section>
 
       {showAboutModal && <AboutModal onClose={() => setShowAboutModal(false)} />}

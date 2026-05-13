@@ -26,7 +26,6 @@ export function MonthlyPlanBoard({
 }: Props) {
   const [randomSlotFinished, setRandomSlotFinished] = useState(false)
 
-  // Reset the sequence if player removes a task and selectedCount drops
   useEffect(() => {
     if (!allSelected) {
       setRandomSlotFinished(false)
@@ -75,13 +74,11 @@ export function MonthlyPlanBoard({
           {allSelected && (
             <motion.div
               key="random-task-slot"
-              layout
               initial={{ opacity: 0, scale: 1.05, y: -40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 1.05, y: -40 }}
               transition={{ delay: 0.6, duration: 0.4, ease: 'easeOut' }}
               onAnimationComplete={(definition) => {
-                // Only trigger the button appearance after the entrance animation (opacity 1) is done
                 if (typeof definition === 'object' && definition.opacity === 1) {
                   setRandomSlotFinished(true)
                 }
