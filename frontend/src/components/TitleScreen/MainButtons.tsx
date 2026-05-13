@@ -1,16 +1,48 @@
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { useGoogleLogin } from '@react-oauth/google'
+import { post } from '../../utils/request'
+import { loginSuccess } from '../../slices/authSlice'
+import type { AppDispatch } from '../../store'
 import { aboutUs as aboutUsImg, signIn as signInImg, startGame as startGameImg } from '../../assets/gamebegin'
+
+interface AuthResponse {
+  token: string
+  userId: string
+  username: string
+  email: string
+  achievements?: string[]
+  endings?: string[]
+  totalPlays?: number
+}
 
 export function MainButtons({
   onStart,
   onAbout,
-  onSignIn,
   isLoggedIn,
 }: {
   onStart: () => void
   onAbout: () => void
-  onSignIn: () => void
   isLoggedIn?: boolean
 }) {
+  const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
+
+  const googleLogin = useGoogleLogin({
+    scope: 'email profile openid',
+    onSuccess: async (tokenResponse) => {
+      try {
+        const data = await post<AuthResponse>('/user/google', {
+          access_token: tokenResponse.access_token
+        })
+        dispatch(loginSuccess(data))
+        navigate('/characters')
+      } catch {
+        // silently ignore
+      }
+    },
+  })
+
   return (
     <div className="flex flex-col items-center justify-center">
       <button
@@ -39,7 +71,7 @@ export function MainButtons({
         {!isLoggedIn && (
           <button
             type="button"
-            onClick={onSignIn}
+            onClick={() => googleLogin()}
             className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px] cursor-pointer"
             aria-label="Sign In"
           >

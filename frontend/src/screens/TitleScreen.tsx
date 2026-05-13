@@ -15,7 +15,7 @@ import {
 import { AboutModal } from '../components/TitleScreen/AboutModal'
 import { MainButtons } from '../components/TitleScreen/MainButtons'
 import { SettingsModal } from '../components/TitleScreen/SettingsModal'
-import { SignInModal } from '../components/TitleScreen/SignInModal'
+
 import { useMusicContext } from '../contexts/MusicContext'
 
 
@@ -26,7 +26,6 @@ export function TitleScreen() {
   const auth = useSelector((s: RootState) => s.auth)
 
   const [showAboutModal, setShowAboutModal] = useState(false)
-  const [showSignInModal, setShowSignInModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   function handleLogout() {
@@ -73,7 +72,6 @@ export function TitleScreen() {
           <MainButtons
             onStart={() => { dispatch(resetGame()); navigate('/characters') }}
             onAbout={() => setShowAboutModal(true)}
-            onSignIn={() => setShowSignInModal(true)}
             isLoggedIn={!!auth.token}
           />
           {auth.token && (
@@ -105,7 +103,6 @@ export function TitleScreen() {
 
       {showAboutModal && <AboutModal onClose={() => setShowAboutModal(false)} />}
 
-      {showSignInModal && <SignInModal onClose={() => setShowSignInModal(false)} />}
 
       {showSettingsModal && (
         <SettingsModal
