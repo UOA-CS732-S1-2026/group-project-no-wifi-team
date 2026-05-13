@@ -37,11 +37,29 @@ export function MonthlyTaskSelection() {
   const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
     setLoading(true)
-    fetchEventsByQuarter(quarter)
-      .then(({ events }) => setTasks(events.map(mapEventToTask)))
-      .catch(() => {})
-      .finally(() => setLoading(false))
+
+    const attempt = (retriesLeft: number) => {
+      fetchEventsByQuarter(quarter)
+        .then(({ events }) => {
+          if (!cancelled) {
+            setTasks(events.map(mapEventToTask))
+            setLoading(false)
+          }
+        })
+        .catch(() => {
+          if (cancelled) return
+          if (retriesLeft > 0) {
+            setTimeout(() => attempt(retriesLeft - 1), 2000)
+          } else {
+            setLoading(false)
+          }
+        })
+    }
+
+    attempt(2)
+    return () => { cancelled = true }
   }, [quarter])
 
   const visibleTasks = tasks.filter(

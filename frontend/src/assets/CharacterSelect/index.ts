@@ -1,22 +1,32 @@
-export { default as characterBg } from '../CommonImage/common-background.png'
+import characterBg from '../CommonImage/common-background.png'
+import heroLeft from './hero-left.png'
+import heroRight from './hero-right.png'
+import heroPlane from './hero-plane.png'
+import backHomeBtn from './back-home-btn.png'
+import arrowLeft from './arrow-left.png'
+import arrowRight from './arrow-right.png'
+import iconAcademic from './icon-academic.png'
+import iconRich from './icon-rich.png'
+import iconFitness from './icon-fitness.png'
+import iconOrdinary from './icon-ordinary.png'
+import iconHeavenlyDragon from './icon-heavenly-dragon.png'
+import iconWorking from './icon-working.png'
+import selectGreen from './card-select-green.png'
+import selectGold from './card-select-gold.png'
+import selectBlue from './card-select-blue.png'
+import selectRed from './card-select-red.png'
+import selectBrown from './card-select-brown.png'
 
-export { default as heroLeft } from './hero-left.png'
-export { default as heroRight } from './hero-right.png'
-export { default as heroPlane } from './hero-plane.png'
+export {
+  characterBg, heroLeft, heroRight, heroPlane,
+  backHomeBtn, arrowLeft, arrowRight,
+  iconAcademic, iconRich, iconFitness, iconOrdinary, iconHeavenlyDragon, iconWorking,
+  selectGreen, selectGold, selectBlue, selectRed, selectBrown,
+}
 
-export { default as backHomeBtn } from './back-home-btn.png'
-export { default as arrowLeft } from './arrow-left.png'
-export { default as arrowRight } from './arrow-right.png'
-
-export { default as iconAcademic } from './icon-academic.png'
-export { default as iconRich } from './icon-rich.png'
-export { default as iconFitness } from './icon-fitness.png'
-export { default as iconOrdinary } from './icon-ordinary.png'
-export { default as iconHeavenlyDragon } from './icon-heavenly-dragon.png'
-export { default as iconWorking } from './icon-working.png'
-
-export { default as selectGreen } from './card-select-green.png'
-export { default as selectGold } from './card-select-gold.png'
-export { default as selectBlue } from './card-select-blue.png'
-export { default as selectRed } from './card-select-red.png'
-export { default as selectBrown } from './card-select-brown.png'
+export const CHARACTER_SELECT_PRELOAD_IMAGES = [
+  characterBg, heroLeft, heroRight, heroPlane,
+  backHomeBtn, arrowLeft, arrowRight,
+  iconAcademic, iconRich, iconFitness, iconOrdinary, iconHeavenlyDragon, iconWorking,
+  selectGreen, selectGold, selectBlue, selectRed, selectBrown,
+]
