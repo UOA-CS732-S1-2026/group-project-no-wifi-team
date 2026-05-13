@@ -79,7 +79,7 @@ export function MonthlyPlanBoard({
               exit={{ opacity: 0, scale: 1.05, y: -40 }}
               transition={{ delay: 0.6, duration: 0.4, ease: 'easeOut' }}
               onAnimationComplete={(definition) => {
-                if (typeof definition === 'object' && definition.opacity === 1) {
+                if (typeof definition === 'object' && !Array.isArray(definition) && (definition as Record<string, unknown>).opacity === 1) {
                   setRandomSlotFinished(true)
                 }
               }}

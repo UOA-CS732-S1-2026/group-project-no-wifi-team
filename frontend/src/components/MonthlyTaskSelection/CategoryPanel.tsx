@@ -9,7 +9,7 @@ import {
 // Panel: 200×340px. Each tab: 200×68px.
 // Images are 2508×627 (4:1). objectFit:cover at 200×68 — no distortion, crops the sides.
 
-const CATEGORY_IMAGES: Record<Category, { normal: string; active: string }> = {
+const CATEGORY_IMAGES: Record<Exclude<Category, 'Random'>, { normal: string; active: string }> = {
   Study: { normal: taskStudy, active: taskStudyChoice },
   Social: { normal: taskSocial, active: taskSocialChoice },
   Entertainment: { normal: taskEntertainment, active: taskEntertainmentChoice },
@@ -34,7 +34,7 @@ export function CategoryPanel({ active, onSelect }: Props) {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {CATEGORIES.map((cat) => {
+      {CATEGORIES.filter((cat): cat is Exclude<Category, 'Random'> => cat !== 'Random').map((cat) => {
         const imgs = CATEGORY_IMAGES[cat]
         const isActive = active === cat
         return (
