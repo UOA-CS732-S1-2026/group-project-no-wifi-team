@@ -2,10 +2,11 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 export const AUTH_TOKEN_KEY = 'auth_token'
 const AUTH_PROFILE_KEY = 'auth_profile'
+const GUEST_ID_KEY = 'guest_id'
 
 interface AuthState {
   token: string | null
-  userId: string | null
+  userId: string
   username: string | null
   email: string | null
   achievements: string[]
@@ -13,11 +14,28 @@ interface AuthState {
   totalPlays: number
 }
 
+function makeGuestId(): string {
+  return crypto.randomUUID?.() ?? 'guest-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8)
+}
+
+function resolveGuestId(): string {
+  try {
+    const id = localStorage.getItem(GUEST_ID_KEY)
+    if (id) return id
+    const fresh = makeGuestId()
+    localStorage.setItem(GUEST_ID_KEY, fresh)
+    return fresh
+  } catch {
+    return makeGuestId()
+  }
+}
+
 function loadInitialState(): AuthState {
+  const empty = { achievements: [] as string[], endings: [] as string[], totalPlays: 0 }
   try {
     const token = localStorage.getItem(AUTH_TOKEN_KEY)
     if (!token) {
-      return { token: null, userId: null, username: null, email: null, achievements: [], endings: [], totalPlays: 0 }
+      return { token: null, userId: resolveGuestId(), username: null, email: null, ...empty }
     }
     let profile: Partial<AuthState> | null = null
     try {
@@ -25,7 +43,7 @@ function loadInitialState(): AuthState {
     } catch { /* corrupted profile — recover with token only */ }
     return {
       token,
-      userId: profile?.userId ?? null,
+      userId: profile?.userId ?? resolveGuestId(),
       username: profile?.username ?? null,
       email: profile?.email ?? null,
       achievements: profile?.achievements ?? [],
@@ -33,7 +51,7 @@ function loadInitialState(): AuthState {
       totalPlays: profile?.totalPlays ?? 0,
     }
   } catch { /* localStorage unavailable */ }
-  return { token: null, userId: null, username: null, email: null, achievements: [], endings: [], totalPlays: 0 }
+  return { token: null, userId: resolveGuestId(), username: null, email: null, ...empty }
 }
 
 const initialState: AuthState = loadInitialState()
@@ -66,7 +84,7 @@ const authSlice = createSlice({
     },
     logout(state) {
       state.token = null
-      state.userId = null
+      state.userId = resolveGuestId()
       state.username = null
       state.email = null
       state.achievements = []

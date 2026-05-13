@@ -151,6 +151,7 @@ export function EndingResultScreen() {
       id:          resultId,
       characterId,
       playerName,
+      userId:      auth.userId,
       score,
       endingId:    ending.id,
       endingTitle: ending.title,
@@ -222,7 +223,7 @@ export function EndingResultScreen() {
                 ENDING
               </motion.span>
               <motion.span
-                className="text-[3vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.3)]"
+                className="text-[2.9vw] font-bold text-[#4a3120] leading-none whitespace-nowrap tracking-wide [transform:scaleY(1.3)]"
                 style={{ fontFamily: '"Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif' }}
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
