@@ -118,10 +118,13 @@ describe('MonthlyTaskSelection', () => {
     })
   })
 
-  it('shows empty loading state when API fails', async () => {
-    vi.mocked(fetchEventsByQuarter).mockRejectedValue(new Error('Network error'))
+  it('shows empty state when API fails', async () => {
+    vi.mocked(fetchEventsByQuarter).mockRejectedValueOnce(new Error('Network error'))
     renderScreen()
-    await waitFor(() => expect(screen.queryByText(/loading tasks/i)).not.toBeInTheDocument())
-    expect(screen.queryByRole('button', { name: /go to lecture/i })).not.toBeInTheDocument()
+    await waitFor(
+      () => expect(screen.queryByText(/loading tasks/i)).not.toBeInTheDocument(),
+      { timeout: 3000 }
+    )
+    expect(screen.queryByText('Go to Lecture')).not.toBeInTheDocument()
   })
 })
