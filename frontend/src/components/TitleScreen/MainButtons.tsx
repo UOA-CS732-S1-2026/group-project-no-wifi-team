@@ -75,14 +75,14 @@ export function MainButtons({
         />
       </button>
 
-      <div className="mt-4 flex items-center justify-center gap-10 sm:mt-5">
+      <div className="mt-4 flex items-center justify-center gap-20 sm:mt-5">
         <button
           type="button"
           onClick={onAbout}
-          className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px] cursor-pointer"
+          className="w-[90px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[100px] cursor-pointer"
           aria-label="About Us"
         >
-          <img src={aboutUsImg} alt="About Us" className="w-full scale-125 drop-shadow-md sm:scale-140" />
+          <img src={aboutUsImg} alt="About Us" className="w-full scale-110 drop-shadow-md sm:scale-125" />
         </button>
 
         {!isLoggedIn ? (
