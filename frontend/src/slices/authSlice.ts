@@ -80,11 +80,16 @@ const authSlice = createSlice({
           endings: state.endings,
           totalPlays: state.totalPlays,
         }))
+        // Clear guest-era data so it doesn't leak into the logged-in session
+        localStorage.removeItem('earned_achievements')
+        localStorage.removeItem('selected_character')
+        localStorage.removeItem('game_history')
+        localStorage.removeItem('last_game_result_id')
+        localStorage.removeItem(GUEST_ID_KEY)
       } catch { /* quota exceeded or storage disabled */ }
     },
     logout(state) {
       state.token = null
-      state.userId = resolveGuestId()
       state.username = null
       state.email = null
       state.achievements = []
@@ -96,7 +101,11 @@ const authSlice = createSlice({
         localStorage.removeItem('earned_achievements')
         localStorage.removeItem('selected_character')
         localStorage.removeItem('game_history')
+        localStorage.removeItem('last_game_result_id')
+        localStorage.removeItem('username')
+        localStorage.removeItem(GUEST_ID_KEY)
       } catch { /* storage disabled */ }
+      state.userId = resolveGuestId()
     },
     setStats(state, action: PayloadAction<{ achievements?: string[]; endings?: string[]; totalPlays?: number }>) {
       if (action.payload.achievements) state.achievements = action.payload.achievements

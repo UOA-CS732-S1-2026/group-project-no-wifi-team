@@ -32,7 +32,9 @@ const gameHistorySlice = createSlice({
   initialState,
   reducers: {
     addRecord(state, action: PayloadAction<GameResult>) {
-      state.records.push(action.payload)
+      if (!state.records.some(r => r.id === action.payload.id)) {
+        state.records.push(action.payload)
+      }
     },
     clearHistory(state) {
       state.records = []

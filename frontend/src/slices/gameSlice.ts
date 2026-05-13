@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { Character, CharacterStats } from '../components/CharacterSelectScreen/constants'
 import type { Task } from '../components/MonthlyTaskSelection/types'
+import { loginSuccess, logout } from './authSlice'
 
 interface QuarterTasks {
   selectedTasks: Task[]   // 3 player-chosen tasks
@@ -95,6 +96,17 @@ const gameSlice = createSlice({
       persistAchievements([])
       try { localStorage.removeItem(CHARACTER_KEY) } catch { /* quota */ }
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginSuccess, (state, action) => {
+        state.earnedAchievements = action.payload.achievements ?? []
+        persistAchievements(state.earnedAchievements)
+      })
+      .addCase(logout, (state) => {
+        state.earnedAchievements = []
+        persistAchievements([])
+      })
   },
 })
 
