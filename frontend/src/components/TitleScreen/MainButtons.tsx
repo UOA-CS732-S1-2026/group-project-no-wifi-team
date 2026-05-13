@@ -1,16 +1,50 @@
-import { aboutUs as aboutUsImg, signIn as signInImg, startGame as startGameImg } from '../../assets/gamebegin'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { useGoogleLogin } from '@react-oauth/google'
+import { post } from '../../utils/request'
+import { loginSuccess } from '../../slices/authSlice'
+import type { AppDispatch } from '../../store'
+import { aboutUs as aboutUsImg, signIn as signInImg, signout as signoutImg, startGame as startGameImg } from '../../assets/gamebegin'
+
+interface AuthResponse {
+  token: string
+  userId: string
+  username: string
+  email: string
+  achievements?: string[]
+  endings?: string[]
+  totalPlays?: number
+}
 
 export function MainButtons({
   onStart,
   onAbout,
-  onSignIn,
+  onLogout,
   isLoggedIn,
 }: {
   onStart: () => void
   onAbout: () => void
-  onSignIn: () => void
+  onLogout: () => void
   isLoggedIn?: boolean
 }) {
+  const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
+
+  const googleLogin = useGoogleLogin({
+    scope: 'email profile openid',
+    onSuccess: async (tokenResponse) => {
+      try {
+        const data = await post<AuthResponse>('/user/google', {
+          access_token: tokenResponse.access_token
+        })
+        dispatch(loginSuccess(data))
+        navigate('/characters')
+      } catch {
+        // silently ignore
+      }
+    },
+  })
+
   return (
     <div className="flex flex-col items-center justify-center">
       <button
@@ -36,14 +70,23 @@ export function MainButtons({
           <img src={aboutUsImg} alt="About Us" className="w-full scale-125 drop-shadow-md sm:scale-140" />
         </button>
 
-        {!isLoggedIn && (
+        {!isLoggedIn ? (
           <button
             type="button"
-            onClick={onSignIn}
-            className="w-[118px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[160px] cursor-pointer"
+            onClick={() => googleLogin()}
+            className="w-[90px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[100px] cursor-pointer"
             aria-label="Sign In"
           >
             <img src={signInImg} alt="Sign In" className="w-full scale-125 drop-shadow-md sm:scale-140" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onLogout}
+            className="w-[90px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[100px] cursor-pointer"
+            aria-label="Sign Out"
+          >
+            <img src={signoutImg} alt="Sign Out" className="w-full scale-125 drop-shadow-md sm:scale-140" />
           </button>
         )}
       </div>

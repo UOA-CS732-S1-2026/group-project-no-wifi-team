@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET ?? 'no-wifi-team-jwt-secret-dev';
+import { JWT_SECRET } from '../config.js';
 
 export function authRequired(req, res, next) {
   const header = req.headers.authorization;
@@ -27,7 +26,7 @@ export function authOptional(req, res, next) {
     req.userId = payload.userId;
     req.username = payload.username;
   } catch {
-    // token invalid — treat as guest
+    req.authInvalid = true;
   }
   next();
 }

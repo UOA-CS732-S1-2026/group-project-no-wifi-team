@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import { CharacterSelectScreen } from './screens/CharacterSelectScreen'
 import { QuarterlySummary } from './screens/QuarterSummary'
 import { TaskInteractionScreen } from './screens/TaskInteractionScreen'
@@ -77,10 +78,26 @@ const router = createBrowserRouter([
   },
 ], { basename: import.meta.env.BASE_URL })
 
+const googleClientId = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string)?.trim()
+
+if (!googleClientId) {
+  console.error('VITE_GOOGLE_CLIENT_ID is missing or empty. Google login will not function.')
+}
+
 export default function App() {
+  if (!googleClientId) {
+    return (
+      <MusicProvider>
+        <RouterProvider router={router} />
+      </MusicProvider>
+    )
+  }
+
   return (
-    <MusicProvider>
-      <RouterProvider router={router} />
-    </MusicProvider>
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <MusicProvider>
+        <RouterProvider router={router} />
+      </MusicProvider>
+    </GoogleOAuthProvider>
   )
 }
