@@ -14,7 +14,7 @@ import {
 import { AboutModal } from '../components/TitleScreen/AboutModal'
 import { MainButtons } from '../components/TitleScreen/MainButtons'
 import { SettingsModal } from '../components/TitleScreen/SettingsModal'
-import { SignInModal } from '../components/TitleScreen/SignInModal'
+
 import { useMusicContext } from '../contexts/MusicContext'
 
 
@@ -25,7 +25,6 @@ export function TitleScreen() {
   const auth = useSelector((s: RootState) => s.auth)
 
   const [showAboutModal, setShowAboutModal] = useState(false)
-  const [showSignInModal, setShowSignInModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   function handleLogout() {
@@ -59,20 +58,11 @@ export function TitleScreen() {
           <MainButtons
             onStart={() => { dispatch(resetGame()); navigate('/characters') }}
             onAbout={() => setShowAboutModal(true)}
-            onSignIn={() => setShowSignInModal(true)}
+            onLogout={handleLogout}
             isLoggedIn={!!auth.token}
           />
           {auth.token && (
-            <div className="mt-5 flex flex-col items-center gap-2">
-              <p className="text-sm font-bold text-[#5a3010]">Welcome, {auth.username}</p>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="rounded-full border border-[#6b3f25] bg-[#f7e8c6] px-5 py-1 text-xs font-bold text-[#7a4b2b] cursor-pointer hover:bg-[#e8d5a8] transition"
-              >
-                Logout
-              </button>
-            </div>
+            <p className="mt-5 text-center text-sm font-bold text-[#5a3010]">Welcome, {auth.username || 'Player'}</p>
           )}
         </div>
 
@@ -88,7 +78,6 @@ export function TitleScreen() {
 
       {showAboutModal && <AboutModal onClose={() => setShowAboutModal(false)} />}
 
-      {showSignInModal && <SignInModal onClose={() => setShowSignInModal(false)} />}
 
       {showSettingsModal && (
         <SettingsModal

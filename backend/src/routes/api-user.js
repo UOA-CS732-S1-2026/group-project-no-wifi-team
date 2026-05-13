@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 import { User } from '../db/user.js';
 import { UserStats } from '../db/userStats.js';
 import { authRequired } from '../middleware/auth.js';
+import { JWT_SECRET, GOOGLE_CLIENT_ID } from '../config.js';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET ?? 'no-wifi-team-jwt-secret-dev';
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 function signToken(userId, username) {
   return jwt.sign({ userId, username }, JWT_SECRET, { expiresIn: '7d' });
@@ -67,7 +69,7 @@ router.post('/login', async (req, res) => {
     }
 
     const user = await User.findOne({ email: email.trim().toLowerCase() });
-    if (!user) {
+    if (!user || !user.passwordHash) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
@@ -130,6 +132,9 @@ router.put('/password', authRequired, async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+    if (!user.passwordHash) {
+      return res.status(400).json({ error: 'Google-authenticated accounts do not have a password' });
+    }
 
     const valid = await bcrypt.compare(oldPassword, user.passwordHash);
     if (!valid) {
@@ -148,6 +153,72 @@ router.put('/password', authRequired, async (req, res) => {
 // POST /user/logout (client-side token removal is sufficient; this is a no-op endpoint)
 router.post('/logout', (_req, res) => {
   res.json({ message: 'Logged out' });
+});
+
+// POST /user/google
+router.post('/google', async (req, res) => {
+  try {
+    const { access_token } = req.body;
+    if (!access_token || typeof access_token !== 'string') {
+      return res.status(400).json({ error: 'Google access token is required' });
+    }
+
+    if (!GOOGLE_CLIENT_ID) {
+      return res.status(500).json({ error: 'Google login is not configured' });
+    }
+
+    const tokenInfo = await googleClient.getTokenInfo(access_token);
+
+    if (!tokenInfo.email) {
+      return res.status(400).json({ error: 'Invalid Google access token' });
+    }
+
+    // Verify the token is issued to our app
+    if (tokenInfo.aud !== GOOGLE_CLIENT_ID) {
+      return res.status(400).json({ error: 'Token was not issued to this application' });
+    }
+
+    // Fetch user display name from Google's userinfo endpoint
+    let displayName = tokenInfo.email.split('@')[0];
+    try {
+      const userInfoClient = new OAuth2Client();
+      userInfoClient.setCredentials({ access_token });
+      const { data } = await userInfoClient.request({
+        url: 'https://www.googleapis.com/oauth2/v3/userinfo',
+      });
+      if (typeof data === 'object' && data && 'name' in data && typeof data.name === 'string') {
+        displayName = data.name;
+      }
+    } catch {
+      // Use email prefix as fallback
+    }
+
+    const email = tokenInfo.email.toLowerCase();
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        username: displayName,
+        email,
+      });
+      await UserStats.create({ userId: user.userId });
+    }
+
+    const stats = await UserStats.findOne({ userId: user.userId });
+    const token = signToken(user.userId, user.username);
+    res.json({
+      token,
+      userId: user.userId,
+      username: user.username,
+      email: user.email,
+      achievements: stats?.achievements ?? [],
+      endings: stats?.endings ?? [],
+      totalPlays: stats?.totalPlays ?? 0,
+    });
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(500).json({ error: 'Google login failed' });
+  }
 });
 
 // GET /user/achievements/:userId (public)
