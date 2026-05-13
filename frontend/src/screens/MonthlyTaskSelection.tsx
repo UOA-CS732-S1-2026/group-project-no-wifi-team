@@ -126,7 +126,7 @@ export function MonthlyTaskSelection() {
         <MonthHeader quarter={quarter} />
 
         <LayoutGroup id="selection-sync">
-          <div className="flex" style={{ width: '1090px', height: '100%', marginTop: 100 }}>
+          <div className="flex" style={{ width: '1090px', height: '100%', marginTop: 88 }}>
             <CategoryPanel active={activeCategory} onSelect={setActiveCategory} />
 
             <AnimatePresence mode="popLayout">
