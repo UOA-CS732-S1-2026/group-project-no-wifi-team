@@ -7,7 +7,7 @@ vi.mock('motion/react', async (importOriginal) => {
   const actual = await importOriginal<typeof import('motion/react')>()
   return {
     ...actual,
-    animate: vi.fn((from: number, to: number, options: any) => {
+    animate: vi.fn((_from: number, to: number, options: any) => {
       if (options?.onUpdate) {
         options.onUpdate(to)
       }
