@@ -9,6 +9,23 @@ import authReducer, { loginSuccess } from '../slices/authSlice'
 import { EndingResultScreen } from './EndingResultScreen'
 import { AchievementCategoryModal } from '../components/EndingResultScreen/AchievementCategoryModal'
 
+// Skip motion animations so initial opacity:0 doesn't block queries
+vi.mock('motion/react', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('motion/react')>()
+  const { forwardRef, createElement } = await import('react')
+  const noAnim = (tag: string) =>
+    forwardRef(({ children, initial: _i, animate: _a, exit: _e, transition: _t, whileHover: _wh, whileTap: _wt, variants: _v, layout: _l, layoutId: _li, onAnimationComplete, ...rest }: any, ref: any) => {
+      return createElement(tag, { ...rest, ref }, children)
+    })
+  return {
+    ...actual,
+    motion: new Proxy(actual.motion, {
+      get: (_target, key: string) => noAnim(key),
+    }),
+    AnimatePresence: ({ children }: any) => children,
+  }
+})
+
 // Prevent real HTTP calls from the fire-and-forget POST
 const mockPost = vi.fn().mockResolvedValue({})
 vi.mock('../utils/request', () => ({
@@ -113,63 +130,61 @@ describe('EndingResultScreen', () => {
   it('renders the "ENDING" label and the resolved ending title', () => {
     renderAt({
       pathname: '/ending-result',
-      state: { snapshot: { intelligence: 95, health: 95, wealth: 95 } },
+      state: { snapshot: { intelligence: 9, health: 9, wealth: 9 } },
     })
     expect(screen.getByText('ENDING')).toBeInTheDocument()
-    expect(screen.getByText('Perfect All-Rounder')).toBeInTheDocument()
+    expect(screen.getByText('The Model Minority Myth: Real Version')).toBeInTheDocument()
   })
 
   it('renders the ending description', () => {
     const { container } = renderAt({
       pathname: '/ending-result',
-      state: { snapshot: { intelligence: 95, health: 95, wealth: 95 } },
+      state: { snapshot: { intelligence: 9, health: 9, wealth: 9 } },
     })
     // Click the description to skip the typewriter and reveal full text
     const cursor = container.querySelector('.animate-pulse')
     if (cursor?.parentElement) fireEvent.click(cursor.parentElement)
     expect(
-      screen.getByText(/you did not just survive international student life/i),
+      screen.getByText(/you are not just studying abroad/i),
     ).toBeInTheDocument()
   })
 
-  it('renders the Burnout Student ending when health collapses despite high intelligence', () => {
-    const { container } = renderAt({
-      pathname: '/ending-result',
-      state: { snapshot: { intelligence: 92, health: 20, wealth: 60 } },
-    })
-    expect(screen.getByText('Burnout Student')).toBeInTheDocument()
-    const cursor = container.querySelector('.animate-pulse')
-    if (cursor?.parentElement) fireEvent.click(cursor.parentElement)
-    expect(screen.getByText(/pushed yourself too hard/i)).toBeInTheDocument()
-  })
-
-  it('renders the Academic Star ending for high intelligence with adequate health', () => {
+  it('renders the GPA ending when health collapses despite high intelligence', () => {
     renderAt({
       pathname: '/ending-result',
-      state: { snapshot: { intelligence: 88, health: 60, wealth: 50 } },
+      state: { snapshot: { intelligence: 9, health: 2, wealth: 6 } },
     })
-    expect(screen.getByText('Academic Star')).toBeInTheDocument()
+    expect(screen.getByText('GPA: 4.0, Hairline: 0.4')).toBeInTheDocument()
   })
 
-  it('renders the Part-Time Hustler ending for high wealth with low intelligence', () => {
+  it('renders the Library Landlord ending for dominant intelligence', () => {
     renderAt({
       pathname: '/ending-result',
-      state: { snapshot: { intelligence: 30, health: 70, wealth: 90 } },
+      state: { snapshot: { intelligence: 9, health: 6, wealth: 5 } },
     })
-    expect(screen.getByText('Part-Time Hustler')).toBeInTheDocument()
+    expect(screen.getByText(/Library.*Resident Landlord/i)).toBeInTheDocument()
   })
 
-  it('falls back to Steady Graduate when no state is supplied', () => {
+  it('renders the Part-time Tycoon ending for high wealth with low intelligence', () => {
+    renderAt({
+      pathname: '/ending-result',
+      state: { snapshot: { intelligence: 3, health: 7, wealth: 9 } },
+    })
+    expect(screen.getByText('Part-time Tycoon')).toBeInTheDocument()
+  })
+
+  it('falls back to I Showed Up, I Survived when no state is supplied', () => {
     renderAt({ pathname: '/ending-result' })
-    expect(screen.getByText('Steady Graduate')).toBeInTheDocument()
+    expect(screen.getByText('I Showed Up, I Survived')).toBeInTheDocument()
   })
 
   it('fills in per-field fallback values for a partial snapshot', () => {
+    // intelligence: 9 (provided), health/wealth fall back to 6 → library ending
     renderAt({
       pathname: '/ending-result',
-      state: { snapshot: { intelligence: 95 } },
+      state: { snapshot: { intelligence: 9 } },
     })
-    expect(screen.getByText('Academic Star')).toBeInTheDocument()
+    expect(screen.getByText(/Library.*Resident Landlord/i)).toBeInTheDocument()
   })
 
   // ── Dynamic achievement category buttons ──────────────────────────────────────
@@ -316,8 +331,8 @@ describe('EndingResultScreen', () => {
     const descEl = screen.getByText('Ran a full marathon')
     const card = descEl.closest('article')!
     const conditionEls = card.querySelectorAll('p')
-    // Only title+description paragraphs, no conditionText paragraph
-    expect(conditionEls.length).toBe(1) // description only
+    // title + description paragraphs, no conditionText paragraph
+    expect(conditionEls.length).toBe(2)
   })
 
   it('shows "Earned: N" counter matching the number of earned achievements in that category', async () => {

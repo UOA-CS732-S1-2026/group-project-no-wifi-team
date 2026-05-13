@@ -15,7 +15,6 @@ import {
   MonthlyPlanBoard,
   TaskList,
   MAX_PLAYER_SELECTIONS,
-  TASKS,
   mapEventToTask,
   type Category,
   type Task,
@@ -32,14 +31,35 @@ export function MonthlyTaskSelection() {
   const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
   const [activeCategory, setActiveCategory] = useState<Category>('Study')
   const [selectedIds, setSelectedIds] = useState<string[]>([])
-  const [tasks, setTasks] = useState<Task[]>(TASKS)
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [loading, setLoading] = useState(true)
   const [showFullToast, setShowFullToast] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
 
   useEffect(() => {
-    fetchEventsByQuarter(quarter)
-      .then(({ events }) => setTasks(events.map(mapEventToTask)))
-      .catch(() => {})
+    let cancelled = false
+    setLoading(true)
+
+    const attempt = (retriesLeft: number) => {
+      fetchEventsByQuarter(quarter)
+        .then(({ events }) => {
+          if (!cancelled) {
+            setTasks(events.map(mapEventToTask))
+            setLoading(false)
+          }
+        })
+        .catch(() => {
+          if (cancelled) return
+          if (retriesLeft > 0) {
+            setTimeout(() => attempt(retriesLeft - 1), 2000)
+          } else {
+            setLoading(false)
+          }
+        })
+    }
+
+    attempt(2)
+    return () => { cancelled = true }
   }, [quarter])
 
   const visibleTasks = tasks.filter(
@@ -106,7 +126,7 @@ export function MonthlyTaskSelection() {
         <MonthHeader quarter={quarter} />
 
         <LayoutGroup id="selection-sync">
-          <div className="flex" style={{ width: '1090px', height: '100%', marginTop: 100 }}>
+          <div className="flex" style={{ width: '1090px', height: '100%', marginTop: 88 }}>
             <CategoryPanel active={activeCategory} onSelect={setActiveCategory} />
 
             <AnimatePresence mode="popLayout">
@@ -123,6 +143,7 @@ export function MonthlyTaskSelection() {
                   tasks={visibleTasks}
                   selectedIds={selectedIds}
                   onToggle={toggleTask}
+                  loading={loading}
                 />
               </motion.div>
             </AnimatePresence>

@@ -1,4 +1,7 @@
 import { useRef, useState } from 'react'
+import { usePreloadImages } from '../utils/preloadImages'
+import taskBg from '../assets/CommonImage/common-background.png'
+import { MONTHLY_TASK_PRELOAD_IMAGES } from '../components/MonthlyTaskSelection/images'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
@@ -21,6 +24,8 @@ export function CharacterSelectScreen() {
   const isMobile = useIsMobile()
   const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled } = useMusicContext()
   const [showSettingsModal, setShowSettingsModal] = useState(false)
+
+  usePreloadImages([taskBg, ...MONTHLY_TASK_PRELOAD_IMAGES])
 
   function scrollLeftHandler() {
     scrollRef.current?.scrollBy({

@@ -4,8 +4,10 @@ import { store } from '../store'
 import { logout, AUTH_TOKEN_KEY } from '../slices/authSlice'
 import { showToast } from '../components/common/Toast'
 
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) ?? '/api'
+
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? '/api',
+  baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
