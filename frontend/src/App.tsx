@@ -12,6 +12,7 @@ import { EndingCollectionScreen } from './screens/EndingCollectionScreen'
 import type { AppDispatch, RootState } from './store'
 import { advanceQuarter } from './slices/gameSlice'
 import { MusicProvider } from './contexts/MusicContext'
+import { AuthRestore } from './components/common/AuthRestore'
 
 function NextQuarterBridge() {
   const navigate = useNavigate()
@@ -88,6 +89,7 @@ export default function App() {
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
       <MusicProvider>
+        <AuthRestore />
         <RouterProvider router={router} />
       </MusicProvider>
     </GoogleOAuthProvider>

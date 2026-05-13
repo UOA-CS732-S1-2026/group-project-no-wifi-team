@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 export const AUTH_TOKEN_KEY = 'auth_token'
+const AUTH_PROFILE_KEY = 'auth_profile'
 
 interface AuthState {
   token: string | null
@@ -15,8 +16,21 @@ interface AuthState {
 function loadInitialState(): AuthState {
   try {
     const token = localStorage.getItem(AUTH_TOKEN_KEY)
-    if (token) {
-      return { token, userId: null, username: null, email: null, achievements: [], endings: [], totalPlays: 0 }
+    if (!token) {
+      return { token: null, userId: null, username: null, email: null, achievements: [], endings: [], totalPlays: 0 }
+    }
+    let profile: Partial<AuthState> | null = null
+    try {
+      profile = JSON.parse(localStorage.getItem(AUTH_PROFILE_KEY) ?? 'null') as Partial<AuthState> | null
+    } catch { /* corrupted profile — recover with token only */ }
+    return {
+      token,
+      userId: profile?.userId ?? null,
+      username: profile?.username ?? null,
+      email: profile?.email ?? null,
+      achievements: profile?.achievements ?? [],
+      endings: profile?.endings ?? [],
+      totalPlays: profile?.totalPlays ?? 0,
     }
   } catch { /* localStorage unavailable */ }
   return { token: null, userId: null, username: null, email: null, achievements: [], endings: [], totalPlays: 0 }
@@ -40,7 +54,15 @@ const authSlice = createSlice({
       state.achievements = achievements ?? []
       state.endings = endings ?? []
       state.totalPlays = totalPlays ?? 0
-      try { localStorage.setItem(AUTH_TOKEN_KEY, token) } catch { /* quota exceeded or storage disabled */ }
+      try {
+        localStorage.setItem(AUTH_TOKEN_KEY, token)
+        localStorage.setItem(AUTH_PROFILE_KEY, JSON.stringify({
+          userId, username, email,
+          achievements: state.achievements,
+          endings: state.endings,
+          totalPlays: state.totalPlays,
+        }))
+      } catch { /* quota exceeded or storage disabled */ }
     },
     logout(state) {
       state.token = null
@@ -50,12 +72,18 @@ const authSlice = createSlice({
       state.achievements = []
       state.endings = []
       state.totalPlays = 0
-      try { localStorage.removeItem(AUTH_TOKEN_KEY) } catch { /* storage disabled */ }
+      try { localStorage.removeItem(AUTH_TOKEN_KEY); localStorage.removeItem(AUTH_PROFILE_KEY) } catch { /* storage disabled */ }
     },
     setStats(state, action: PayloadAction<{ achievements?: string[]; endings?: string[]; totalPlays?: number }>) {
       if (action.payload.achievements) state.achievements = action.payload.achievements
       if (action.payload.endings) state.endings = action.payload.endings
       if (action.payload.totalPlays != null) state.totalPlays = action.payload.totalPlays
+      try {
+        localStorage.setItem(AUTH_PROFILE_KEY, JSON.stringify({
+          userId: state.userId, username: state.username, email: state.email,
+          achievements: state.achievements, endings: state.endings, totalPlays: state.totalPlays,
+        }))
+      } catch { /* storage disabled */ }
     },
   },
 })

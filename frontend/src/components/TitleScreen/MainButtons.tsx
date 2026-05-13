@@ -16,17 +16,9 @@ interface AuthResponse {
   totalPlays?: number
 }
 
-export function MainButtons({
-  onStart,
-  onAbout,
-  onLogout,
-  isLoggedIn,
-}: {
-  onStart: () => void
-  onAbout: () => void
-  onLogout: () => void
-  isLoggedIn?: boolean
-}) {
+const googleClientId = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string)?.trim() || ''
+
+function GoogleSignInButton() {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
 
@@ -45,6 +37,29 @@ export function MainButtons({
     },
   })
 
+  return (
+    <button
+      type="button"
+      onClick={() => googleLogin()}
+      className="w-[90px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[100px] cursor-pointer"
+      aria-label="Sign In"
+    >
+      <img src={signInImg} alt="Sign In" className="w-full scale-125 drop-shadow-md sm:scale-140" />
+    </button>
+  )
+}
+
+export function MainButtons({
+  onStart,
+  onAbout,
+  onLogout,
+  isLoggedIn,
+}: {
+  onStart: () => void
+  onAbout: () => void
+  onLogout: () => void
+  isLoggedIn?: boolean
+}) {
   return (
     <div className="flex flex-col items-center justify-center">
       <button
@@ -71,14 +86,7 @@ export function MainButtons({
         </button>
 
         {!isLoggedIn ? (
-          <button
-            type="button"
-            onClick={() => googleLogin()}
-            className="w-[90px] transition duration-200 hover:scale-105 active:scale-95 sm:w-[100px] cursor-pointer"
-            aria-label="Sign In"
-          >
-            <img src={signInImg} alt="Sign In" className="w-full scale-125 drop-shadow-md sm:scale-140" />
-          </button>
+          googleClientId ? <GoogleSignInButton /> : null
         ) : (
           <button
             type="button"
