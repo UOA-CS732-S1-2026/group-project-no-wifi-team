@@ -40,7 +40,7 @@ const authSlice = createSlice({
       state.achievements = achievements ?? []
       state.endings = endings ?? []
       state.totalPlays = totalPlays ?? 0
-      localStorage.setItem(AUTH_TOKEN_KEY, token)
+      try { localStorage.setItem(AUTH_TOKEN_KEY, token) } catch { /* quota exceeded or storage disabled */ }
     },
     logout(state) {
       state.token = null
@@ -50,7 +50,7 @@ const authSlice = createSlice({
       state.achievements = []
       state.endings = []
       state.totalPlays = 0
-      localStorage.removeItem(AUTH_TOKEN_KEY)
+      try { localStorage.removeItem(AUTH_TOKEN_KEY) } catch { /* storage disabled */ }
     },
     setStats(state, action: PayloadAction<{ achievements?: string[]; endings?: string[]; totalPlays?: number }>) {
       if (action.payload.achievements) state.achievements = action.payload.achievements

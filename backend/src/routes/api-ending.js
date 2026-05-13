@@ -149,30 +149,9 @@ router.patch('/:endingId/unlock', authOptional, async (req, res) => {
             })
         }
 
-        const ending = await Ending.findOneAndUpdate(
-            {
-                endingId,
-                isDeleted: { $ne: true },
-            },
-            {
-                status: 'Unlocked',
-            },
-            {
-                new: true,
-            },
-        ).lean()
-
-        if (!ending) {
-            return res.status(404).json({
-                success: false,
-                message: 'Ending not found',
-            })
-        }
-
-        return res.json({
-            success: true,
-            message: 'Ending unlocked successfully',
-            data: ending,
+        return res.status(401).json({
+            success: false,
+            message: 'Authentication required to unlock endings',
         })
     } catch (error) {
         console.error('Failed to unlock ending detail:')
